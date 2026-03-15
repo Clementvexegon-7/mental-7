@@ -9,7 +9,10 @@ from django.contrib import messages
 from django.utils import timezone
 
 # ── MODELS ─────────────────────────────────────────────────────
-from .models import Mood, JournalEntry, SavedResource, Checklist, UserProfile, ContactMessage
+from .models import (
+    Mood, JournalEntry, SavedResource, Checklist,
+    UserProfile, ContactMessage, Appointment,
+)
 
 # ── FORMS ──────────────────────────────────────────────────────
 from .forms import (
@@ -21,6 +24,7 @@ from .forms import (
     ChecklistForm,
     SavedResourceForm,
     ContactMessageForm,
+    AppointmentForm,
 )
 
 
@@ -39,12 +43,12 @@ def signs(request):
 
 def prevention(request):
     return render(request, 'mentalapp/prevention.html')
+
 def selfcare_info(request):
     return render(request, 'mentalapp/selfcare.html')
 
 def resources_info(request):
     return render(request, 'mentalapp/resources.html')
-
 
 
 def contact(request):
@@ -64,18 +68,17 @@ def contact(request):
 
 # ── AUTHENTICATION ─────────────────────────────────────────────
 def register_view(request):
-    # If the user is already logged in, send them to home
     if request.user.is_authenticated:
         messages.info(request, "You are already logged in!")
-        return redirect('mentalapp:home')  # safe redirect
+        return redirect('mentalapp:home')
 
     if request.method == 'POST':
         form = UserRegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user)  # log in the user immediately
+            login(request, user)
             messages.success(request, "Registration successful! Welcome 🎉")
-            return redirect('mentalapp:home')  # redirect after registration
+            return redirect('mentalapp:home')
     else:
         form = UserRegisterForm()
 
@@ -83,7 +86,6 @@ def register_view(request):
 
 
 def login_view(request):
-    # Redirect logged-in users to home
     if request.user.is_authenticated:
         messages.info(request, "You are already logged in!")
         return redirect('mentalapp:home')
@@ -95,38 +97,41 @@ def login_view(request):
 
         if user is not None:
             login(request, user)
-            # Use next_url if provided, else redirect to home
             next_url = request.GET.get('next') or request.POST.get('next')
             if next_url:
                 return redirect(next_url)
-            return redirect('mentalapp:home')  # redirect to home after login
+            return redirect('mentalapp:home')
         else:
             messages.error(request, "Invalid username or password.")
 
-    # Pass 'next' from GET to template
     return render(request, 'mentalapp/login.html', {'next': request.GET.get('next', '')})
 
+
 def logout_view(request):
-    # FIX: Only allow POST logout to prevent CSRF/logout attacks
     if request.method == 'POST':
         logout(request)
-        return redirect('mentalapp:home')
     return redirect('mentalapp:home')
 
 
 # ── DASHBOARD ──────────────────────────────────────────────────
 @login_required
 def dashboard(request):
-    today = timezone.now().date()
+    today           = timezone.now().date()
     recent_moods    = Mood.objects.filter(user=request.user).order_by('-date')[:5]
     recent_journals = JournalEntry.objects.filter(user=request.user).order_by('-created_at')[:3]
     today_checklist = Checklist.objects.filter(user=request.user, date=today).first()
+    upcoming_appointments = Appointment.objects.filter(
+        user=request.user,
+        preferred_date__gte=today,
+        status__in=('pending', 'confirmed'),
+    ).order_by('preferred_date', 'preferred_time')[:3]
 
     context = {
-        'recent_moods':    recent_moods,
-        'recent_journals': recent_journals,
-        'today_checklist': today_checklist,
-        'today':           today,
+        'recent_moods':           recent_moods,
+        'recent_journals':        recent_journals,
+        'today_checklist':        today_checklist,
+        'today':                  today,
+        'upcoming_appointments':  upcoming_appointments,
     }
     return render(request, 'mentalapp/dashboard.html', context)
 
@@ -309,3 +314,56 @@ def profile_edit(request):
     else:
         form = UserProfileForm(instance=profile_obj)
     return render(request, 'mentalapp/profile_edit.html', {'form': form})
+
+
+# ── APPOINTMENTS ───────────────────────────────────────────────
+@login_required
+def appointment_list(request):
+    """List all appointments for the logged-in user."""
+    appointments = Appointment.objects.filter(user=request.user)
+    return render(request, 'mentalapp/appointment_list.html', {'appointments': appointments})
+
+
+@login_required
+def appointment_create(request):
+    """Book a new appointment."""
+    if request.method == 'POST':
+        form = AppointmentForm(request.POST)
+        if form.is_valid():
+            appt = form.save(commit=False)
+            appt.user = request.user
+            appt.save()
+            messages.success(request, "Your appointment has been booked! We'll confirm it shortly.")
+            return redirect('mentalapp:appointment_list')
+    else:
+        form = AppointmentForm()
+    return render(request, 'mentalapp/appointment_form.html', {'form': form, 'action': 'Book'})
+
+
+@login_required
+def appointment_edit(request, pk):
+    """Edit a pending appointment."""
+    appt = get_object_or_404(Appointment, pk=pk, user=request.user)
+    if appt.status in ('confirmed', 'completed'):
+        messages.warning(request, "This appointment cannot be edited.")
+        return redirect('mentalapp:appointment_list')
+    if request.method == 'POST':
+        form = AppointmentForm(request.POST, instance=appt)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Appointment updated successfully.")
+            return redirect('mentalapp:appointment_list')
+    else:
+        form = AppointmentForm(instance=appt)
+    return render(request, 'mentalapp/appointment_form.html', {'form': form, 'action': 'Update'})
+
+
+@login_required
+def appointment_cancel(request, pk):
+    """Cancel an appointment (POST only)."""
+    appt = get_object_or_404(Appointment, pk=pk, user=request.user)
+    if request.method == 'POST':
+        appt.status = 'cancelled'
+        appt.save()
+        messages.info(request, "Your appointment has been cancelled.")
+    return redirect('mentalapp:appointment_list')

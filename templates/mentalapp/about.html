@@ -77,6 +77,5 @@
 </section>
 {% endblock %}
 {% block extra_js %}
-  const barObs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){const el=e.target;setTimeout(()=>el.style.width=el.dataset.w,200);barObs.unobserve(el)}});}},{threshold:.3});
-  document.querySelectorAll('.progress-bar[data-w]').forEach(b=>barObs.observe(b));
+
 {% endblock %}

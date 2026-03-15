@@ -10,9 +10,6 @@ app_name = 'mentalapp'
 urlpatterns = [
 
     # ── HOME & INFO PAGES ──────────────────────────────────────
-
-
-
     path('',                        views.home_view,      name='home'),
     path('about/',                  views.about,          name='about'),
     path('conditions/',             views.conditions,     name='conditions'),
@@ -55,4 +52,10 @@ urlpatterns = [
     # ── PROFILE ────────────────────────────────────────────────
     path('profile/',                views.profile,      name='profile'),
     path('profile/edit/',           views.profile_edit, name='profile_edit'),
+
+    # ── APPOINTMENTS ───────────────────────────────────────────
+    path('appointments/',                       views.appointment_list,   name='appointment_list'),
+    path('appointments/book/',                  views.appointment_create, name='appointment_create'),
+    path('appointments/<int:pk>/edit/',         views.appointment_edit,   name='appointment_edit'),
+    path('appointments/<int:pk>/cancel/',       views.appointment_cancel, name='appointment_cancel'),
 ]

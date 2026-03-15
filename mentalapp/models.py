@@ -1,3 +1,7 @@
+# ================================================================
+#  mentalapp/models.py
+# ================================================================
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
@@ -25,7 +29,7 @@ class UserProfile(models.Model):
         return f"{self.user.username}'s Profile"
 
 
-# FIX: Auto-create profile when a new User is created via signal
+# Auto-create profile when a new User is created via signal
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
@@ -199,3 +203,56 @@ class ContactMessage(models.Model):
 
     def __str__(self):
         return f"[{self.get_status_display()}] {self.subject} from {self.name}"
+
+
+# ─────────────────────────────────────────────
+#  APPOINTMENT
+# ─────────────────────────────────────────────
+class Appointment(models.Model):
+
+    APPOINTMENT_TYPE_CHOICES = [
+        ('individual', 'Individual Therapy'),
+        ('group',      'Group Session'),
+        ('assessment', 'Mental Health Assessment'),
+        ('follow_up',  'Follow-Up Consultation'),
+        ('crisis',     'Crisis Support'),
+    ]
+
+    STATUS_CHOICES = [
+        ('pending',   'Pending'),
+        ('confirmed', 'Confirmed'),
+        ('cancelled', 'Cancelled'),
+        ('completed', 'Completed'),
+    ]
+
+    user             = models.ForeignKey(User, on_delete=models.CASCADE, related_name='appointments')
+    appointment_type = models.CharField(max_length=50, choices=APPOINTMENT_TYPE_CHOICES, default='individual')
+    preferred_date   = models.DateField()
+    preferred_time   = models.TimeField()
+    therapist_name   = models.CharField(max_length=120, blank=True)
+    location         = models.CharField(
+        max_length=200, blank=True,
+        help_text="Clinic address or 'Online' for virtual sessions"
+    )
+    notes      = models.TextField(
+        blank=True,
+        help_text="Any additional information or concerns you'd like to share"
+    )
+    status     = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering            = ['preferred_date', 'preferred_time']
+        verbose_name        = 'Appointment'
+        verbose_name_plural = 'Appointments'
+
+    def __str__(self):
+        return (
+            f"{self.user.username} — "
+            f"{self.get_appointment_type_display()} on "
+            f"{self.preferred_date} at {self.preferred_time}"
+        )
+
+    def is_upcoming(self):
+        return self.preferred_date >= timezone.localdate()

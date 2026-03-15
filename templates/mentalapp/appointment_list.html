@@ -1,0 +1,347 @@
+{% extends "mentalapp/base.html" %}
+{% load static %}
+
+{% block title %}{{ action }} Appointment · MindWell{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* ── PAGE SHELL ───────────────────────────────────── */
+  .appt-hero{
+    background:linear-gradient(135deg,var(--deep) 0%,#2a4a40 60%,#1c3530 100%);
+    padding:4rem 0 5.5rem;
+    position:relative;
+    overflow:hidden
+  }
+  .appt-hero::before{
+    content:'';
+    position:absolute;inset:0;
+    background:radial-gradient(ellipse 70% 60% at 80% 50%,rgba(74,124,111,.35) 0%,transparent 70%);
+    pointer-events:none
+  }
+  .appt-hero-badge{
+    display:inline-flex;align-items:center;gap:.45rem;
+    background:rgba(232,201,138,.12);
+    border:1px solid rgba(232,201,138,.3);
+    border-radius:50px;
+    padding:.35rem .95rem;
+    font-size:.78rem;
+    color:var(--warm);
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    margin-bottom:1.2rem
+  }
+  .appt-hero h1{
+    font-size:clamp(1.8rem,4vw,2.8rem);
+    color:#fff;
+    line-height:1.2;
+    margin-bottom:.7rem
+  }
+  .appt-hero p{
+    color:rgba(255,255,255,.62);
+    font-size:1rem;
+    max-width:520px
+  }
+
+  /* decorative leaf */
+  .appt-hero .deco-leaf{
+    position:absolute;right:6%;top:50%;transform:translateY(-50%);
+    font-size:9rem;opacity:.07;
+    pointer-events:none;line-height:1
+  }
+
+  /* ── CARD ─────────────────────────────────────────── */
+  .appt-card-wrap{
+    margin-top:-3rem;
+    padding-bottom:5rem
+  }
+
+  .appt-card{
+    background:#fff;
+    border-radius:20px;
+    box-shadow:0 12px 60px rgba(28,43,40,.12);
+    overflow:hidden
+  }
+
+  .appt-card-sidebar{
+    background:linear-gradient(160deg,var(--deep),#2e5048);
+    color:#fff;
+    padding:2.5rem 2rem;
+    display:flex;flex-direction:column;gap:2rem
+  }
+
+  .sidebar-step{
+    display:flex;align-items:flex-start;gap:.85rem
+  }
+  .step-num{
+    width:32px;height:32px;flex-shrink:0;
+    border-radius:50%;
+    background:rgba(232,201,138,.18);
+    border:1.5px solid rgba(232,201,138,.4);
+    display:flex;align-items:center;justify-content:center;
+    font-size:.78rem;font-weight:600;color:var(--warm)
+  }
+  .step-body h6{
+    font-family:'DM Sans',sans-serif;
+    font-weight:600;font-size:.88rem;color:#fff;
+    margin-bottom:.2rem
+  }
+  .step-body p{
+    font-size:.78rem;color:rgba(255,255,255,.52);margin:0
+  }
+
+  .sidebar-note{
+    background:rgba(232,201,138,.08);
+    border-left:3px solid var(--warm);
+    border-radius:0 8px 8px 0;
+    padding:.85rem 1rem;
+    font-size:.8rem;color:rgba(255,255,255,.65);
+    margin-top:auto
+  }
+
+  /* ── FORM BODY ───────────────────────────────────── */
+  .appt-form-body{
+    padding:2.5rem 2.5rem 2rem
+  }
+
+  .form-section-title{
+    font-family:'Playfair Display',serif;
+    font-size:1rem;
+    color:var(--sage);
+    border-bottom:1px solid #e8ede9;
+    padding-bottom:.5rem;
+    margin-bottom:1.25rem
+  }
+
+  /* override Bootstrap inputs to match brand */
+  .appt-input{
+    border:1.5px solid #d8e3df!important;
+    border-radius:10px!important;
+    padding:.65rem .95rem!important;
+    font-size:.9rem!important;
+    color:var(--text)!important;
+    background:#fafcfb!important;
+    transition:border-color .2s,box-shadow .2s!important
+  }
+  .appt-input:focus{
+    border-color:var(--sage)!important;
+    box-shadow:0 0 0 3px rgba(74,124,111,.12)!important;
+    background:#fff!important;
+    outline:none!important
+  }
+  .form-label{
+    font-size:.83rem;
+    font-weight:600;
+    color:var(--muted);
+    letter-spacing:.03em;
+    margin-bottom:.35rem
+  }
+
+  /* status badge */
+  .status-pill{
+    display:inline-block;
+    padding:.2rem .7rem;
+    border-radius:50px;
+    font-size:.74rem;font-weight:600
+  }
+  .status-pending{background:#fff3cd;color:#856404}
+  .status-confirmed{background:#d1f0e6;color:#0a6640}
+  .status-cancelled{background:#fde8e8;color:#9b1b1b}
+  .status-completed{background:#e2eeff;color:#1a4db5}
+
+  /* ── SUBMIT BTN ──────────────────────────────────── */
+  .btn-appt-submit{
+    background:var(--sage);
+    color:#fff;
+    border:none;
+    border-radius:12px;
+    padding:.8rem 2.2rem;
+    font-size:.95rem;font-weight:600;
+    letter-spacing:.02em;
+    transition:background .25s,transform .15s,box-shadow .25s;
+    cursor:pointer
+  }
+  .btn-appt-submit:hover{
+    background:var(--sage-lt);
+    transform:translateY(-2px);
+    box-shadow:0 6px 24px rgba(74,124,111,.3)
+  }
+
+  .btn-appt-cancel{
+    background:transparent;
+    color:var(--muted);
+    border:1.5px solid #d8e3df;
+    border-radius:12px;
+    padding:.8rem 1.6rem;
+    font-size:.95rem;
+    transition:all .25s;
+    text-decoration:none;
+    display:inline-block
+  }
+  .btn-appt-cancel:hover{
+    border-color:var(--blush);
+    color:var(--blush)
+  }
+
+  /* ── ANIMATE IN ──────────────────────────────────── */
+  @keyframes fadeUp{
+    from{opacity:0;transform:translateY(18px)}
+    to{opacity:1;transform:translateY(0)}
+  }
+  .appt-card{animation:fadeUp .5s ease both}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="appt-hero">
+  <div class="container position-relative">
+    <div class="appt-hero-badge">🌿 Wellbeing Appointment</div>
+    <h1>{{ action }} Your Appointment</h1>
+    <p>Take a step toward better mental health. Fill in the details below and we'll confirm your session soon.</p>
+  </div>
+  <span class="deco-leaf" aria-hidden="true">🌱</span>
+</section>
+
+<!-- CARD -->
+<div class="appt-card-wrap">
+  <div class="container">
+    <div class="appt-card row g-0">
+
+      <!-- SIDEBAR -->
+      <div class="col-lg-4 appt-card-sidebar">
+        <h5 style="font-family:'Playfair Display',serif;margin-bottom:.25rem">How it works</h5>
+        <p style="font-size:.8rem;color:rgba(255,255,255,.5);margin-bottom:1rem">Simple steps to get support</p>
+
+        <div class="sidebar-step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <h6>Choose a session type</h6>
+            <p>Individual, group, assessment, or crisis support.</p>
+          </div>
+        </div>
+        <div class="sidebar-step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <h6>Pick date &amp; time</h6>
+            <p>Select a future date that works best for you.</p>
+          </div>
+        </div>
+        <div class="sidebar-step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <h6>Add optional details</h6>
+            <p>Name your therapist or leave notes for context.</p>
+          </div>
+        </div>
+        <div class="sidebar-step">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <h6>We confirm &amp; follow up</h6>
+            <p>You'll receive a confirmation once reviewed.</p>
+          </div>
+        </div>
+
+        <div class="sidebar-note">
+          <strong style="color:var(--warm)">Need urgent help?</strong><br>
+          If you're in crisis, please call your local emergency services or a crisis helpline immediately.
+        </div>
+      </div>
+
+      <!-- FORM -->
+      <div class="col-lg-8 appt-form-body">
+
+        {% if messages %}
+          {% for msg in messages %}
+            <div class="alert alert-{{ msg.tags }} alert-dismissible fade show mb-3" role="alert">
+              {{ msg }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+          {% endfor %}
+        {% endif %}
+
+        <form method="post" novalidate>
+          {% csrf_token %}
+
+          <!-- Session Details -->
+          <p class="form-section-title"><i class="bi bi-calendar2-heart me-2"></i>Session Details</p>
+
+          <div class="row g-3 mb-3">
+            <div class="col-12">
+              <label class="form-label" for="{{ form.appointment_type.id_for_label }}">
+                {{ form.appointment_type.label }}
+              </label>
+              {{ form.appointment_type }}
+              {% if form.appointment_type.errors %}
+                <div class="text-danger mt-1" style="font-size:.8rem">{{ form.appointment_type.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <div class="col-sm-6">
+              <label class="form-label" for="{{ form.preferred_date.id_for_label }}">
+                {{ form.preferred_date.label }}
+              </label>
+              {{ form.preferred_date }}
+              {% if form.preferred_date.errors %}
+                <div class="text-danger mt-1" style="font-size:.8rem">{{ form.preferred_date.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <div class="col-sm-6">
+              <label class="form-label" for="{{ form.preferred_time.id_for_label }}">
+                {{ form.preferred_time.label }}
+              </label>
+              {{ form.preferred_time }}
+              {% if form.preferred_time.errors %}
+                <div class="text-danger mt-1" style="font-size:.8rem">{{ form.preferred_time.errors.0 }}</div>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- Provider & Location -->
+          <p class="form-section-title mt-4"><i class="bi bi-person-badge me-2"></i>Provider &amp; Location</p>
+
+          <div class="row g-3 mb-3">
+            <div class="col-sm-6">
+              <label class="form-label" for="{{ form.therapist_name.id_for_label }}">
+                {{ form.therapist_name.label }}
+              </label>
+              {{ form.therapist_name }}
+            </div>
+
+            <div class="col-sm-6">
+              <label class="form-label" for="{{ form.location.id_for_label }}">
+                {{ form.location.label }}
+              </label>
+              {{ form.location }}
+            </div>
+          </div>
+
+          <!-- Notes -->
+          <p class="form-section-title mt-4"><i class="bi bi-chat-square-text me-2"></i>Additional Notes</p>
+
+          <div class="mb-4">
+            <label class="form-label" for="{{ form.notes.id_for_label }}">{{ form.notes.label }}</label>
+            {{ form.notes }}
+            <div class="form-text mt-1" style="font-size:.76rem;color:var(--muted)">
+              Everything you share is confidential and helps your therapist prepare.
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="d-flex align-items-center gap-3 flex-wrap">
+            <button type="submit" class="btn-appt-submit">
+              <i class="bi bi-calendar-check me-2"></i>{{ action }} Appointment
+            </button>
+            <a href="{% url 'mentalapp:appointment_list' %}" class="btn-appt-cancel">
+              Cancel
+            </a>
+          </div>
+
+        </form>
+      </div><!-- /form col -->
+    </div><!-- /row -->
+  </div>
+</div>
+
+{% endblock %}

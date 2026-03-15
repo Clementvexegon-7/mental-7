@@ -1,7 +1,8 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .models import Mood, JournalEntry, Checklist, SavedResource, UserProfile, ContactMessage
+from django.utils import timezone
+from .models import Mood, JournalEntry, Checklist, SavedResource, UserProfile, ContactMessage, Appointment
 
 
 # ─────────────────────────────────────────────
@@ -102,8 +103,8 @@ class JournalForm(forms.ModelForm):
 
 # ─────────────────────────────────────────────
 #  CHECKLIST FORM
-#  FIX: 'date' removed from fields — it is set automatically
-#       in the view via get_or_create(date=today)
+#  'date' removed from fields — set automatically
+#  in the view via get_or_create(date=today)
 # ─────────────────────────────────────────────
 class ChecklistForm(forms.ModelForm):
     class Meta:
@@ -139,3 +140,60 @@ class ContactMessageForm(forms.ModelForm):
         widgets = {
             'message': forms.Textarea(attrs={'rows': 5, 'placeholder': 'Your message…'}),
         }
+
+
+# ─────────────────────────────────────────────
+#  APPOINTMENT FORM
+# ─────────────────────────────────────────────
+class AppointmentForm(forms.ModelForm):
+
+    class Meta:
+        model  = Appointment
+        fields = [
+            'appointment_type',
+            'preferred_date',
+            'preferred_time',
+            'therapist_name',
+            'location',
+            'notes',
+        ]
+        widgets = {
+            'appointment_type': forms.Select(attrs={
+                'class': 'form-select appt-input',
+            }),
+            'preferred_date': forms.DateInput(attrs={
+                'class': 'form-control appt-input',
+                'type':  'date',
+            }),
+            'preferred_time': forms.TimeInput(attrs={
+                'class': 'form-control appt-input',
+                'type':  'time',
+            }),
+            'therapist_name': forms.TextInput(attrs={
+                'class':       'form-control appt-input',
+                'placeholder': 'e.g. Dr. Amara Osei (optional)',
+            }),
+            'location': forms.TextInput(attrs={
+                'class':       'form-control appt-input',
+                'placeholder': 'Clinic address or "Online"',
+            }),
+            'notes': forms.Textarea(attrs={
+                'class':       'form-control appt-input',
+                'rows':        4,
+                'placeholder': "Anything you'd like your therapist to know beforehand...",
+            }),
+        }
+        labels = {
+            'appointment_type': 'Type of Session',
+            'preferred_date':   'Preferred Date',
+            'preferred_time':   'Preferred Time',
+            'therapist_name':   'Therapist / Counsellor',
+            'location':         'Location',
+            'notes':            'Additional Notes',
+        }
+
+    def clean_preferred_date(self):
+        date = self.cleaned_data.get('preferred_date')
+        if date and date < timezone.localdate():
+            raise forms.ValidationError("Please choose a date in the future.")
+        return date
