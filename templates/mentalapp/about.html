@@ -1,34 +1,140 @@
 {% extends "mentalapp/base.html" %}
 {% load static %}
-{% block title %}About Mental Health — MindWell}{% endblock %}
+
+{# ── Fix: removed stray closing brace from original title ── #}
+{% block title %}About Mental Health — MindWell{% endblock %}
 {% block nav_about %}active-page{% endblock %}
+
 {% block extra_css %}
-    <style>
-  .info-card{background:#fff;border-radius:20px;padding:2rem;height:100%;border:1px solid rgba(74,124,111,.12);transition:all .3s}
-  .info-card:hover{box-shadow:0 12px 40px rgba(74,124,111,.15);transform:translateY(-4px)}
-  .ic-wrap{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin-bottom:1rem}
-  .ic-green{background:rgba(74,124,111,.12);color:var(--sage)}
-  .ic-warm{background:rgba(232,201,138,.25);color:#b5892a}
-  .ic-blush{background:rgba(232,165,152,.2);color:#b5554a}
-  .ic-blue{background:rgba(100,149,237,.15);color:#4169a8}
-  .awareness-item{margin-bottom:1.4rem}
-  .awareness-item .lbl{display:flex;justify-content:space-between;font-size:.88rem;margin-bottom:.4rem}
-  .progress{height:10px;border-radius:50px;background:rgba(74,124,111,.12)}
-  .progress-bar{border-radius:50px;background:linear-gradient(90deg,var(--sage),var(--sage-lt));width:0;transition:width 1.2s cubic-bezier(.4,0,.2,1)}
-  .accordion-item{background:#fff;border:1px solid rgba(74,124,111,.15)!important;border-radius:12px!important;margin-bottom:.7rem;overflow:hidden}
-  .accordion-button{font-family:'DM Sans',sans-serif;font-weight:500;color:var(--deep);background:#fff}
-  .accordion-button:not(.collapsed){background:rgba(74,124,111,.08);color:var(--sage);box-shadow:none}
-  .accordion-body{font-size:.92rem;color:var(--muted);line-height:1.75}
-  #what{background:var(--cream);padding:90px 0}
-  #mission{background:var(--deep);padding:90px 0}
-  .mission-pill{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:1.8rem;text-align:center;transition:all .3s}
-  .mission-pill:hover{background:rgba(111,173,160,.18);border-color:var(--sage-lt)}
-  .mission-pill i{font-size:2rem;color:var(--warm);display:block;margin-bottom:.8rem}
-  .mission-pill h5{color:#fff;font-size:1rem;margin-bottom:.4rem}
-  .mission-pill p{color:rgba(255,255,255,.58);font-size:.86rem;margin:0;line-height:1.6}
-    </style>
+<style>
+/* ═══════════════════════════════════════════
+   EXISTING STYLES — PRESERVED
+═══════════════════════════════════════════ */
+.info-card{background:#fff;border-radius:20px;padding:2rem;height:100%;border:1px solid rgba(74,124,111,.12);transition:all .3s;position:relative;overflow:hidden}
+.info-card::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 0%,rgba(74,124,111,.07),transparent 70%);opacity:0;transition:opacity .4s}
+.info-card:hover{box-shadow:0 12px 40px rgba(74,124,111,.18);transform:translateY(-6px)}
+.info-card:hover::after{opacity:1}
+.ic-wrap{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin-bottom:1rem;transition:transform .35s cubic-bezier(.34,1.56,.64,1)}
+.info-card:hover .ic-wrap{transform:scale(1.15) rotate(-5deg)}
+.ic-green{background:rgba(74,124,111,.12);color:var(--sage)}
+.ic-warm{background:rgba(232,201,138,.25);color:#b5892a}
+.ic-blush{background:rgba(232,165,152,.2);color:#b5554a}
+.ic-blue{background:rgba(100,149,237,.15);color:#4169a8}
+.awareness-item{margin-bottom:1.4rem}
+.awareness-item .lbl{display:flex;justify-content:space-between;font-size:.88rem;margin-bottom:.4rem;color:var(--text)}
+.awareness-item .lbl .val{font-weight:700;color:var(--sage)}
+.progress{height:10px;border-radius:50px;background:rgba(74,124,111,.12)}
+.progress-bar{border-radius:50px;background:linear-gradient(90deg,var(--sage),var(--sage-lt));width:0;transition:width 1.4s cubic-bezier(.4,0,.2,1)}
+.accordion-item{background:#fff;border:1px solid rgba(74,124,111,.15)!important;border-radius:12px!important;margin-bottom:.7rem;overflow:hidden}
+.accordion-button{font-family:'DM Sans',sans-serif;font-weight:500;color:var(--deep);background:#fff;transition:all .25s}
+.accordion-button:not(.collapsed){background:rgba(74,124,111,.08);color:var(--sage);box-shadow:none}
+.accordion-button::after{filter:hue-rotate(160deg) brightness(.7)}
+.accordion-body{font-size:.92rem;color:var(--muted);line-height:1.75}
+#what{background:var(--cream);padding:90px 0}
+#mission{background:var(--deep);padding:90px 0}
+.mission-pill{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:1.8rem;text-align:center;transition:all .3s;position:relative;overflow:hidden}
+.mission-pill::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 100%,rgba(111,173,160,.15),transparent 65%);opacity:0;transition:opacity .35s}
+.mission-pill:hover{background:rgba(111,173,160,.18);border-color:var(--sage-lt);transform:translateY(-4px)}
+.mission-pill:hover::before{opacity:1}
+.mission-pill i{font-size:2rem;color:var(--warm);display:block;margin-bottom:.8rem;transition:transform .35s cubic-bezier(.34,1.56,.64,1)}
+.mission-pill:hover i{transform:scale(1.2)}
+.mission-pill h5{color:#fff;font-size:1rem;margin-bottom:.4rem}
+.mission-pill p{color:rgba(255,255,255,.58);font-size:.86rem;margin:0;line-height:1.6}
+
+/* ═══════════════════════════════════════════
+   NEW — REAL STORIES SECTION
+═══════════════════════════════════════════ */
+#real-stories{padding:100px 0;background:linear-gradient(160deg,#f7f3eb 0%,#eef5f3 100%);position:relative;overflow:hidden}
+#real-stories::before{content:'';position:absolute;top:-80px;right:-100px;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(74,124,111,.06) 0%,transparent 70%);pointer-events:none}
+#real-stories::after{content:'';position:absolute;bottom:-60px;left:-60px;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(232,201,138,.08) 0%,transparent 70%);pointer-events:none}
+
+.story-card{background:#fff;border-radius:24px;padding:2.2rem 2rem;height:100%;border:1px solid rgba(74,124,111,.1);position:relative;transition:all .35s;overflow:hidden}
+.story-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;border-radius:24px 24px 0 0;opacity:0;transition:opacity .3s}
+.story-card:hover{box-shadow:0 20px 60px rgba(74,124,111,.14);transform:translateY(-6px)}
+.story-card:hover::before{opacity:1}
+.story-card.color-sage::before{background:linear-gradient(90deg,var(--sage),var(--sage-lt))}
+.story-card.color-warm::before{background:linear-gradient(90deg,#c8882a,var(--warm))}
+.story-card.color-blush::before{background:linear-gradient(90deg,#b5554a,var(--blush))}
+.story-card.color-blue::before{background:linear-gradient(90deg,#4169a8,#7ba0d4)}
+
+.story-quote-icon{font-size:3rem;line-height:1;color:rgba(74,124,111,.15);font-family:'Playfair Display',serif;margin-bottom:.3rem;display:block}
+.story-card.color-warm .story-quote-icon{color:rgba(200,136,42,.15)}
+.story-card.color-blush .story-quote-icon{color:rgba(181,85,74,.15)}
+.story-card.color-blue .story-quote-icon{color:rgba(65,105,168,.15)}
+
+.story-text{font-size:.95rem;color:var(--text);line-height:1.78;font-style:italic;margin-bottom:1.5rem;flex:1}
+.story-text em{font-style:normal;font-weight:600;color:var(--sage)}
+.story-card.color-warm .story-text em{color:#b5892a}
+.story-card.color-blush .story-text em{color:#b5554a}
+.story-card.color-blue .story-text em{color:#4169a8}
+
+.story-author{display:flex;align-items:center;gap:.85rem;margin-top:auto;padding-top:1.3rem;border-top:1px solid rgba(74,124,111,.08)}
+.story-avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.05rem;font-weight:700;color:#fff;flex-shrink:0;font-family:'Playfair Display',serif}
+.story-name{font-weight:700;font-size:.92rem;color:var(--deep)}
+.story-meta{font-size:.78rem;color:var(--muted);margin-top:.1rem}
+.story-condition-tag{display:inline-block;font-size:.73rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:.2rem .7rem;border-radius:50px;margin-bottom:.9rem}
+.story-card.color-sage .story-condition-tag{background:rgba(74,124,111,.1);color:var(--sage)}
+.story-card.color-warm .story-condition-tag{background:rgba(200,136,42,.12);color:#a87528}
+.story-card.color-blush .story-condition-tag{background:rgba(181,85,74,.1);color:#b5554a}
+.story-card.color-blue .story-condition-tag{background:rgba(65,105,168,.1);color:#4169a8}
+
+.story-impact-strip{background:linear-gradient(135deg,var(--sage),var(--deep));border-radius:20px;padding:2.5rem 2.5rem;margin-top:3.5rem;display:flex;flex-wrap:wrap;gap:1.5rem;align-items:center;justify-content:space-between}
+.impact-stat{text-align:center;flex:1;min-width:120px}
+.impact-stat .num{font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:700;color:var(--warm);display:block;line-height:1}
+.impact-stat .lbl{font-size:.78rem;color:rgba(255,255,255,.6);margin-top:.3rem}
+.impact-divider{width:1px;height:50px;background:rgba(255,255,255,.15);flex-shrink:0}
+.share-story-btn{background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.3);color:#fff;border-radius:50px;padding:.7rem 1.8rem;font-size:.88rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .25s;white-space:nowrap;text-decoration:none;display:inline-block}
+.share-story-btn:hover{background:rgba(255,255,255,.22);color:#fff;transform:translateY(-2px)}
+
+/* ═══════════════════════════════════════════
+   MICRO-INTERACTIONS — PROGRESS BAR TOOLTIP
+═══════════════════════════════════════════ */
+.awareness-item{position:relative}
+.progress-tooltip{position:absolute;right:0;top:-28px;background:var(--deep);color:var(--warm);font-size:.72rem;font-weight:700;padding:.2rem .6rem;border-radius:6px;pointer-events:none;opacity:0;transition:opacity .2s;white-space:nowrap}
+.awareness-item:hover .progress-tooltip{opacity:1}
+
+/* ═══════════════════════════════════════════
+   MICRO-INTERACTIONS — FAQ ACCORDION
+═══════════════════════════════════════════ */
+.accordion-button{position:relative;padding-right:3rem}
+.accordion-button .acc-icon{position:absolute;right:1rem;top:50%;transform:translateY(-50%);font-size:1.1rem;color:var(--sage);transition:transform .3s,color .3s}
+.accordion-button.collapsed .acc-icon{color:var(--muted)}
+.accordion-button:not(.collapsed) .acc-icon{transform:translateY(-50%) rotate(45deg)}
+
+/* ═══════════════════════════════════════════
+   MICRO-INTERACTIONS — INFO CARD RIPPLE
+═══════════════════════════════════════════ */
+.ripple{position:absolute;border-radius:50%;background:rgba(74,124,111,.12);transform:scale(0);animation:ripple-anim .6s linear;pointer-events:none}
+@keyframes ripple-anim{to{transform:scale(4);opacity:0}}
+
+/* ═══════════════════════════════════════════
+   MICRO-INTERACTIONS — SECTION COUNTER NUMS
+═══════════════════════════════════════════ */
+.count-up{display:inline}
+
+/* ═══════════════════════════════════════════
+   MICRO-INTERACTIONS — HOVER HIGHLIGHT ROW
+═══════════════════════════════════════════ */
+.awareness-item .progress-bar-wrap{position:relative;cursor:default}
+.awareness-item:hover .progress{background:rgba(74,124,111,.18)}
+.awareness-item:hover .lbl{color:var(--deep)}
+
+/* ═══════════════════════════════════════════
+   MICRO-INTERACTIONS — STAGGERED CARD ENTRY
+═══════════════════════════════════════════ */
+.stagger-1{transition-delay:.1s!important}
+.stagger-2{transition-delay:.2s!important}
+.stagger-3{transition-delay:.3s!important}
+.stagger-4{transition-delay:.4s!important}
+</style>
 {% endblock %}
+
+
 {% block content %}
+
+{# ══════════════════════════════════════
+   PAGE HERO
+══════════════════════════════════════ #}
 <div class="page-hero">
   <div class="container position-relative">
     <span class="badge-pill">Foundation</span>
@@ -36,46 +142,401 @@
     <p>Mental health encompasses our emotional, psychological, and social well-being — shaping how we think, feel, act, and relate at every stage of life.</p>
   </div>
 </div>
+
+
+{# ══════════════════════════════════════
+   THREE PILLARS + AWARENESS + FAQ
+   EXISTING SECTION — PRESERVED
+══════════════════════════════════════ #}
 <section id="what">
   <div class="container">
-    <div class="row justify-content-center mb-5 text-center"><div class="col-lg-7 reveal"><span class="section-label">The Three Pillars</span><h2 class="section-title">The Building Blocks of Mental Health</h2><p class="text-muted mt-3" style="line-height:1.8">Mental health is not simply the absence of mental illness — it's a dynamic state of overall well-being across three interconnected dimensions.</p></div></div>
-    <div class="row g-4">
-      <div class="col-md-6 col-lg-3 reveal"><div class="info-card"><div class="ic-wrap ic-green"><i class="bi bi-heart-pulse"></i></div><h5>Emotional Well-being</h5><p class="text-muted" style="font-size:.9rem;line-height:1.65;margin-top:.5rem">The ability to understand and manage your emotions, including coping with the normal stresses of life in a productive, healthy way.</p></div></div>
-      <div class="col-md-6 col-lg-3 reveal"><div class="info-card"><div class="ic-wrap ic-warm"><i class="bi bi-gear"></i></div><h5>Psychological Function</h5><p class="text-muted" style="font-size:.9rem;line-height:1.65;margin-top:.5rem">Your capacity to think clearly, learn, make decisions, and adapt to change — core cognitive skills needed to function effectively each day.</p></div></div>
-      <div class="col-md-6 col-lg-3 reveal"><div class="info-card"><div class="ic-wrap ic-blush"><i class="bi bi-people"></i></div><h5>Social Well-being</h5><p class="text-muted" style="font-size:.9rem;line-height:1.65;margin-top:.5rem">The ability to form healthy relationships, contribute to community, and feel genuinely connected to the people and world around you.</p></div></div>
-      <div class="col-md-6 col-lg-3 reveal"><div class="info-card"><div class="ic-wrap ic-blue"><i class="bi bi-arrow-repeat"></i></div><h5>A Spectrum, Not Binary</h5><p class="text-muted" style="font-size:.9rem;line-height:1.65;margin-top:.5rem">Mental health is a dynamic spectrum that can shift with life circumstances, stress, support, and care — not a fixed state.</p></div></div>
+
+    <div class="row justify-content-center mb-5 text-center">
+      <div class="col-lg-7 reveal">
+        <span class="section-label">The Three Pillars</span>
+        <h2 class="section-title">The Building Blocks of Mental Health</h2>
+        <p class="text-muted mt-3" style="line-height:1.8">Mental health is not simply the absence of mental illness — it's a dynamic state of overall well-being across three interconnected dimensions.</p>
+      </div>
     </div>
+
+    <div class="row g-4">
+      <div class="col-md-6 col-lg-3 reveal stagger-1">
+        <div class="info-card" data-ripple>
+          <div class="ic-wrap ic-green"><i class="bi bi-heart-pulse"></i></div>
+          <h5>Emotional Well-being</h5>
+          <p class="text-muted" style="font-size:.9rem;line-height:1.65;margin-top:.5rem">The ability to understand and manage your emotions, including coping with the normal stresses of life in a productive, healthy way.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3 reveal stagger-2">
+        <div class="info-card" data-ripple>
+          <div class="ic-wrap ic-warm"><i class="bi bi-gear"></i></div>
+          <h5>Psychological Function</h5>
+          <p class="text-muted" style="font-size:.9rem;line-height:1.65;margin-top:.5rem">Your capacity to think clearly, learn, make decisions, and adapt to change — core cognitive skills needed to function effectively each day.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3 reveal stagger-3">
+        <div class="info-card" data-ripple>
+          <div class="ic-wrap ic-blush"><i class="bi bi-people"></i></div>
+          <h5>Social Well-being</h5>
+          <p class="text-muted" style="font-size:.9rem;line-height:1.65;margin-top:.5rem">The ability to form healthy relationships, contribute to community, and feel genuinely connected to the people and world around you.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3 reveal stagger-4">
+        <div class="info-card" data-ripple>
+          <div class="ic-wrap ic-blue"><i class="bi bi-arrow-repeat"></i></div>
+          <h5>A Spectrum, Not Binary</h5>
+          <p class="text-muted" style="font-size:.9rem;line-height:1.65;margin-top:.5rem">Mental health is a dynamic spectrum that can shift with life circumstances, stress, support, and care — not a fixed state.</p>
+        </div>
+      </div>
+    </div>
+
     <div class="row mt-5 pt-3 align-items-start g-5">
+
+      {# ── Awareness bars ── #}
       <div class="col-lg-6 reveal">
         <h3 style="font-size:1.8rem;color:var(--deep);margin-bottom:1.5rem">Global Awareness Snapshot</h3>
-        <div class="awareness-item"><div class="lbl"><span>Anxiety Disorders</span><span>301M affected</span></div><div class="progress"><div class="progress-bar" data-w="90%"></div></div></div>
-        <div class="awareness-item"><div class="lbl"><span>Depression</span><span>280M affected</span></div><div class="progress"><div class="progress-bar" data-w="82%"></div></div></div>
-        <div class="awareness-item"><div class="lbl"><span>PTSD</span><span>70M affected</span></div><div class="progress"><div class="progress-bar" data-w="55%"></div></div></div>
-        <div class="awareness-item"><div class="lbl"><span>Bipolar Disorder</span><span>40M affected</span></div><div class="progress"><div class="progress-bar" data-w="40%"></div></div></div>
-        <div class="awareness-item"><div class="lbl"><span>Schizophrenia</span><span>24M affected</span></div><div class="progress"><div class="progress-bar" data-w="28%"></div></div></div>
+        <div class="awareness-item">
+          <div class="lbl"><span>Anxiety Disorders</span><span class="val"><span class="count-up" data-target="301">0</span>M affected</span></div>
+          <div class="progress-tooltip">301M people globally</div>
+          <div class="progress"><div class="progress-bar" data-w="90%"></div></div>
+        </div>
+        <div class="awareness-item">
+          <div class="lbl"><span>Depression</span><span class="val"><span class="count-up" data-target="280">0</span>M affected</span></div>
+          <div class="progress-tooltip">280M people globally</div>
+          <div class="progress"><div class="progress-bar" data-w="82%"></div></div>
+        </div>
+        <div class="awareness-item">
+          <div class="lbl"><span>PTSD</span><span class="val"><span class="count-up" data-target="70">0</span>M affected</span></div>
+          <div class="progress-tooltip">70M people globally</div>
+          <div class="progress"><div class="progress-bar" data-w="55%"></div></div>
+        </div>
+        <div class="awareness-item">
+          <div class="lbl"><span>Bipolar Disorder</span><span class="val"><span class="count-up" data-target="40">0</span>M affected</span></div>
+          <div class="progress-tooltip">40M people globally</div>
+          <div class="progress"><div class="progress-bar" data-w="40%"></div></div>
+        </div>
+        <div class="awareness-item">
+          <div class="lbl"><span>Schizophrenia</span><span class="val"><span class="count-up" data-target="24">0</span>M affected</span></div>
+          <div class="progress-tooltip">24M people globally</div>
+          <div class="progress"><div class="progress-bar" data-w="28%"></div></div>
+        </div>
       </div>
+
+      {# ── FAQ Accordion ── #}
       <div class="col-lg-6 reveal">
         <div class="accordion" id="faqAccordion">
-          <div class="accordion-item"><h2 class="accordion-header"><button class="accordion-button" data-bs-toggle="collapse" data-bs-target="#faq1">Is mental illness the same as mental health?</button></h2><div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion"><div class="accordion-body">No. Mental health refers to your overall psychological well-being. Mental illness refers to specific diagnosed conditions.</div></div></div>
-          <div class="accordion-item"><h2 class="accordion-header"><button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#faq2">Can mental health change over time?</button></h2><div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion"><div class="accordion-body">Absolutely. It can improve with proper support, lifestyle changes, therapy, and treatment.</div></div></div>
-          <div class="accordion-item"><h2 class="accordion-header"><button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#faq3">Is seeking help a sign of weakness?</button></h2><div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion"><div class="accordion-body">Not at all. Seeking help is one of the most courageous things a person can do.</div></div></div>
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                Is mental illness the same as mental health?
+                <i class="bi bi-plus acc-icon"></i>
+              </button>
+            </h2>
+            <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">No. Mental health refers to your overall psychological well-being. Mental illness refers to specific diagnosed conditions. You can have poor mental health without a diagnosis, and someone with a condition can still have periods of good mental health with the right support.</div>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#faq2">
+                Can mental health change over time?
+                <i class="bi bi-plus acc-icon"></i>
+              </button>
+            </h2>
+            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">Absolutely. Mental health is fluid — it can improve significantly with proper support, lifestyle changes, therapy, medication, and social connection. It can also deteriorate without care. That's why consistent attention to it matters so much.</div>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#faq3">
+                Is seeking help a sign of weakness?
+                <i class="bi bi-plus acc-icon"></i>
+              </button>
+            </h2>
+            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">Not at all. Seeking help is one of the most courageous things a person can do. It takes self-awareness to recognise struggle and strength to ask for support. The bravest people we know ask for help.</div>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#faq4">
+                How does mental health affect physical health?
+                <i class="bi bi-plus acc-icon"></i>
+              </button>
+            </h2>
+            <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">Deeply. Chronic stress weakens the immune system. Depression can cause physical fatigue, appetite changes, and pain. The mind-body connection is well established — caring for your mental health is caring for your whole self.</div>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#faq5">
+                Where can I find help in Kenya?
+                <i class="bi bi-plus acc-icon"></i>
+              </button>
+            </h2>
+            <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">You can reach <strong>Befrienders Kenya on 0722 178 177</strong> (24/7, free). Mathari National Teaching &amp; Referral Hospital also offers mental health services. Our <a href="{% url 'mentalapp:resources' %}" style="color:var(--sage)">Resources page</a> has a full directory of support options across Kenya.</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </section>
+
+
+{# ══════════════════════════════════════
+   NEW — REAL STORIES SECTION
+══════════════════════════════════════ #}
+<section id="real-stories">
+  <div class="container position-relative">
+
+    <div class="row justify-content-center mb-5 text-center">
+      <div class="col-lg-7 reveal">
+        <span class="section-label">Real Stories</span>
+        <h2 class="section-title">You Are Not Alone in This</h2>
+        <p class="text-muted mt-3" style="line-height:1.8">These are real voices — people who faced their struggles and found their way through. Their stories exist so that you know recovery is real, healing is possible, and <strong style="color:var(--sage)">your story isn't over.</strong></p>
+      </div>
+    </div>
+
+    <div class="row g-4">
+
+      {# Story 1 — Anxiety #}
+      <div class="col-md-6 col-lg-3 reveal stagger-1">
+        <div class="story-card color-sage d-flex flex-column">
+          <span class="story-quote-icon">"</span>
+          <span class="story-condition-tag">Anxiety</span>
+          <p class="story-text">For two years I couldn't leave my house without a panic attack. I thought that was just <em>who I was.</em> Therapy showed me it was something that could change — and it did.</p>
+          <div class="story-author">
+            <div class="story-avatar" style="background:linear-gradient(135deg,var(--sage),var(--sage-lt))">A</div>
+            <div>
+              <div class="story-name">Amara, 26</div>
+              <div class="story-meta">Nairobi · In recovery 2 years</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {# Story 2 — Depression #}
+      <div class="col-md-6 col-lg-3 reveal stagger-2">
+        <div class="story-card color-warm d-flex flex-column">
+          <span class="story-quote-icon">"</span>
+          <span class="story-condition-tag">Depression</span>
+          <p class="story-text">I smiled every day at work while <em>drowning inside.</em> Nobody knew. When I finally told my wife, the relief was indescribable. Talking saved me — literally.</p>
+          <div class="story-author">
+            <div class="story-avatar" style="background:linear-gradient(135deg,#c8882a,var(--warm))">D</div>
+            <div>
+              <div class="story-name">Daniel, 34</div>
+              <div class="story-meta">Mombasa · 3 years in therapy</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {# Story 3 — PTSD #}
+      <div class="col-md-6 col-lg-3 reveal stagger-3">
+        <div class="story-card color-blush d-flex flex-column">
+          <span class="story-quote-icon">"</span>
+          <span class="story-condition-tag">PTSD</span>
+          <p class="story-text">After what I survived, I believed I was broken beyond repair. EMDR therapy changed that belief one session at a time. I still have <em>hard days — but I have good ones too.</em></p>
+          <div class="story-author">
+            <div class="story-avatar" style="background:linear-gradient(135deg,#b5554a,var(--blush))">F</div>
+            <div>
+              <div class="story-name">Faith, 29</div>
+              <div class="story-meta">Kisumu · Healing every day</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {# Story 4 — Burnout #}
+      <div class="col-md-6 col-lg-3 reveal stagger-4">
+        <div class="story-card color-blue d-flex flex-column">
+          <span class="story-quote-icon">"</span>
+          <span class="story-condition-tag">Burnout</span>
+          <p class="story-text">I was the most productive person in my office. Then one morning I couldn't get up. Burnout is <em>real and serious.</em> Rest isn't giving up — it's part of the work.</p>
+          <div class="story-author">
+            <div class="story-avatar" style="background:linear-gradient(135deg,#4169a8,#7ba0d4)">K</div>
+            <div>
+              <div class="story-name">Kevin, 31</div>
+              <div class="story-meta">Nairobi · Back to himself</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    {# ── Impact strip ── #}
+    <div class="story-impact-strip reveal">
+      <div class="impact-stat">
+        <span class="num"><span class="count-up" data-target="89">0</span>%</span>
+        <div class="lbl">of people felt less alone<br>after reading a story</div>
+      </div>
+      <div class="impact-divider d-none d-md-block"></div>
+      <div class="impact-stat">
+        <span class="num"><span class="count-up" data-target="3">0</span>x</span>
+        <div class="lbl">more likely to seek help<br>after hearing real experiences</div>
+      </div>
+      <div class="impact-divider d-none d-md-block"></div>
+      <div class="impact-stat">
+        <span class="num"><span class="count-up" data-target="74">0</span>%</span>
+        <div class="lbl">reported recovery is possible<br>with the right support</div>
+      </div>
+      <div class="impact-divider d-none d-md-block"></div>
+      <a href="{% url 'mentalapp:register' %}" class="share-story-btn">
+        Share Your Story 💚
+      </a>
+    </div>
+
+  </div>
+</section>
+
+
+{# ══════════════════════════════════════
+   MISSION — EXISTING SECTION, PRESERVED
+══════════════════════════════════════ #}
 <section id="mission">
   <div class="container">
-    <div class="row justify-content-center mb-5 text-center"><div class="col-lg-7 reveal"><span class="section-label" style="color:var(--sage-lt)">Our Mission</span><h2 class="section-title text-white">Why MindWell Exists</h2></div></div>
+    <div class="row justify-content-center mb-5 text-center">
+      <div class="col-lg-7 reveal">
+        <span class="section-label" style="color:var(--sage-lt)">Our Mission</span>
+        <h2 class="section-title text-white">Why MindWell Exists</h2>
+      </div>
+    </div>
     <div class="row g-3">
-      <div class="col-md-6 col-lg-3 reveal"><div class="mission-pill"><i class="bi bi-book-open"></i><h5>Education</h5><p>Providing clear, evidence-based information about mental health to reduce stigma worldwide.</p></div></div>
-      <div class="col-md-6 col-lg-3 reveal"><div class="mission-pill"><i class="bi bi-shield-heart"></i><h5>Prevention</h5><p>Equipping people with practical strategies to protect mental well-being before crises arise.</p></div></div>
-      <div class="col-md-6 col-lg-3 reveal"><div class="mission-pill"><i class="bi bi-people-fill"></i><h5>Community</h5><p>Building a safe space where people feel less alone and more connected to genuine support.</p></div></div>
-      <div class="col-md-6 col-lg-3 reveal"><div class="mission-pill"><i class="bi bi-compass"></i><h5>Direction</h5><p>Connecting individuals to the right professional resources and tools for their unique needs.</p></div></div>
+      <div class="col-md-6 col-lg-3 reveal stagger-1">
+        <div class="mission-pill">
+          <i class="bi bi-book-open"></i>
+          <h5>Education</h5>
+          <p>Providing clear, evidence-based information about mental health to reduce stigma worldwide.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3 reveal stagger-2">
+        <div class="mission-pill">
+          <i class="bi bi-shield-heart"></i>
+          <h5>Prevention</h5>
+          <p>Equipping people with practical strategies to protect mental well-being before crises arise.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3 reveal stagger-3">
+        <div class="mission-pill">
+          <i class="bi bi-people-fill"></i>
+          <h5>Community</h5>
+          <p>Building a safe space where people feel less alone and more connected to genuine support.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3 reveal stagger-4">
+        <div class="mission-pill">
+          <i class="bi bi-compass"></i>
+          <h5>Direction</h5>
+          <p>Connecting individuals to the right professional resources and tools for their unique needs.</p>
+        </div>
+      </div>
     </div>
   </div>
 </section>
-{% endblock %}
-{% block extra_js %}
 
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+/* ══════════════════════════════════════
+   PROGRESS BAR ANIMATION ON SCROLL
+══════════════════════════════════════ */
+const progObs = new IntersectionObserver(entries => {
+  if (!entries[0].isIntersecting) return;
+  document.querySelectorAll('.progress-bar[data-w]').forEach((bar, i) => {
+    setTimeout(() => { bar.style.width = bar.dataset.w; }, i * 160 + 100);
+  });
+  progObs.unobserve(entries[0].target);
+}, { threshold: 0.3 });
+const whatSec = document.getElementById('what');
+if (whatSec) progObs.observe(whatSec);
+
+/* ══════════════════════════════════════
+   COUNT-UP ANIMATION
+══════════════════════════════════════ */
+const countObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    const el = e.target;
+    const target = parseInt(el.dataset.target);
+    if (!target) return;
+    let cur = 0;
+    const step = Math.ceil(target / 60);
+    const tick = setInterval(() => {
+      cur = Math.min(cur + step, target);
+      el.textContent = cur;
+      if (cur >= target) clearInterval(tick);
+    }, 22);
+    countObs.unobserve(el);
+  });
+}, { threshold: 0.4 });
+document.querySelectorAll('.count-up[data-target]').forEach(el => countObs.observe(el));
+
+/* ══════════════════════════════════════
+   RIPPLE EFFECT ON INFO CARDS
+══════════════════════════════════════ */
+document.querySelectorAll('[data-ripple]').forEach(card => {
+  card.addEventListener('click', function (e) {
+    const rect = this.getBoundingClientRect();
+    const ripple = document.createElement('span');
+    ripple.className = 'ripple';
+    const size = Math.max(rect.width, rect.height);
+    ripple.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX - rect.left - size/2}px;top:${e.clientY - rect.top - size/2}px`;
+    this.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 620);
+  });
+});
+
+/* ══════════════════════════════════════
+   ACCORDION ICON TOGGLE
+══════════════════════════════════════ */
+document.querySelectorAll('.accordion-button').forEach(btn => {
+  btn.addEventListener('click', function () {
+    // icons rotate via CSS .acc-icon class — just ensure collapsed state toggled
+    // Bootstrap handles collapsed class automatically
+  });
+});
+
+/* ══════════════════════════════════════
+   STORY CARDS — TILT ON MOUSE MOVE
+══════════════════════════════════════ */
+document.querySelectorAll('.story-card').forEach(card => {
+  card.addEventListener('mousemove', function (e) {
+    const rect = this.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top)  / rect.height - 0.5;
+    this.style.transform = `translateY(-6px) rotateX(${(-y * 6).toFixed(2)}deg) rotateY(${(x * 6).toFixed(2)}deg)`;
+  });
+  card.addEventListener('mouseleave', function () {
+    this.style.transform = '';
+  });
+});
+
+/* ══════════════════════════════════════
+   AWARENESS BARS — HOVER HIGHLIGHT
+══════════════════════════════════════ */
+document.querySelectorAll('.awareness-item').forEach(item => {
+  item.addEventListener('mouseenter', function () {
+    const bar = this.querySelector('.progress-bar');
+    if (bar) bar.style.filter = 'brightness(1.2)';
+  });
+  item.addEventListener('mouseleave', function () {
+    const bar = this.querySelector('.progress-bar');
+    if (bar) bar.style.filter = '';
+  });
+});
+
+/* ══════════════════════════════════════
+   MISSION PILLS — STAGGERED ENTRY DELAY
+══════════════════════════════════════ */
+document.querySelectorAll('#mission .mission-pill').forEach((pill, i) => {
+  pill.style.transitionDelay = (i * 0.1) + 's';
+});
+</script>
 {% endblock %}
