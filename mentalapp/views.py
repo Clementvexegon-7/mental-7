@@ -2,11 +2,15 @@
 #  mentalapp/views.py
 # ================================================================
 
+import json
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils import timezone
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_exempt
 
 # ── MODELS ─────────────────────────────────────────────────────
 from .models import (
@@ -134,6 +138,184 @@ def dashboard(request):
         'upcoming_appointments':  upcoming_appointments,
     }
     return render(request, 'mentalapp/dashboard.html', context)
+
+
+# ══════════════════════════════════════════════════════════════
+#  MWENDO AI CHAT ENDPOINT
+#  POST /mwendo-chat/   { "message": "...", "history": [...] }
+#  Returns { "reply": "...", "quick": [...], "action": null }
+#
+#  NOTE: Add this URL to urls.py:
+#     path('mwendo-chat/', views.mwendo_chat, name='mwendo_chat'),
+# ══════════════════════════════════════════════════════════════
+@require_POST
+def mwendo_chat(request):
+    """
+    Context-aware Mwendo AI endpoint.
+
+    Reads the user's recent moods & journal entries (if authenticated)
+    and generates a personalised, compassionate reply.
+
+    Request body (JSON):
+        message  – user's raw text input
+        history  – list of {"role":"user"|"bot", "text":"..."} (last 6)
+
+    Response (JSON):
+        reply    – Mwendo's response text (supports **bold** markdown)
+        quick    – list of quick-reply button labels
+        action   – "breathe" | "open_chat" | null
+        redirect – MW_URLS key to redirect to, or null
+    """
+    try:
+        body    = json.loads(request.body)
+        message = body.get('message', '').strip()[:500]
+        history = body.get('history', [])[-6:]          # last 6 turns only
+    except (json.JSONDecodeError, AttributeError):
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+
+    if not message:
+        return JsonResponse({'error': 'Empty message'}, status=400)
+
+    low = message.lower()
+
+    # ── Gather user context if authenticated ──────────────────
+    user_context = {}
+    if request.user.is_authenticated:
+        recent_moods = list(
+            Mood.objects.filter(user=request.user)
+            .order_by('-date')[:5]
+            .values('score', 'label', 'date')
+        )
+        recent_journals = list(
+            JournalEntry.objects.filter(user=request.user)
+            .order_by('-created_at')[:3]
+            .values('title', 'created_at')
+        )
+        user_context = {
+            'name':    request.user.get_short_name() or request.user.username,
+            'moods':   recent_moods,
+            'journals': recent_journals,
+        }
+
+    name_prefix = f"{user_context.get('name', '')}, " if user_context.get('name') else ""
+
+    # ── Mood-aware personalisation ────────────────────────────
+    mood_note = ""
+    if user_context.get('moods'):
+        scores  = [m['score'] for m in user_context['moods'] if m.get('score')]
+        if scores:
+            avg = sum(scores) / len(scores)
+            if avg <= 3:
+                mood_note = "I can see from your recent check-ins that things have been heavy lately. "
+            elif avg >= 7:
+                mood_note = "Your recent mood logs show you've been doing better — that matters. "
+
+    # ── Crisis detection (highest priority) ──────────────────
+    if any(kw in low for kw in ['crisis','suicid','kill','harm','hurt myself','end it','die','want to die']):
+        return JsonResponse({
+            'reply': f"{name_prefix}You matter deeply. Please reach out right now — a real person is ready to listen:\n\n🆘 **Befrienders Kenya: 0722 178 177** (24/7 · Free)\n📍 Mathari Hospital: **+254 20 2724069**\n🚑 Emergency: **999 / 112**\n\nI'm staying right here with you. You are not alone.",
+            'quick': ['Call 0722 178 177', "I'm scared but okay", 'Stay with me', '🧘 Help me breathe'],
+            'action': None,
+            'redirect': None,
+            'crisis': True,
+        })
+
+    # ── Anxiety ───────────────────────────────────────────────
+    if any(kw in low for kw in ['anxi','panic','worry','stressed','overwhelm','scared','fear']):
+        return JsonResponse({
+            'reply': f"{mood_note}Anxiety is real, and it can feel relentless. 💙 Your nervous system is trying to protect you — it's just being a little too enthusiastic right now.\n\nLet's slow things down together. Would a 4-minute breathing exercise help?",
+            'quick': ['🧘 Yes, let\'s breathe', 'Learn about anxiety', 'Tell me more', '🆘 I need crisis support'],
+            'action': None,
+            'redirect': None,
+        })
+
+    # ── Sadness / Depression ──────────────────────────────────
+    if any(kw in low for kw in ['sad','depress','cry','hopeless','empty','alone','lonely','worthless','numb']):
+        return JsonResponse({
+            'reply': f"{mood_note}Thank you for trusting me with this. 💚 {name_prefix}Sadness doesn't mean weakness — it means something hurts, and that hurt deserves care.\n\nYou reached out today. That's not nothing — that's everything. Can I ask — are you safe right now?",
+            'quick': ["Yes, I'm safe", 'I need crisis support', 'Find support near me', '🧘 Help me breathe'],
+            'action': None,
+            'redirect': None,
+        })
+
+    # ── Exhaustion / Burnout ──────────────────────────────────
+    if any(kw in low for kw in ['tired','exhaust','burnout','no energy','drain','sleep','worn out']):
+        return JsonResponse({
+            'reply': f"Your body and mind are sending you a signal. 🌙 {mood_note}Rest is not giving up — it's maintenance for the most important thing you own: yourself.\n\nLet's find something that helps you recover.",
+            'quick': ['Self-care guide', '🧘 Try breathing', 'Tell me more', 'Find resources'],
+            'action': None,
+            'redirect': None,
+        })
+
+    # ── Anger / Frustration ───────────────────────────────────
+    if any(kw in low for kw in ['angry','mad','frustrated','rage','annoyed','furious']):
+        return JsonResponse({
+            'reply': f"Frustration usually means something genuinely matters to you. 🔥 That's not a character flaw — it's information.\n\nWhat's been weighing on you most?",
+            'quick': ['Work / school pressure', 'Relationships', 'Feeling unheard', 'Everything at once'],
+            'action': None,
+            'redirect': None,
+        })
+
+    # ── Breathing request ─────────────────────────────────────
+    if any(kw in low for kw in ['breath','breathe','breathing','calm down','relax']):
+        return JsonResponse({
+            'reply': "Let's breathe together. 🌿 Box breathing — inhale 4, hold 4, exhale 6, hold 4. Starting now.",
+            'quick': [],
+            'action': 'breathe',
+            'redirect': None,
+        })
+
+    # ── Resource requests ─────────────────────────────────────
+    if any(kw in low for kw in ['therapist','counsellor','help','support','resource','find','doctor','hospital']):
+        return JsonResponse({
+            'reply': f"There are people ready to support you. 💚 Our resources page has therapists, crisis lines, support groups, and apps — all vetted and free to browse.",
+            'quick': ['Open resources page', 'Crisis lines only', 'Talk more first'],
+            'action': None,
+            'redirect': 'resources',
+        })
+
+    # ── Positive / Doing well ─────────────────────────────────
+    if any(kw in low for kw in ['good','great','happy','fine','okay','well','better','grateful','thankful']):
+        mood_celebration = ""
+        if user_context.get('moods'):
+            mood_celebration = " Your recent check-ins reflect that too — keep going."
+        return JsonResponse({
+            'reply': f"That genuinely makes me happy to hear. 🌟{mood_celebration}\n\nWould you like to explore something today, or just check in?",
+            'quick': ['Self-care guide', 'Explore the site', 'Prevention strategies', 'Just saying hi 😊'],
+            'action': None,
+            'redirect': None,
+        })
+
+    # ── Journal / Writing ─────────────────────────────────────
+    if any(kw in low for kw in ['journal','write','diary','record','track']):
+        journal_note = ""
+        if user_context.get('journals'):
+            journal_note = f" I can see you've been journaling — that's one of the most powerful tools for mental clarity."
+        return JsonResponse({
+            'reply': f"Journaling is one of the most underrated forms of self-care.{journal_note} 📖 Writing your thoughts gives them a place to live outside your head.",
+            'quick': ['Open my journal', 'Why journaling helps', 'Tell me more'],
+            'action': None,
+            'redirect': 'journal_list' if request.user.is_authenticated else None,
+        })
+
+    # ── Appointment / Therapy ─────────────────────────────────
+    if any(kw in low for kw in ['appointment','book','session','therapy','therapist','schedule']):
+        return JsonResponse({
+            'reply': "Booking a session is a powerful act of self-care. 📅 Our appointment system lets you choose the type, mode, and time that works for you.",
+            'quick': ['Book an appointment', 'What session types exist?', 'I\'m not sure yet'],
+            'action': None,
+            'redirect': 'appointment_list',
+        })
+
+    # ── Default / Unknown ────────────────────────────────────
+    # Build a context-aware default using mood history
+    default_opener = f"{mood_note}I hear you. 💚" if mood_note else "I hear you. 💚"
+    return JsonResponse({
+        'reply': f"{default_opener} Whatever you're carrying right now — it's real, it matters, and you deserve care.\n\nWhat would feel most helpful right now?",
+        'quick': ['Find resources', 'Self-care guide', '🧘 Try breathing', 'Just talk'],
+        'action': None,
+        'redirect': None,
+    })
 
 
 # ── MOOD TRACKER ───────────────────────────────────────────────
@@ -319,14 +501,12 @@ def profile_edit(request):
 # ── APPOINTMENTS ───────────────────────────────────────────────
 @login_required
 def appointment_list(request):
-    """List all appointments for the logged-in user."""
     appointments = Appointment.objects.filter(user=request.user)
     return render(request, 'mentalapp/appointment_list.html', {'appointments': appointments})
 
 
 @login_required
 def appointment_create(request):
-    """Book a new appointment."""
     if request.method == 'POST':
         form = AppointmentForm(request.POST)
         if form.is_valid():
@@ -342,7 +522,6 @@ def appointment_create(request):
 
 @login_required
 def appointment_edit(request, pk):
-    """Edit a pending appointment."""
     appt = get_object_or_404(Appointment, pk=pk, user=request.user)
     if appt.status in ('confirmed', 'completed'):
         messages.warning(request, "This appointment cannot be edited.")
@@ -360,7 +539,6 @@ def appointment_edit(request, pk):
 
 @login_required
 def appointment_cancel(request, pk):
-    """Cancel an appointment (POST only)."""
     appt = get_object_or_404(Appointment, pk=pk, user=request.user)
     if request.method == 'POST':
         appt.status = 'cancelled'

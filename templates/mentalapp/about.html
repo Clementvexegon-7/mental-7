@@ -1,140 +1,179 @@
 {% extends "mentalapp/base.html" %}
 {% load static %}
-
-{# ── Fix: removed stray closing brace from original title ── #}
 {% block title %}About Mental Health — MindWell{% endblock %}
 {% block nav_about %}active-page{% endblock %}
 
 {% block extra_css %}
 <style>
-/* ═══════════════════════════════════════════
-   EXISTING STYLES — PRESERVED
-═══════════════════════════════════════════ */
+/* ── Info Cards ── */
 .info-card{background:#fff;border-radius:20px;padding:2rem;height:100%;border:1px solid rgba(74,124,111,.12);transition:all .3s;position:relative;overflow:hidden}
-.info-card::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 0%,rgba(74,124,111,.07),transparent 70%);opacity:0;transition:opacity .4s}
-.info-card:hover{box-shadow:0 12px 40px rgba(74,124,111,.18);transform:translateY(-6px)}
-.info-card:hover::after{opacity:1}
-.ic-wrap{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin-bottom:1rem;transition:transform .35s cubic-bezier(.34,1.56,.64,1)}
-.info-card:hover .ic-wrap{transform:scale(1.15) rotate(-5deg)}
+.info-card::after{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--sage),var(--warm));transform:scaleY(0);transform-origin:bottom;transition:transform .35s var(--ease)}
+.info-card:hover{box-shadow:0 12px 40px rgba(74,124,111,.15);transform:translateY(-4px)}
+.info-card:hover::after{transform:scaleY(1)}
+.ic-wrap{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin-bottom:1rem;transition:transform .3s var(--ease)}
+.info-card:hover .ic-wrap{transform:scale(1.12) rotate(-4deg)}
 .ic-green{background:rgba(74,124,111,.12);color:var(--sage)}
 .ic-warm{background:rgba(232,201,138,.25);color:#b5892a}
 .ic-blush{background:rgba(232,165,152,.2);color:#b5554a}
 .ic-blue{background:rgba(100,149,237,.15);color:#4169a8}
+.info-card .sparkle{position:absolute;top:14px;right:14px;font-size:1rem;opacity:0;transition:opacity .3s,transform .4s var(--ease);transform:scale(0)}
+.info-card:hover .sparkle{opacity:1;transform:scale(1.1) rotate(20deg)}
+
+/* ── Progress bars ── */
 .awareness-item{margin-bottom:1.4rem}
 .awareness-item .lbl{display:flex;justify-content:space-between;font-size:.88rem;margin-bottom:.4rem;color:var(--text)}
-.awareness-item .lbl .val{font-weight:700;color:var(--sage)}
-.progress{height:10px;border-radius:50px;background:rgba(74,124,111,.12)}
-.progress-bar{border-radius:50px;background:linear-gradient(90deg,var(--sage),var(--sage-lt));width:0;transition:width 1.4s cubic-bezier(.4,0,.2,1)}
+.awareness-item .lbl .bar-num{font-weight:700;color:var(--sage);transition:color .3s,transform .3s;display:inline-block}
+.awareness-item:hover .bar-num{color:var(--deep);transform:scale(1.1)}
+.progress{height:10px;border-radius:50px;background:rgba(74,124,111,.1);overflow:hidden}
+.progress-bar{border-radius:50px;background:linear-gradient(90deg,var(--sage),var(--sage-lt));width:0;transition:width 1.3s cubic-bezier(.4,0,.2,1)}
+
+/* ── Accordion ── */
 .accordion-item{background:#fff;border:1px solid rgba(74,124,111,.15)!important;border-radius:12px!important;margin-bottom:.7rem;overflow:hidden}
-.accordion-button{font-family:'DM Sans',sans-serif;font-weight:500;color:var(--deep);background:#fff;transition:all .25s}
+.accordion-button{font-family:'DM Sans',sans-serif;font-weight:500;color:var(--deep);background:#fff;transition:background .25s}
 .accordion-button:not(.collapsed){background:rgba(74,124,111,.08);color:var(--sage);box-shadow:none}
-.accordion-button::after{filter:hue-rotate(160deg) brightness(.7)}
+.accordion-button:focus{box-shadow:none}
 .accordion-body{font-size:.92rem;color:var(--muted);line-height:1.75}
+
+/* ── Sections ── */
 #what{background:var(--cream);padding:90px 0}
 #mission{background:var(--deep);padding:90px 0}
-.mission-pill{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:1.8rem;text-align:center;transition:all .3s;position:relative;overflow:hidden}
-.mission-pill::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 100%,rgba(111,173,160,.15),transparent 65%);opacity:0;transition:opacity .35s}
-.mission-pill:hover{background:rgba(111,173,160,.18);border-color:var(--sage-lt);transform:translateY(-4px)}
-.mission-pill:hover::before{opacity:1}
-.mission-pill i{font-size:2rem;color:var(--warm);display:block;margin-bottom:.8rem;transition:transform .35s cubic-bezier(.34,1.56,.64,1)}
-.mission-pill:hover i{transform:scale(1.2)}
+.mission-pill{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:1.8rem;text-align:center;transition:all .3s;cursor:default;position:relative;overflow:hidden}
+.mission-pill:hover{background:rgba(111,173,160,.18);border-color:var(--sage-lt);transform:translateY(-5px)}
+.mission-pill i{font-size:2rem;color:var(--warm);display:block;margin-bottom:.8rem;transition:transform .3s var(--ease)}
+.mission-pill:hover i{transform:scale(1.2) rotate(-5deg)}
 .mission-pill h5{color:#fff;font-size:1rem;margin-bottom:.4rem}
 .mission-pill p{color:rgba(255,255,255,.58);font-size:.86rem;margin:0;line-height:1.6}
+@keyframes ripple-anim{0%{transform:scale(0);opacity:.35}100%{transform:scale(4);opacity:0}}
+.ripple-el{position:absolute;border-radius:50%;width:60px;height:60px;background:rgba(111,173,160,.3);transform:scale(0);animation:ripple-anim .6s ease-out;pointer-events:none}
 
-/* ═══════════════════════════════════════════
-   NEW — REAL STORIES SECTION
-═══════════════════════════════════════════ */
-#real-stories{padding:100px 0;background:linear-gradient(160deg,#f7f3eb 0%,#eef5f3 100%);position:relative;overflow:hidden}
-#real-stories::before{content:'';position:absolute;top:-80px;right:-100px;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(74,124,111,.06) 0%,transparent 70%);pointer-events:none}
-#real-stories::after{content:'';position:absolute;bottom:-60px;left:-60px;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(232,201,138,.08) 0%,transparent 70%);pointer-events:none}
+/* ══════════════════════════════════
+   REAL STORIES — BASE
+══════════════════════════════════ */
+#real-stories{padding:96px 0;background:linear-gradient(135deg,#eef5f2 0%,#f7f3eb 100%);position:relative;overflow:hidden}
+#real-stories::before{content:'';position:absolute;top:-80px;right:-80px;width:350px;height:350px;border-radius:50%;background:radial-gradient(circle,rgba(74,124,111,.08),transparent 70%);pointer-events:none}
+.stories-intro{max-width:600px;margin:0 auto;text-align:center;margin-bottom:3rem}
+.stories-intro p{color:var(--muted);font-size:.97rem;line-height:1.8;margin-top:.8rem}
 
-.story-card{background:#fff;border-radius:24px;padding:2.2rem 2rem;height:100%;border:1px solid rgba(74,124,111,.1);position:relative;transition:all .35s;overflow:hidden}
-.story-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;border-radius:24px 24px 0 0;opacity:0;transition:opacity .3s}
-.story-card:hover{box-shadow:0 20px 60px rgba(74,124,111,.14);transform:translateY(-6px)}
-.story-card:hover::before{opacity:1}
-.story-card.color-sage::before{background:linear-gradient(90deg,var(--sage),var(--sage-lt))}
-.story-card.color-warm::before{background:linear-gradient(90deg,#c8882a,var(--warm))}
-.story-card.color-blush::before{background:linear-gradient(90deg,#b5554a,var(--blush))}
-.story-card.color-blue::before{background:linear-gradient(90deg,#4169a8,#7ba0d4)}
+/* ── SWIPE CAROUSEL (Feature 3) ── */
+.story-carousel-wrap{position:relative;overflow:hidden;touch-action:pan-y}
+.story-track{display:flex;gap:1.5rem;transition:transform .45s var(--ease);will-change:transform;align-items:stretch}
+.story-track.no-transition{transition:none}
 
-.story-quote-icon{font-size:3rem;line-height:1;color:rgba(74,124,111,.15);font-family:'Playfair Display',serif;margin-bottom:.3rem;display:block}
-.story-card.color-warm .story-quote-icon{color:rgba(200,136,42,.15)}
-.story-card.color-blush .story-quote-icon{color:rgba(181,85,74,.15)}
-.story-card.color-blue .story-quote-icon{color:rgba(65,105,168,.15)}
+/* desktop: 3 visible */
+.story-card{flex:0 0 calc(33.333% - 1rem);background:#fff;border-radius:22px;padding:2.2rem 2rem;border:1.5px solid rgba(74,124,111,.1);position:relative;transition:box-shadow .32s var(--ease),transform .32s var(--ease),opacity .32s var(--ease);overflow:hidden;display:flex;flex-direction:column}
+@media(max-width:991px){.story-card{flex:0 0 calc(50% - 0.75rem)}}
+@media(max-width:600px){.story-card{flex:0 0 90vw}}
 
-.story-text{font-size:.95rem;color:var(--text);line-height:1.78;font-style:italic;margin-bottom:1.5rem;flex:1}
-.story-text em{font-style:normal;font-weight:600;color:var(--sage)}
-.story-card.color-warm .story-text em{color:#b5892a}
-.story-card.color-blush .story-text em{color:#b5554a}
-.story-card.color-blue .story-text em{color:#4169a8}
+.story-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--sage),var(--warm));transform:scaleX(0);transform-origin:left;transition:transform .4s var(--ease)}
+.story-card:hover{box-shadow:0 16px 50px rgba(74,124,111,.14);transform:translateY(-5px)}
+.story-card:hover::before{transform:scaleX(1)}
+.story-quote-icon{font-size:2.8rem;color:rgba(74,124,111,.15);font-family:'Playfair Display',serif;line-height:1;margin-bottom:.5rem;transition:color .3s}
+.story-card:hover .story-quote-icon{color:rgba(74,124,111,.3)}
+.story-text{font-family:'Playfair Display',serif;font-style:italic;font-size:1rem;color:var(--deep);line-height:1.75;margin-bottom:1.2rem;flex:1}
+.story-tag-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:1rem}
+.story-tag{background:rgba(74,124,111,.08);color:var(--sage);border-radius:50px;padding:.22rem .75rem;font-size:.75rem;font-weight:600;letter-spacing:.04em;cursor:pointer;transition:all .2s}
+.story-tag:hover{background:var(--sage);color:#fff}
+.story-emotion{position:absolute;top:1.4rem;right:1.4rem;font-size:1.4rem;transition:transform .3s var(--ease)}
+.story-card:hover .story-emotion{transform:scale(1.25) rotate(8deg)}
+.story-attr{display:flex;align-items:center;gap:.85rem;padding-top:1rem;border-top:1px solid rgba(74,124,111,.1);margin-top:auto}
+.story-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;transition:transform .3s var(--ease)}
+.story-card:hover .story-avatar{transform:scale(1.1)}
+.story-name{font-weight:700;font-size:.9rem;color:var(--deep)}
+.story-location{font-size:.78rem;color:var(--muted);margin-top:.08rem}
+.story-outcome{font-size:.78rem;color:var(--sage);font-weight:600;margin-top:.12rem}
+.story-outcome::before{content:'↗ '}
 
-.story-author{display:flex;align-items:center;gap:.85rem;margin-top:auto;padding-top:1.3rem;border-top:1px solid rgba(74,124,111,.08)}
-.story-avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.05rem;font-weight:700;color:#fff;flex-shrink:0;font-family:'Playfair Display',serif}
-.story-name{font-weight:700;font-size:.92rem;color:var(--deep)}
-.story-meta{font-size:.78rem;color:var(--muted);margin-top:.1rem}
-.story-condition-tag{display:inline-block;font-size:.73rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:.2rem .7rem;border-radius:50px;margin-bottom:.9rem}
-.story-card.color-sage .story-condition-tag{background:rgba(74,124,111,.1);color:var(--sage)}
-.story-card.color-warm .story-condition-tag{background:rgba(200,136,42,.12);color:#a87528}
-.story-card.color-blush .story-condition-tag{background:rgba(181,85,74,.1);color:#b5554a}
-.story-card.color-blue .story-condition-tag{background:rgba(65,105,168,.1);color:#4169a8}
+/* ── STORY ACTION BUTTONS ROW ── */
+.story-actions{display:flex;gap:7px;flex-wrap:wrap;padding-top:.9rem;margin-top:.5rem}
+.sac-btn{flex:1;min-width:0;border-radius:50px;border:1.5px solid rgba(74,124,111,.2);background:#fff;color:var(--sage);font-size:.73rem;font-weight:600;padding:.38rem .6rem;cursor:pointer;font-family:inherit;transition:all .22s;display:flex;align-items:center;justify-content:center;gap:.3rem;white-space:nowrap}
+.sac-btn:hover{background:var(--sage);color:#fff;border-color:var(--sage);transform:translateY(-2px)}
+.sac-btn.saved{background:rgba(232,165,152,.15);border-color:#e8a598;color:#b5554a}
+.sac-btn.saved:hover{background:#e8a598;color:#fff;border-color:#e8a598}
+.sac-btn.relate-active{background:var(--sage);color:#fff}
 
-.story-impact-strip{background:linear-gradient(135deg,var(--sage),var(--deep));border-radius:20px;padding:2.5rem 2.5rem;margin-top:3.5rem;display:flex;flex-wrap:wrap;gap:1.5rem;align-items:center;justify-content:space-between}
-.impact-stat{text-align:center;flex:1;min-width:120px}
-.impact-stat .num{font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:700;color:var(--warm);display:block;line-height:1}
-.impact-stat .lbl{font-size:.78rem;color:rgba(255,255,255,.6);margin-top:.3rem}
-.impact-divider{width:1px;height:50px;background:rgba(255,255,255,.15);flex-shrink:0}
-.share-story-btn{background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.3);color:#fff;border-radius:50px;padding:.7rem 1.8rem;font-size:.88rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .25s;white-space:nowrap;text-decoration:none;display:inline-block}
-.share-story-btn:hover{background:rgba(255,255,255,.22);color:#fff;transform:translateY(-2px)}
+/* ── SWIPE CONTROLS ── */
+.carousel-controls{display:flex;align-items:center;justify-content:center;gap:1rem;margin-top:1.6rem}
+.car-btn{width:42px;height:42px;border-radius:50%;background:#fff;border:1.5px solid rgba(74,124,111,.25);color:var(--sage);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .22s;flex-shrink:0}
+.car-btn:hover:not(:disabled){background:var(--sage);color:#fff;border-color:var(--sage)}
+.car-btn:disabled{opacity:.3;cursor:not-allowed}
+.car-dots{display:flex;gap:7px;align-items:center}
+.car-dot{width:8px;height:8px;border-radius:50%;background:rgba(74,124,111,.2);cursor:pointer;transition:all .3s}
+.car-dot.active{background:var(--sage);transform:scale(1.3);width:22px;border-radius:50px}
 
-/* ═══════════════════════════════════════════
-   MICRO-INTERACTIONS — PROGRESS BAR TOOLTIP
-═══════════════════════════════════════════ */
-.awareness-item{position:relative}
-.progress-tooltip{position:absolute;right:0;top:-28px;background:var(--deep);color:var(--warm);font-size:.72rem;font-weight:700;padding:.2rem .6rem;border-radius:6px;pointer-events:none;opacity:0;transition:opacity .2s;white-space:nowrap}
-.awareness-item:hover .progress-tooltip{opacity:1}
+/* ── RELATE RESPONSE PANEL (Feature 1) ── */
+.relate-panel{background:linear-gradient(135deg,#eef5f2,#fff);border:1.5px solid rgba(74,124,111,.18);border-radius:16px;padding:1.2rem 1.4rem;margin-top:.9rem;display:none;animation:fp .35s ease}
+.relate-panel.show{display:block}
+.relate-header{display:flex;align-items:center;gap:.6rem;margin-bottom:.65rem}
+.relate-avatar{width:30px;height:30px;background:linear-gradient(135deg,var(--sage),var(--warm));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0}
+.relate-name{font-size:.8rem;font-weight:700;color:var(--sage)}
+.relate-text{font-size:.88rem;color:var(--deep);line-height:1.7;margin-bottom:.8rem}
+.relate-actions{display:flex;flex-wrap:wrap;gap:6px}
+.relate-action-btn{background:var(--sage);color:#fff;border:none;border-radius:50px;padding:.35rem .9rem;font-size:.78rem;cursor:pointer;font-family:inherit;transition:all .2s;text-decoration:none;display:inline-block}
+.relate-action-btn:hover{background:var(--deep);color:#fff;transform:translateY(-1px)}
+.relate-action-btn.outline{background:transparent;border:1.5px solid var(--sage);color:var(--sage)}
+.relate-action-btn.outline:hover{background:var(--sage);color:#fff}
 
-/* ═══════════════════════════════════════════
-   MICRO-INTERACTIONS — FAQ ACCORDION
-═══════════════════════════════════════════ */
-.accordion-button{position:relative;padding-right:3rem}
-.accordion-button .acc-icon{position:absolute;right:1rem;top:50%;transform:translateY(-50%);font-size:1.1rem;color:var(--sage);transition:transform .3s,color .3s}
-.accordion-button.collapsed .acc-icon{color:var(--muted)}
-.accordion-button:not(.collapsed) .acc-icon{transform:translateY(-50%) rotate(45deg)}
+/* ── GET HELP NEAR STORY (Feature 2) ── */
+.help-near-panel{background:#fff;border:1.5px solid rgba(74,124,111,.15);border-radius:16px;padding:1.2rem 1.4rem;margin-top:.6rem;display:none;animation:fp .35s ease}
+.help-near-panel.show{display:block}
+.help-near-title{font-size:.8rem;font-weight:700;color:var(--deep);margin-bottom:.75rem;display:flex;align-items:center;gap:.4rem}
+.help-resource-row{display:flex;align-items:center;gap:.75rem;padding:.5rem 0;border-bottom:1px solid rgba(74,124,111,.07)}
+.help-resource-row:last-child{border-bottom:none}
+.hri{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0}
+.hr-name{font-size:.82rem;font-weight:600;color:var(--deep)}
+.hr-type{font-size:.72rem;color:var(--muted)}
+.hr-link{margin-left:auto;background:rgba(74,124,111,.08);color:var(--sage);border:none;border-radius:50px;padding:.25rem .75rem;font-size:.73rem;cursor:pointer;font-family:inherit;transition:all .2s;text-decoration:none;white-space:nowrap}
+.hr-link:hover{background:var(--sage);color:#fff}
 
-/* ═══════════════════════════════════════════
-   MICRO-INTERACTIONS — INFO CARD RIPPLE
-═══════════════════════════════════════════ */
-.ripple{position:absolute;border-radius:50%;background:rgba(74,124,111,.12);transform:scale(0);animation:ripple-anim .6s linear;pointer-events:none}
-@keyframes ripple-anim{to{transform:scale(4);opacity:0}}
+/* ── SHARE YOUR STORY (Feature 5) ── */
+#share-story{padding:80px 0;background:#fff}
+.share-inner{max-width:680px;margin:0 auto}
+.share-form-wrap{background:linear-gradient(135deg,var(--cream),#fff);border:1.5px solid rgba(74,124,111,.15);border-radius:24px;padding:2.5rem 2rem}
+.share-field{margin-bottom:1.2rem}
+.share-label{font-size:.82rem;font-weight:700;color:var(--deep);margin-bottom:.45rem;display:block}
+.share-input,.share-textarea,.share-select{width:100%;border:1.5px solid rgba(74,124,111,.2);border-radius:12px;padding:.62rem 1rem;font-size:.9rem;font-family:'DM Sans',sans-serif;color:var(--deep);background:#fff;outline:none;transition:border-color .2s,box-shadow .2s}
+.share-input:focus,.share-textarea:focus,.share-select:focus{border-color:var(--sage);box-shadow:0 0 0 3px rgba(74,124,111,.1)}
+.share-textarea{resize:vertical;min-height:130px;line-height:1.65}
+.share-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='%234a7c6f' d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .8rem center;background-size:12px;cursor:pointer}
+.char-count{font-size:.75rem;color:var(--muted);text-align:right;margin-top:.3rem}
+.char-count.warn{color:#b5892a}
+.char-count.over{color:#b5554a}
+.share-consent{display:flex;align-items:flex-start;gap:.7rem;font-size:.82rem;color:var(--muted);line-height:1.6;margin-bottom:1.3rem}
+.share-consent input{margin-top:.2rem;accent-color:var(--sage);flex-shrink:0;cursor:pointer}
+.share-submit{background:linear-gradient(135deg,var(--sage),#3d8b7a);color:#fff;border:none;border-radius:50px;padding:.78rem 2.2rem;font-size:.93rem;font-weight:600;font-family:inherit;cursor:pointer;transition:all .28s var(--ease);box-shadow:0 4px 16px rgba(74,124,111,.3);width:100%}
+.share-submit:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(74,124,111,.4)}
+.share-submit:disabled{opacity:.55;cursor:not-allowed;transform:none}
+.share-success{background:linear-gradient(135deg,rgba(74,124,111,.08),rgba(74,124,111,.04));border:1.5px solid rgba(74,124,111,.2);border-radius:20px;padding:2.5rem 2rem;text-align:center;display:none}
+.share-success.show{display:block;animation:fp .45s ease}
+.share-success-icon{font-size:3rem;margin-bottom:.8rem}
+.share-success h5{font-family:'Playfair Display',serif;color:var(--deep);font-size:1.4rem;margin-bottom:.5rem}
+.share-success p{color:var(--muted);font-size:.9rem;line-height:1.7}
 
-/* ═══════════════════════════════════════════
-   MICRO-INTERACTIONS — SECTION COUNTER NUMS
-═══════════════════════════════════════════ */
-.count-up{display:inline}
+/* ── HELPFUL WIDGET ── */
+.helpful-bar{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;margin-top:.8rem}
+.helpful-label{font-size:.85rem;color:var(--muted)}
+.helpful-btn{background:#fff;border:1.5px solid rgba(74,124,111,.22);border-radius:50px;padding:.38rem 1.1rem;font-size:.85rem;cursor:pointer;font-family:inherit;color:var(--deep);transition:all .22s;display:flex;align-items:center;gap:.35rem}
+.helpful-btn:hover,.helpful-btn.chosen{background:var(--sage);border-color:var(--sage);color:#fff}
+.helpful-btn:hover{transform:scale(1.05)}
+.helpful-response{font-size:.85rem;color:var(--sage);font-weight:600;margin-top:.7rem;display:none}
+.helpful-response.show{display:block;animation:fp .35s ease}
 
-/* ═══════════════════════════════════════════
-   MICRO-INTERACTIONS — HOVER HIGHLIGHT ROW
-═══════════════════════════════════════════ */
-.awareness-item .progress-bar-wrap{position:relative;cursor:default}
-.awareness-item:hover .progress{background:rgba(74,124,111,.18)}
-.awareness-item:hover .lbl{color:var(--deep)}
+/* CTA under stories */
+.stories-cta{text-align:center;margin-top:3rem}
+.stories-cta p{color:var(--muted);font-size:.92rem;margin-bottom:1.2rem;line-height:1.7}
 
-/* ═══════════════════════════════════════════
-   MICRO-INTERACTIONS — STAGGERED CARD ENTRY
-═══════════════════════════════════════════ */
-.stagger-1{transition-delay:.1s!important}
-.stagger-2{transition-delay:.2s!important}
-.stagger-3{transition-delay:.3s!important}
-.stagger-4{transition-delay:.4s!important}
+/* Shared animation */
+@keyframes fp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.page-hero h1{animation:hero-in .7s var(--ease) both}
+.page-hero p{animation:hero-in .7s .15s var(--ease) both}
+.badge-pill{animation:hero-in .5s .05s var(--ease) both}
+@keyframes hero-in{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
 </style>
 {% endblock %}
 
-
 {% block content %}
 
-{# ══════════════════════════════════════
-   PAGE HERO
-══════════════════════════════════════ #}
+<!-- PAGE HERO -->
 <div class="page-hero">
   <div class="container position-relative">
     <span class="badge-pill">Foundation</span>
@@ -143,14 +182,9 @@
   </div>
 </div>
 
-
-{# ══════════════════════════════════════
-   THREE PILLARS + AWARENESS + FAQ
-   EXISTING SECTION — PRESERVED
-══════════════════════════════════════ #}
+<!-- THREE PILLARS + AWARENESS -->
 <section id="what">
   <div class="container">
-
     <div class="row justify-content-center mb-5 text-center">
       <div class="col-lg-7 reveal">
         <span class="section-label">The Three Pillars</span>
@@ -158,385 +192,583 @@
         <p class="text-muted mt-3" style="line-height:1.8">Mental health is not simply the absence of mental illness — it's a dynamic state of overall well-being across three interconnected dimensions.</p>
       </div>
     </div>
-
     <div class="row g-4">
-      <div class="col-md-6 col-lg-3 reveal stagger-1">
-        <div class="info-card" data-ripple>
-          <div class="ic-wrap ic-green"><i class="bi bi-heart-pulse"></i></div>
-          <h5>Emotional Well-being</h5>
-          <p class="text-muted" style="font-size:.9rem;line-height:1.65;margin-top:.5rem">The ability to understand and manage your emotions, including coping with the normal stresses of life in a productive, healthy way.</p>
-        </div>
-      </div>
-      <div class="col-md-6 col-lg-3 reveal stagger-2">
-        <div class="info-card" data-ripple>
-          <div class="ic-wrap ic-warm"><i class="bi bi-gear"></i></div>
-          <h5>Psychological Function</h5>
-          <p class="text-muted" style="font-size:.9rem;line-height:1.65;margin-top:.5rem">Your capacity to think clearly, learn, make decisions, and adapt to change — core cognitive skills needed to function effectively each day.</p>
-        </div>
-      </div>
-      <div class="col-md-6 col-lg-3 reveal stagger-3">
-        <div class="info-card" data-ripple>
-          <div class="ic-wrap ic-blush"><i class="bi bi-people"></i></div>
-          <h5>Social Well-being</h5>
-          <p class="text-muted" style="font-size:.9rem;line-height:1.65;margin-top:.5rem">The ability to form healthy relationships, contribute to community, and feel genuinely connected to the people and world around you.</p>
-        </div>
-      </div>
-      <div class="col-md-6 col-lg-3 reveal stagger-4">
-        <div class="info-card" data-ripple>
-          <div class="ic-wrap ic-blue"><i class="bi bi-arrow-repeat"></i></div>
-          <h5>A Spectrum, Not Binary</h5>
-          <p class="text-muted" style="font-size:.9rem;line-height:1.65;margin-top:.5rem">Mental health is a dynamic spectrum that can shift with life circumstances, stress, support, and care — not a fixed state.</p>
-        </div>
-      </div>
+      <div class="col-md-6 col-lg-3 reveal"><div class="info-card"><span class="sparkle">✨</span><div class="ic-wrap ic-green"><i class="bi bi-heart-pulse"></i></div><h5>Emotional Well-being</h5><p class="text-muted" style="font-size:.9rem;line-height:1.65;margin-top:.5rem">The ability to understand and manage your emotions, including coping with the normal stresses of life in a productive, healthy way.</p></div></div>
+      <div class="col-md-6 col-lg-3 reveal"><div class="info-card"><span class="sparkle">⚙️</span><div class="ic-wrap ic-warm"><i class="bi bi-gear"></i></div><h5>Psychological Function</h5><p class="text-muted" style="font-size:.9rem;line-height:1.65;margin-top:.5rem">Your capacity to think clearly, learn, make decisions, and adapt to change — core cognitive skills needed to function effectively each day.</p></div></div>
+      <div class="col-md-6 col-lg-3 reveal"><div class="info-card"><span class="sparkle">🤝</span><div class="ic-wrap ic-blush"><i class="bi bi-people"></i></div><h5>Social Well-being</h5><p class="text-muted" style="font-size:.9rem;line-height:1.65;margin-top:.5rem">The ability to form healthy relationships, contribute to community, and feel genuinely connected to the people and world around you.</p></div></div>
+      <div class="col-md-6 col-lg-3 reveal"><div class="info-card"><span class="sparkle">🌊</span><div class="ic-wrap ic-blue"><i class="bi bi-arrow-repeat"></i></div><h5>A Spectrum, Not Binary</h5><p class="text-muted" style="font-size:.9rem;line-height:1.65;margin-top:.5rem">Mental health is a dynamic spectrum that can shift with life circumstances, stress, support, and care — not a fixed state.</p></div></div>
     </div>
-
     <div class="row mt-5 pt-3 align-items-start g-5">
-
-      {# ── Awareness bars ── #}
       <div class="col-lg-6 reveal">
         <h3 style="font-size:1.8rem;color:var(--deep);margin-bottom:1.5rem">Global Awareness Snapshot</h3>
-        <div class="awareness-item">
-          <div class="lbl"><span>Anxiety Disorders</span><span class="val"><span class="count-up" data-target="301">0</span>M affected</span></div>
-          <div class="progress-tooltip">301M people globally</div>
-          <div class="progress"><div class="progress-bar" data-w="90%"></div></div>
-        </div>
-        <div class="awareness-item">
-          <div class="lbl"><span>Depression</span><span class="val"><span class="count-up" data-target="280">0</span>M affected</span></div>
-          <div class="progress-tooltip">280M people globally</div>
-          <div class="progress"><div class="progress-bar" data-w="82%"></div></div>
-        </div>
-        <div class="awareness-item">
-          <div class="lbl"><span>PTSD</span><span class="val"><span class="count-up" data-target="70">0</span>M affected</span></div>
-          <div class="progress-tooltip">70M people globally</div>
-          <div class="progress"><div class="progress-bar" data-w="55%"></div></div>
-        </div>
-        <div class="awareness-item">
-          <div class="lbl"><span>Bipolar Disorder</span><span class="val"><span class="count-up" data-target="40">0</span>M affected</span></div>
-          <div class="progress-tooltip">40M people globally</div>
-          <div class="progress"><div class="progress-bar" data-w="40%"></div></div>
-        </div>
-        <div class="awareness-item">
-          <div class="lbl"><span>Schizophrenia</span><span class="val"><span class="count-up" data-target="24">0</span>M affected</span></div>
-          <div class="progress-tooltip">24M people globally</div>
-          <div class="progress"><div class="progress-bar" data-w="28%"></div></div>
-        </div>
+        <div class="awareness-item"><div class="lbl"><span>Anxiety Disorders</span><span class="bar-num" data-target="301">0M affected</span></div><div class="progress"><div class="progress-bar" data-w="90"></div></div></div>
+        <div class="awareness-item"><div class="lbl"><span>Depression</span><span class="bar-num" data-target="280">0M affected</span></div><div class="progress"><div class="progress-bar" data-w="82"></div></div></div>
+        <div class="awareness-item"><div class="lbl"><span>PTSD</span><span class="bar-num" data-target="70">0M affected</span></div><div class="progress"><div class="progress-bar" data-w="55"></div></div></div>
+        <div class="awareness-item"><div class="lbl"><span>Bipolar Disorder</span><span class="bar-num" data-target="40">0M affected</span></div><div class="progress"><div class="progress-bar" data-w="40"></div></div></div>
+        <div class="awareness-item"><div class="lbl"><span>Schizophrenia</span><span class="bar-num" data-target="24">0M affected</span></div><div class="progress"><div class="progress-bar" data-w="28"></div></div></div>
+        <p style="font-size:.8rem;color:var(--muted);margin-top:1rem">Source: World Health Organization, 2024</p>
       </div>
-
-      {# ── FAQ Accordion ── #}
       <div class="col-lg-6 reveal">
         <div class="accordion" id="faqAccordion">
-          <div class="accordion-item">
-            <h2 class="accordion-header">
-              <button class="accordion-button" data-bs-toggle="collapse" data-bs-target="#faq1">
-                Is mental illness the same as mental health?
-                <i class="bi bi-plus acc-icon"></i>
-              </button>
-            </h2>
-            <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
-              <div class="accordion-body">No. Mental health refers to your overall psychological well-being. Mental illness refers to specific diagnosed conditions. You can have poor mental health without a diagnosis, and someone with a condition can still have periods of good mental health with the right support.</div>
-            </div>
+          <div class="accordion-item"><h2 class="accordion-header"><button class="accordion-button" data-bs-toggle="collapse" data-bs-target="#faq1"><i class="bi bi-question-circle me-2" style="color:var(--sage)"></i>Is mental illness the same as mental health?</button></h2><div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion"><div class="accordion-body">No. Mental health refers to your overall psychological well-being. Mental illness refers to specific diagnosed conditions. You can have good mental health while managing a condition, and poor mental health without a diagnosis.</div></div></div>
+          <div class="accordion-item"><h2 class="accordion-header"><button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#faq2"><i class="bi bi-question-circle me-2" style="color:var(--sage)"></i>Can mental health change over time?</button></h2><div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion"><div class="accordion-body">Absolutely. Mental health is fluid and can improve with proper support, lifestyle changes, therapy, and treatment — or worsen under prolonged stress. That's exactly why early awareness matters.</div></div></div>
+          <div class="accordion-item"><h2 class="accordion-header"><button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#faq3"><i class="bi bi-question-circle me-2" style="color:var(--sage)"></i>Is seeking help a sign of weakness?</button></h2><div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion"><div class="accordion-body">Not at all. Seeking help is one of the most courageous things a person can do. It takes self-awareness, honesty, and real strength to say "I need support." That's not weakness — that's wisdom.</div></div></div>
+          <div class="accordion-item"><h2 class="accordion-header"><button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#faq4"><i class="bi bi-question-circle me-2" style="color:var(--sage)"></i>Why does mental health stigma still exist?</button></h2><div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion"><div class="accordion-body">Stigma is rooted in misinformation and cultural silence. In Kenya and across Africa, traditional views sometimes discourage open conversations. Education and communities like MindWell exist to change that — one story at a time.</div></div></div>
+        </div>
+        <div style="margin-top:1.5rem;padding:1.2rem 1.4rem;background:#fff;border-radius:16px;border:1px solid rgba(74,124,111,.12)">
+          <p style="font-size:.88rem;color:var(--deep);font-weight:600;margin-bottom:.6rem">💡 Was this section helpful?</p>
+          <div class="helpful-bar">
+            <span class="helpful-label">Your feedback helps us improve</span>
+            <button class="helpful-btn" id="helpYes" onclick="markHelpful('yes')">👍 Yes, it helped</button>
+            <button class="helpful-btn" id="helpNo" onclick="markHelpful('no')">🤔 Not quite</button>
           </div>
-          <div class="accordion-item">
-            <h2 class="accordion-header">
-              <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#faq2">
-                Can mental health change over time?
-                <i class="bi bi-plus acc-icon"></i>
-              </button>
-            </h2>
-            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-              <div class="accordion-body">Absolutely. Mental health is fluid — it can improve significantly with proper support, lifestyle changes, therapy, medication, and social connection. It can also deteriorate without care. That's why consistent attention to it matters so much.</div>
-            </div>
-          </div>
-          <div class="accordion-item">
-            <h2 class="accordion-header">
-              <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#faq3">
-                Is seeking help a sign of weakness?
-                <i class="bi bi-plus acc-icon"></i>
-              </button>
-            </h2>
-            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-              <div class="accordion-body">Not at all. Seeking help is one of the most courageous things a person can do. It takes self-awareness to recognise struggle and strength to ask for support. The bravest people we know ask for help.</div>
-            </div>
-          </div>
-          <div class="accordion-item">
-            <h2 class="accordion-header">
-              <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#faq4">
-                How does mental health affect physical health?
-                <i class="bi bi-plus acc-icon"></i>
-              </button>
-            </h2>
-            <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-              <div class="accordion-body">Deeply. Chronic stress weakens the immune system. Depression can cause physical fatigue, appetite changes, and pain. The mind-body connection is well established — caring for your mental health is caring for your whole self.</div>
-            </div>
-          </div>
-          <div class="accordion-item">
-            <h2 class="accordion-header">
-              <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#faq5">
-                Where can I find help in Kenya?
-                <i class="bi bi-plus acc-icon"></i>
-              </button>
-            </h2>
-            <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-              <div class="accordion-body">You can reach <strong>Befrienders Kenya on 0722 178 177</strong> (24/7, free). Mathari National Teaching &amp; Referral Hospital also offers mental health services. Our <a href="{% url 'mentalapp:resources' %}" style="color:var(--sage)">Resources page</a> has a full directory of support options across Kenya.</div>
-            </div>
-          </div>
+          <div class="helpful-response" id="helpResp"></div>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-
-{# ══════════════════════════════════════
-   NEW — REAL STORIES SECTION
-══════════════════════════════════════ #}
+<!-- ══════════════════════════════════════
+     REAL STORIES — ALL 5 FEATURES
+══════════════════════════════════════ -->
 <section id="real-stories">
-  <div class="container position-relative">
-
-    <div class="row justify-content-center mb-5 text-center">
-      <div class="col-lg-7 reveal">
-        <span class="section-label">Real Stories</span>
-        <h2 class="section-title">You Are Not Alone in This</h2>
-        <p class="text-muted mt-3" style="line-height:1.8">These are real voices — people who faced their struggles and found their way through. Their stories exist so that you know recovery is real, healing is possible, and <strong style="color:var(--sage)">your story isn't over.</strong></p>
-      </div>
+  <div class="container">
+    <div class="stories-intro reveal">
+      <span class="section-label">Real Voices</span>
+      <h2 class="section-title">Stories of Survival &amp; Strength</h2>
+      <p>These are real experiences shared by real people. Names and details have been changed to protect privacy — but the feelings, the struggles, and the hope? Those are entirely true.</p>
     </div>
 
-    <div class="row g-4">
+    <!-- FEATURE 3: Swipe carousel wrapper -->
+    <div class="story-carousel-wrap reveal" id="storyCarousel">
+      <div class="story-track" id="storyTrack">
 
-      {# Story 1 — Anxiety #}
-      <div class="col-md-6 col-lg-3 reveal stagger-1">
-        <div class="story-card color-sage d-flex flex-column">
-          <span class="story-quote-icon">"</span>
-          <span class="story-condition-tag">Anxiety</span>
-          <p class="story-text">For two years I couldn't leave my house without a panic attack. I thought that was just <em>who I was.</em> Therapy showed me it was something that could change — and it did.</p>
-          <div class="story-author">
-            <div class="story-avatar" style="background:linear-gradient(135deg,var(--sage),var(--sage-lt))">A</div>
+        <!-- ══ STORY 1 — Depression ══ -->
+        <div class="story-card" data-story="0" data-tags="depression,recognition" data-condition="Depression">
+          <div class="story-emotion">😔</div>
+          <div class="story-quote-icon">"</div>
+          <p class="story-text">For two years I woke up every day feeling like I was drowning on dry land. No one around me could see it. I smiled at work, I laughed at dinner. But inside I was disappearing. The day I finally typed "I think I have depression" into a search bar was the first day I started to surface.</p>
+          <div class="story-tag-row">
+            <span class="story-tag">Depression</span>
+            <span class="story-tag">Recognition</span>
+            <span class="story-tag">First step</span>
+          </div>
+          <div class="story-attr">
+            <div class="story-avatar" style="background:rgba(74,124,111,.1)">🌿</div>
             <div>
               <div class="story-name">Amara, 26</div>
-              <div class="story-meta">Nairobi · In recovery 2 years</div>
+              <div class="story-location">📍 Nairobi, Kenya</div>
+              <div class="story-outcome">Now 14 months into therapy</div>
             </div>
           </div>
+          <!-- Feature 1 + 2 + 4 action buttons -->
+          <div class="story-actions">
+            <button class="sac-btn" onclick="relateToStory(0,this)" title="I relate to this">💙 I Relate</button>
+            <button class="sac-btn" onclick="getHelpNear(0,this)" title="Get help for this condition">📍 Get Help</button>
+            <button class="sac-btn save-btn" onclick="saveStory(0,this)" title="Save this story">🤍 Save</button>
+          </div>
+          <!-- Feature 1: AI Relate Response -->
+          <div class="relate-panel" id="relate-0">
+            <div class="relate-header">
+              <div class="relate-avatar">🌿</div>
+              <div class="relate-name">Mwendo says</div>
+            </div>
+            <p class="relate-text" id="relate-text-0"></p>
+            <div class="relate-actions" id="relate-actions-0"></div>
+          </div>
+          <!-- Feature 2: Get Help Near Panel -->
+          <div class="help-near-panel" id="help-0">
+            <div class="help-near-title"><i class="bi bi-geo-alt-fill" style="color:#b5554a"></i>Support for Depression — Kenya</div>
+            <div class="help-resource-row"><div class="hri" style="background:rgba(74,124,111,.1)">🏥</div><div><div class="hr-name">Mathari National Hospital</div><div class="hr-type">Psychiatric care · Nairobi</div></div><a href="tel:+254202724069" class="hr-link">Call</a></div>
+            <div class="help-resource-row"><div class="hri" style="background:rgba(232,201,138,.15)">📞</div><div><div class="hr-name">Befrienders Kenya</div><div class="hr-type">Crisis line · 24/7 · Free</div></div><a href="tel:0722178177" class="hr-link">0722 178 177</a></div>
+            <div class="help-resource-row"><div class="hri" style="background:rgba(100,149,237,.1)">💊</div><div><div class="hr-name">Chiromo Hospital Group</div><div class="hr-type">Outpatient therapy · Nairobi</div></div><a href="{% url 'mentalapp:resources' %}" class="hr-link">Learn more</a></div>
+          </div>
         </div>
-      </div>
 
-      {# Story 2 — Depression #}
-      <div class="col-md-6 col-lg-3 reveal stagger-2">
-        <div class="story-card color-warm d-flex flex-column">
-          <span class="story-quote-icon">"</span>
-          <span class="story-condition-tag">Depression</span>
-          <p class="story-text">I smiled every day at work while <em>drowning inside.</em> Nobody knew. When I finally told my wife, the relief was indescribable. Talking saved me — literally.</p>
-          <div class="story-author">
-            <div class="story-avatar" style="background:linear-gradient(135deg,#c8882a,var(--warm))">D</div>
+        <!-- ══ STORY 2 — Anxiety ══ -->
+        <div class="story-card" data-story="1" data-tags="anxiety,social" data-condition="Anxiety">
+          <div class="story-emotion">😰</div>
+          <div class="story-quote-icon">"</div>
+          <p class="story-text">My anxiety made every social situation feel like a performance review. I cancelled plans constantly, avoided my own friends. I thought I was just "bad at people." Learning that it had a name — that it was anxiety — was like someone turning the lights on in a room I'd been fumbling around in for years.</p>
+          <div class="story-tag-row">
+            <span class="story-tag">Anxiety</span>
+            <span class="story-tag">Social anxiety</span>
+            <span class="story-tag">Understanding</span>
+          </div>
+          <div class="story-attr">
+            <div class="story-avatar" style="background:rgba(232,201,138,.2)">🌟</div>
             <div>
-              <div class="story-name">Daniel, 34</div>
-              <div class="story-meta">Mombasa · 3 years in therapy</div>
+              <div class="story-name">David, 31</div>
+              <div class="story-location">📍 Mombasa, Kenya</div>
+              <div class="story-outcome">Leading a peer support group</div>
             </div>
           </div>
+          <div class="story-actions">
+            <button class="sac-btn" onclick="relateToStory(1,this)">💙 I Relate</button>
+            <button class="sac-btn" onclick="getHelpNear(1,this)">📍 Get Help</button>
+            <button class="sac-btn save-btn" onclick="saveStory(1,this)">🤍 Save</button>
+          </div>
+          <div class="relate-panel" id="relate-1">
+            <div class="relate-header"><div class="relate-avatar">🌿</div><div class="relate-name">Mwendo says</div></div>
+            <p class="relate-text" id="relate-text-1"></p>
+            <div class="relate-actions" id="relate-actions-1"></div>
+          </div>
+          <div class="help-near-panel" id="help-1">
+            <div class="help-near-title"><i class="bi bi-geo-alt-fill" style="color:#b5554a"></i>Support for Anxiety — Kenya</div>
+            <div class="help-resource-row"><div class="hri" style="background:rgba(74,124,111,.1)">🧘</div><div><div class="hr-name">MindWell Breathing Exercise</div><div class="hr-type">Free · Works right now</div></div><button onclick="startBreathe()" class="hr-link">Start now</button></div>
+            <div class="help-resource-row"><div class="hri" style="background:rgba(232,201,138,.15)">📞</div><div><div class="hr-name">Befrienders Kenya</div><div class="hr-type">Crisis line · 24/7 · Free</div></div><a href="tel:0722178177" class="hr-link">0722 178 177</a></div>
+            <div class="help-resource-row"><div class="hri" style="background:rgba(100,149,237,.1)">💻</div><div><div class="hr-name">Amani Counselling Centre</div><div class="hr-type">Online + in-person · Nairobi</div></div><a href="{% url 'mentalapp:resources' %}" class="hr-link">Learn more</a></div>
+          </div>
         </div>
-      </div>
 
-      {# Story 3 — PTSD #}
-      <div class="col-md-6 col-lg-3 reveal stagger-3">
-        <div class="story-card color-blush d-flex flex-column">
-          <span class="story-quote-icon">"</span>
-          <span class="story-condition-tag">PTSD</span>
-          <p class="story-text">After what I survived, I believed I was broken beyond repair. EMDR therapy changed that belief one session at a time. I still have <em>hard days — but I have good ones too.</em></p>
-          <div class="story-author">
-            <div class="story-avatar" style="background:linear-gradient(135deg,#b5554a,var(--blush))">F</div>
+        <!-- ══ STORY 3 — Grief ══ -->
+        <div class="story-card" data-story="2" data-tags="grief,counselling" data-condition="Grief &amp; Loss">
+          <div class="story-emotion">💚</div>
+          <div class="story-quote-icon">"</div>
+          <p class="story-text">After losing my mother, I stopped being myself. Not dramatically — quietly. Like someone slowly turning down a volume dial. Grief isn't just sadness — it's the absence of yourself. Counselling helped me find the dial and turn it back up. I'm not the same person I was. But I'm whole.</p>
+          <div class="story-tag-row">
+            <span class="story-tag">Grief</span>
+            <span class="story-tag">Counselling</span>
+            <span class="story-tag">Recovery</span>
+          </div>
+          <div class="story-attr">
+            <div class="story-avatar" style="background:rgba(232,165,152,.15)">🌸</div>
             <div>
-              <div class="story-name">Faith, 29</div>
-              <div class="story-meta">Kisumu · Healing every day</div>
+              <div class="story-name">Faith, 38</div>
+              <div class="story-location">📍 Kisumu, Kenya</div>
+              <div class="story-outcome">Returned to work &amp; community</div>
             </div>
           </div>
-        </div>
-      </div>
-
-      {# Story 4 — Burnout #}
-      <div class="col-md-6 col-lg-3 reveal stagger-4">
-        <div class="story-card color-blue d-flex flex-column">
-          <span class="story-quote-icon">"</span>
-          <span class="story-condition-tag">Burnout</span>
-          <p class="story-text">I was the most productive person in my office. Then one morning I couldn't get up. Burnout is <em>real and serious.</em> Rest isn't giving up — it's part of the work.</p>
-          <div class="story-author">
-            <div class="story-avatar" style="background:linear-gradient(135deg,#4169a8,#7ba0d4)">K</div>
-            <div>
-              <div class="story-name">Kevin, 31</div>
-              <div class="story-meta">Nairobi · Back to himself</div>
-            </div>
+          <div class="story-actions">
+            <button class="sac-btn" onclick="relateToStory(2,this)">💙 I Relate</button>
+            <button class="sac-btn" onclick="getHelpNear(2,this)">📍 Get Help</button>
+            <button class="sac-btn save-btn" onclick="saveStory(2,this)">🤍 Save</button>
+          </div>
+          <div class="relate-panel" id="relate-2">
+            <div class="relate-header"><div class="relate-avatar">🌿</div><div class="relate-name">Mwendo says</div></div>
+            <p class="relate-text" id="relate-text-2"></p>
+            <div class="relate-actions" id="relate-actions-2"></div>
+          </div>
+          <div class="help-near-panel" id="help-2">
+            <div class="help-near-title"><i class="bi bi-geo-alt-fill" style="color:#b5554a"></i>Grief Support — Kenya</div>
+            <div class="help-resource-row"><div class="hri" style="background:rgba(74,124,111,.1)">🕊️</div><div><div class="hr-name">Hospice Care Kenya</div><div class="hr-type">Grief counselling · Nairobi</div></div><a href="{% url 'mentalapp:resources' %}" class="hr-link">Learn more</a></div>
+            <div class="help-resource-row"><div class="hri" style="background:rgba(232,201,138,.15)">📞</div><div><div class="hr-name">Befrienders Kenya</div><div class="hr-type">Crisis line · 24/7 · Free</div></div><a href="tel:0722178177" class="hr-link">0722 178 177</a></div>
+            <div class="help-resource-row"><div class="hri" style="background:rgba(100,149,237,.1)">💚</div><div><div class="hr-name">MindWell Self-Care Guide</div><div class="hr-type">Free resource · Always available</div></div><a href="{% url 'mentalapp:selfcare' %}" class="hr-link">Open guide</a></div>
           </div>
         </div>
-      </div>
 
+      </div>{# end story-track #}
+    </div>{# end carousel-wrap #}
+
+    <!-- Carousel Controls (Feature 3) -->
+    <div class="carousel-controls">
+      <button class="car-btn" id="carPrev" onclick="carMove(-1)" disabled><i class="bi bi-chevron-left"></i></button>
+      <div class="car-dots" id="carDots"></div>
+      <button class="car-btn" id="carNext" onclick="carMove(1)"><i class="bi bi-chevron-right"></i></button>
     </div>
 
-    {# ── Impact strip ── #}
-    <div class="story-impact-strip reveal">
-      <div class="impact-stat">
-        <span class="num"><span class="count-up" data-target="89">0</span>%</span>
-        <div class="lbl">of people felt less alone<br>after reading a story</div>
+    <div class="stories-cta reveal">
+      <p>You are not alone in what you're carrying. Every story above was written by someone who once thought no one would understand — and discovered they were wrong.</p>
+      <div class="d-flex gap-3 justify-content-center flex-wrap">
+        <a href="{% url 'mentalapp:resources' %}" class="btn-sage">Find Support Now</a>
+        <button onclick="startBreathe()" style="background:rgba(74,124,111,.1);color:var(--sage);border:1.5px solid rgba(74,124,111,.25);border-radius:50px;padding:.78rem 2rem;font-size:.93rem;font-family:inherit;cursor:pointer;transition:all .28s">🧘 Try Breathing Exercise</button>
+        <button onclick="document.getElementById('share-story').scrollIntoView({behavior:'smooth'})" style="background:rgba(232,201,138,.15);color:#b5892a;border:1.5px solid rgba(232,201,138,.4);border-radius:50px;padding:.78rem 2rem;font-size:.93rem;font-family:inherit;cursor:pointer;transition:all .28s">✍️ Share Your Story</button>
       </div>
-      <div class="impact-divider d-none d-md-block"></div>
-      <div class="impact-stat">
-        <span class="num"><span class="count-up" data-target="3">0</span>x</span>
-        <div class="lbl">more likely to seek help<br>after hearing real experiences</div>
-      </div>
-      <div class="impact-divider d-none d-md-block"></div>
-      <div class="impact-stat">
-        <span class="num"><span class="count-up" data-target="74">0</span>%</span>
-        <div class="lbl">reported recovery is possible<br>with the right support</div>
-      </div>
-      <div class="impact-divider d-none d-md-block"></div>
-      <a href="{% url 'mentalapp:register' %}" class="share-story-btn">
-        Share Your Story 💚
-      </a>
     </div>
-
   </div>
 </section>
 
+<!-- ══════════════════════════════════════
+     FEATURE 5: SHARE YOUR STORY
+══════════════════════════════════════ -->
+<section id="share-story">
+  <div class="container">
+    <div class="share-inner">
+      <div class="text-center mb-4 reveal">
+        <span class="section-label">Your Voice Matters</span>
+        <h2 class="section-title">Share Your Story</h2>
+        <p class="text-muted mt-2" style="line-height:1.8;font-size:.97rem">Your experience could be the exact thing someone else needs to read today. Stories heal — yours might save someone's life.</p>
+      </div>
+      <div class="reveal">
+        <!-- Success state -->
+        <div class="share-success" id="shareSuccess">
+          <div class="share-success-icon">💚</div>
+          <h5>Thank You for Your Courage</h5>
+          <p>Your story has been received. Our team will review it with care and compassion before publishing. You've done something incredibly brave today — and someone out there will be so grateful you did.</p>
+          <button onclick="resetShareForm()" style="margin-top:1.2rem;background:var(--sage);color:#fff;border:none;border-radius:50px;padding:.65rem 2rem;cursor:pointer;font-family:inherit;font-size:.9rem">Share Another Story</button>
+        </div>
+        <!-- Form -->
+        <div class="share-form-wrap" id="shareForm">
+          <div class="share-field">
+            <label class="share-label">What are you comfortable sharing? <span style="color:#b5554a">*</span></label>
+            <select class="share-select" id="storyType">
+              <option value="">Select your experience...</option>
+              <option value="depression">Depression</option>
+              <option value="anxiety">Anxiety</option>
+              <option value="grief">Grief &amp; Loss</option>
+              <option value="ptsd">PTSD / Trauma</option>
+              <option value="bipolar">Bipolar Disorder</option>
+              <option value="recovery">Recovery Journey</option>
+              <option value="stigma">Stigma &amp; Silence</option>
+              <option value="other">Other / General</option>
+            </select>
+          </div>
+          <div class="share-field">
+            <label class="share-label">Your first name (or a pseudonym) <span style="color:#b5554a">*</span></label>
+            <input class="share-input" id="storyName" type="text" placeholder="e.g. Amara, David, Anonymous...">
+          </div>
+          <div class="share-field">
+            <label class="share-label">Your story <span style="color:#b5554a">*</span></label>
+            <textarea class="share-textarea" id="storyText" maxlength="600" placeholder="Write in your own words — there are no wrong feelings here. This is a safe space..." oninput="updateChar()"></textarea>
+            <div class="char-count" id="charCount">0 / 600 characters</div>
+          </div>
+          <div class="share-field">
+            <label class="share-label">Where are you from? (optional)</label>
+            <input class="share-input" id="storyLocation" type="text" placeholder="e.g. Nairobi, Kisumu, Mombasa...">
+          </div>
+          <div class="share-field">
+            <label class="share-label">What's one thing that helped you or helped you move forward?</label>
+            <input class="share-input" id="storyOutcome" type="text" placeholder="e.g. Therapy, talking to a friend, breathing exercises...">
+          </div>
+          <div class="share-consent">
+            <input type="checkbox" id="shareConsent">
+            <label for="shareConsent">I agree to share this story on MindWell. I understand it will be reviewed by the team before publishing, and my personal details will be protected. I can request removal at any time.</label>
+          </div>
+          <button class="share-submit" id="shareSubmitBtn" onclick="submitStory()">
+            <i class="bi bi-send-heart me-2"></i>Submit My Story
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-{# ══════════════════════════════════════
-   MISSION — EXISTING SECTION, PRESERVED
-══════════════════════════════════════ #}
+<!-- MISSION -->
 <section id="mission">
   <div class="container">
     <div class="row justify-content-center mb-5 text-center">
       <div class="col-lg-7 reveal">
         <span class="section-label" style="color:var(--sage-lt)">Our Mission</span>
         <h2 class="section-title text-white">Why MindWell Exists</h2>
+        <p style="color:rgba(255,255,255,.58);margin-top:.8rem;line-height:1.8">Because mental health care should be accessible, stigma-free, and grounded in compassion — for everyone.</p>
       </div>
     </div>
     <div class="row g-3">
-      <div class="col-md-6 col-lg-3 reveal stagger-1">
-        <div class="mission-pill">
-          <i class="bi bi-book-open"></i>
-          <h5>Education</h5>
-          <p>Providing clear, evidence-based information about mental health to reduce stigma worldwide.</p>
-        </div>
-      </div>
-      <div class="col-md-6 col-lg-3 reveal stagger-2">
-        <div class="mission-pill">
-          <i class="bi bi-shield-heart"></i>
-          <h5>Prevention</h5>
-          <p>Equipping people with practical strategies to protect mental well-being before crises arise.</p>
-        </div>
-      </div>
-      <div class="col-md-6 col-lg-3 reveal stagger-3">
-        <div class="mission-pill">
-          <i class="bi bi-people-fill"></i>
-          <h5>Community</h5>
-          <p>Building a safe space where people feel less alone and more connected to genuine support.</p>
-        </div>
-      </div>
-      <div class="col-md-6 col-lg-3 reveal stagger-4">
-        <div class="mission-pill">
-          <i class="bi bi-compass"></i>
-          <h5>Direction</h5>
-          <p>Connecting individuals to the right professional resources and tools for their unique needs.</p>
-        </div>
-      </div>
+      <div class="col-md-6 col-lg-3 reveal"><div class="mission-pill" onclick="missionRipple(event,this)"><i class="bi bi-book-open"></i><h5>Education</h5><p>Providing clear, evidence-based information about mental health to reduce stigma worldwide.</p></div></div>
+      <div class="col-md-6 col-lg-3 reveal"><div class="mission-pill" onclick="missionRipple(event,this)"><i class="bi bi-shield-heart"></i><h5>Prevention</h5><p>Equipping people with practical strategies to protect mental well-being before crises arise.</p></div></div>
+      <div class="col-md-6 col-lg-3 reveal"><div class="mission-pill" onclick="missionRipple(event,this)"><i class="bi bi-people-fill"></i><h5>Community</h5><p>Building a safe space where people feel less alone and more connected to genuine support.</p></div></div>
+      <div class="col-md-6 col-lg-3 reveal"><div class="mission-pill" onclick="missionRipple(event,this)"><i class="bi bi-compass"></i><h5>Direction</h5><p>Connecting individuals to the right professional resources and tools for their unique needs.</p></div></div>
     </div>
   </div>
 </section>
 
 {% endblock %}
 
-
 {% block extra_js %}
 <script>
-/* ══════════════════════════════════════
-   PROGRESS BAR ANIMATION ON SCROLL
-══════════════════════════════════════ */
-const progObs = new IntersectionObserver(entries => {
-  if (!entries[0].isIntersecting) return;
-  document.querySelectorAll('.progress-bar[data-w]').forEach((bar, i) => {
-    setTimeout(() => { bar.style.width = bar.dataset.w; }, i * 160 + 100);
+/* ════════════════════════════════════
+   PROGRESS BARS + COUNT-UP
+════════════════════════════════════ */
+const _pbO=new IntersectionObserver(es=>{
+  if(!es[0].isIntersecting)return;
+  document.querySelectorAll('.progress-bar[data-w]').forEach((b,i)=>{
+    setTimeout(()=>{b.style.width=b.dataset.w+'%';},i*160);
   });
-  progObs.unobserve(entries[0].target);
-}, { threshold: 0.3 });
-const whatSec = document.getElementById('what');
-if (whatSec) progObs.observe(whatSec);
-
-/* ══════════════════════════════════════
-   COUNT-UP ANIMATION
-══════════════════════════════════════ */
-const countObs = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (!e.isIntersecting) return;
-    const el = e.target;
-    const target = parseInt(el.dataset.target);
-    if (!target) return;
-    let cur = 0;
-    const step = Math.ceil(target / 60);
-    const tick = setInterval(() => {
-      cur = Math.min(cur + step, target);
-      el.textContent = cur;
-      if (cur >= target) clearInterval(tick);
-    }, 22);
-    countObs.unobserve(el);
+  document.querySelectorAll('.bar-num[data-target]').forEach((el,i)=>{
+    const t=parseInt(el.dataset.target);
+    setTimeout(()=>{
+      let c=0;
+      const tick=setInterval(()=>{
+        c=Math.min(c+Math.ceil(t/50),t);
+        el.textContent=c+'M affected';
+        if(c>=t)clearInterval(tick);
+      },28);
+    },i*160);
   });
-}, { threshold: 0.4 });
-document.querySelectorAll('.count-up[data-target]').forEach(el => countObs.observe(el));
+  _pbO.unobserve(es[0].target);
+},{threshold:.3});
+const _ws=document.getElementById('what');
+if(_ws)_pbO.observe(_ws);
 
-/* ══════════════════════════════════════
-   RIPPLE EFFECT ON INFO CARDS
-══════════════════════════════════════ */
-document.querySelectorAll('[data-ripple]').forEach(card => {
-  card.addEventListener('click', function (e) {
-    const rect = this.getBoundingClientRect();
-    const ripple = document.createElement('span');
-    ripple.className = 'ripple';
-    const size = Math.max(rect.width, rect.height);
-    ripple.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX - rect.left - size/2}px;top:${e.clientY - rect.top - size/2}px`;
-    this.appendChild(ripple);
-    setTimeout(() => ripple.remove(), 620);
+/* ════════════════════════════════════
+   MISSION RIPPLE
+════════════════════════════════════ */
+function missionRipple(e,el){
+  const r=document.createElement('span');
+  r.className='ripple-el';
+  const rect=el.getBoundingClientRect();
+  r.style.left=(e.clientX-rect.left-30)+'px';
+  r.style.top=(e.clientY-rect.top-30)+'px';
+  el.appendChild(r);
+  setTimeout(()=>r.remove(),650);
+}
+
+/* ════════════════════════════════════
+   HELPFUL WIDGET
+════════════════════════════════════ */
+function markHelpful(v){
+  document.getElementById('helpYes').classList.toggle('chosen',v==='yes');
+  document.getElementById('helpNo').classList.toggle('chosen',v==='no');
+  const r=document.getElementById('helpResp');
+  r.textContent=v==='yes'?"💚 Thank you! We're glad this helped.":"🙏 Thank you — we'll keep improving this section.";
+  r.classList.add('show');
+}
+
+/* ════════════════════════════════════
+   FEATURE 3: SWIPE CAROUSEL
+════════════════════════════════════ */
+let _carIdx=0;
+const _cards=document.querySelectorAll('.story-card');
+const _total=_cards.length;
+let _touchStartX=0, _touchEndX=0;
+
+function _getVisible(){
+  if(window.innerWidth<=600) return 1;
+  if(window.innerWidth<=991) return 2;
+  return 3;
+}
+function _maxIdx(){ return Math.max(0,_total-_getVisible()); }
+
+function _buildDots(){
+  const dc=document.getElementById('carDots');
+  dc.innerHTML='';
+  const pages=_maxIdx()+1;
+  for(let i=0;i<pages;i++){
+    const d=document.createElement('div');
+    d.className='car-dot'+(i===_carIdx?' active':'');
+    d.onclick=()=>carGoTo(i);
+    dc.appendChild(d);
+  }
+}
+
+function _applyPos(animate=true){
+  const track=document.getElementById('storyTrack');
+  if(!animate) track.classList.add('no-transition');
+  const cardW=_cards[0].getBoundingClientRect().width;
+  const gap=24;
+  track.style.transform=`translateX(-${_carIdx*(cardW+gap)}px)`;
+  if(!animate) setTimeout(()=>track.classList.remove('no-transition'),50);
+  document.getElementById('carPrev').disabled=_carIdx===0;
+  document.getElementById('carNext').disabled=_carIdx>=_maxIdx();
+  document.querySelectorAll('.car-dot').forEach((d,i)=>d.classList.toggle('active',i===_carIdx));
+}
+
+function carMove(dir){
+  _carIdx=Math.max(0,Math.min(_carIdx+dir,_maxIdx()));
+  _applyPos();
+}
+function carGoTo(i){ _carIdx=i; _applyPos(); }
+
+// Touch swipe
+const _cw=document.getElementById('storyCarousel');
+if(_cw){
+  _cw.addEventListener('touchstart',e=>{ _touchStartX=e.changedTouches[0].screenX; },{passive:true});
+  _cw.addEventListener('touchend',e=>{
+    _touchEndX=e.changedTouches[0].screenX;
+    const diff=_touchStartX-_touchEndX;
+    if(Math.abs(diff)>40) carMove(diff>0?1:-1);
+  },{passive:true});
+}
+
+window.addEventListener('resize',()=>{ _applyPos(false); _buildDots(); });
+_buildDots(); _applyPos(false);
+
+/* ════════════════════════════════════
+   FEATURE 1: I RELATE TO THIS STORY + AI RESPONSE
+════════════════════════════════════ */
+const _relateData=[
+  {
+    text:"Thank you for saying that. 💙 Feeling like you're disappearing while still going through the motions — that's one of depression's cruelest tricks. It makes you invisible to everyone, including yourself.\n\nYou recognising it in Amara's story? That's your awareness speaking. That's strength.",
+    actions:[
+      {label:"🧘 Try breathing with me",action:"breathe"},
+      {label:"Learn about depression",href:"{% url 'mentalapp:conditions' %}"},
+      {label:"🌿 Talk to Mwendo",action:"chat"},
+    ]
+  },
+  {
+    text:"You're not \"bad at people\" — you never were. 💚 Anxiety makes connection feel dangerous, even when you desperately want it.\n\nDavid's story shows that naming it changes everything. You just took a step like his by saying \"I relate.\"",
+    actions:[
+      {label:"🧘 Breathing exercise",action:"breathe"},
+      {label:"Anxiety resources",href:"{% url 'mentalapp:conditions' %}"},
+      {label:"🌿 Talk to Mwendo",action:"chat"},
+    ]
+  },
+  {
+    text:"Grief doesn't follow a schedule or a rulebook. 🌸 If you've lost someone — or something — and feel like parts of yourself went with them, that's not weakness. That's love.\n\nFaith found her way back. And so can you, at your own pace.",
+    actions:[
+      {label:"Self-care guide",href:"{% url 'mentalapp:selfcare' %}"},
+      {label:"Find a counsellor",href:"{% url 'mentalapp:resources' %}"},
+      {label:"🌿 Talk to Mwendo",action:"chat"},
+    ]
+  }
+];
+
+function relateToStory(idx,btn){
+  const panel=document.getElementById('relate-'+idx);
+  const helpPanel=document.getElementById('help-'+idx);
+  const isOpen=panel.classList.contains('show');
+
+  // Toggle: close if already open
+  if(isOpen){
+    panel.classList.remove('show');
+    btn.classList.remove('relate-active');
+    btn.innerHTML='💙 I Relate';
+    return;
+  }
+
+  // Close help panel if open
+  if(helpPanel.classList.contains('show')){
+    helpPanel.classList.remove('show');
+    const hBtn=btn.parentElement.querySelector('[onclick^="getHelpNear"]');
+    if(hBtn) hBtn.innerHTML='📍 Get Help';
+  }
+
+  const data=_relateData[idx];
+  const textEl=document.getElementById('relate-text-'+idx);
+  const actEl=document.getElementById('relate-actions-'+idx);
+
+  // Typewriter effect for the response text
+  const clean=data.text.replace(/\n/g,' ');
+  textEl.innerHTML='';
+  let ci=0;
+  const typer=setInterval(()=>{
+    textEl.textContent=clean.slice(0,ci);
+    ci++;
+    if(ci>clean.length) clearInterval(typer);
+  },18);
+
+  // Action buttons
+  actEl.innerHTML='';
+  data.actions.forEach(a=>{
+    if(a.href){
+      const el=document.createElement('a');
+      el.className='relate-action-btn';
+      el.href=a.href;
+      el.textContent=a.label;
+      actEl.appendChild(el);
+    } else {
+      const el=document.createElement('button');
+      el.className='relate-action-btn outline';
+      el.textContent=a.label;
+      if(a.action==='breathe') el.onclick=startBreathe;
+      if(a.action==='chat')    el.onclick=()=>toggleChat(true);
+      actEl.appendChild(el);
+    }
+  });
+
+  panel.classList.add('show');
+  btn.classList.add('relate-active');
+  btn.innerHTML='💙 Relating';
+  panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+/* ════════════════════════════════════
+   FEATURE 2: GET HELP NEAR THIS STORY
+════════════════════════════════════ */
+function getHelpNear(idx,btn){
+  const panel=document.getElementById('help-'+idx);
+  const relatePanel=document.getElementById('relate-'+idx);
+  const isOpen=panel.classList.contains('show');
+
+  if(isOpen){
+    panel.classList.remove('show');
+    btn.innerHTML='📍 Get Help';
+    return;
+  }
+
+  // Close relate panel if open
+  if(relatePanel.classList.contains('show')){
+    relatePanel.classList.remove('show');
+    const rBtn=btn.parentElement.querySelector('[onclick^="relateToStory"]');
+    if(rBtn){ rBtn.classList.remove('relate-active'); rBtn.innerHTML='💙 I Relate'; }
+  }
+
+  panel.classList.add('show');
+  btn.innerHTML='📍 Showing Help';
+  panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+/* ════════════════════════════════════
+   FEATURE 4: SAVE STORY ❤️
+════════════════════════════════════ */
+let _saved=JSON.parse(localStorage.getItem('mw_saved_stories')||'[]');
+
+function saveStory(idx,btn){
+  const already=_saved.includes(idx);
+  if(already){
+    _saved=_saved.filter(i=>i!==idx);
+    btn.className='sac-btn save-btn';
+    btn.innerHTML='🤍 Save';
+    btn.title='Save this story';
+  } else {
+    _saved.push(idx);
+    btn.className='sac-btn save-btn saved';
+    btn.innerHTML='❤️ Saved';
+    btn.title='Remove from saved';
+    // Micro-burst animation
+    btn.style.transform='scale(1.25)';
+    setTimeout(()=>btn.style.transform='',250);
+  }
+  localStorage.setItem('mw_saved_stories',JSON.stringify(_saved));
+}
+
+// Restore saved state on load
+document.addEventListener('DOMContentLoaded',()=>{
+  _saved.forEach(idx=>{
+    const btn=document.querySelector(`.story-card[data-story="${idx}"] .save-btn`);
+    if(btn){ btn.className='sac-btn save-btn saved'; btn.innerHTML='❤️ Saved'; }
   });
 });
 
-/* ══════════════════════════════════════
-   ACCORDION ICON TOGGLE
-══════════════════════════════════════ */
-document.querySelectorAll('.accordion-button').forEach(btn => {
-  btn.addEventListener('click', function () {
-    // icons rotate via CSS .acc-icon class — just ensure collapsed state toggled
-    // Bootstrap handles collapsed class automatically
-  });
-});
+/* ════════════════════════════════════
+   FEATURE 5: SHARE YOUR STORY
+════════════════════════════════════ */
+function updateChar(){
+  const ta=document.getElementById('storyText');
+  const cc=document.getElementById('charCount');
+  const len=ta.value.length;
+  cc.textContent=len+' / 600 characters';
+  cc.className='char-count'+(len>550?' warn':'')+(len>=600?' over':'');
+}
 
-/* ══════════════════════════════════════
-   STORY CARDS — TILT ON MOUSE MOVE
-══════════════════════════════════════ */
-document.querySelectorAll('.story-card').forEach(card => {
-  card.addEventListener('mousemove', function (e) {
-    const rect = this.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width - 0.5;
-    const y = (e.clientY - rect.top)  / rect.height - 0.5;
-    this.style.transform = `translateY(-6px) rotateX(${(-y * 6).toFixed(2)}deg) rotateY(${(x * 6).toFixed(2)}deg)`;
-  });
-  card.addEventListener('mouseleave', function () {
-    this.style.transform = '';
-  });
-});
+function submitStory(){
+  const type=document.getElementById('storyType').value;
+  const name=document.getElementById('storyName').value.trim();
+  const text=document.getElementById('storyText').value.trim();
+  const consent=document.getElementById('shareConsent').checked;
+  const btn=document.getElementById('shareSubmitBtn');
 
-/* ══════════════════════════════════════
-   AWARENESS BARS — HOVER HIGHLIGHT
-══════════════════════════════════════ */
-document.querySelectorAll('.awareness-item').forEach(item => {
-  item.addEventListener('mouseenter', function () {
-    const bar = this.querySelector('.progress-bar');
-    if (bar) bar.style.filter = 'brightness(1.2)';
-  });
-  item.addEventListener('mouseleave', function () {
-    const bar = this.querySelector('.progress-bar');
-    if (bar) bar.style.filter = '';
-  });
-});
+  if(!type){ alert('Please select the type of experience you\'re sharing.'); return; }
+  if(!name){ alert('Please enter a name or pseudonym.'); return; }
+  if(text.length<40){ alert('Please share a bit more — at least 40 characters so your story can help others.'); return; }
+  if(!consent){ alert('Please check the consent box to continue.'); return; }
 
-/* ══════════════════════════════════════
-   MISSION PILLS — STAGGERED ENTRY DELAY
-══════════════════════════════════════ */
-document.querySelectorAll('#mission .mission-pill').forEach((pill, i) => {
-  pill.style.transitionDelay = (i * 0.1) + 's';
-});
+  // Disable + loading state
+  btn.disabled=true;
+  btn.innerHTML='<i class="bi bi-hourglass-split me-2"></i>Submitting...';
+
+  // Simulate submission (replace with real fetch/POST when backend ready)
+  setTimeout(()=>{
+    document.getElementById('shareForm').style.display='none';
+    document.getElementById('shareSuccess').classList.add('show');
+    document.getElementById('shareSuccess').scrollIntoView({behavior:'smooth',block:'center'});
+  },1400);
+}
+
+function resetShareForm(){
+  document.getElementById('shareForm').style.display='block';
+  document.getElementById('shareForm').reset && document.getElementById('shareForm').reset();
+  document.getElementById('storyType').value='';
+  document.getElementById('storyName').value='';
+  document.getElementById('storyText').value='';
+  document.getElementById('storyLocation').value='';
+  document.getElementById('storyOutcome').value='';
+  document.getElementById('shareConsent').checked=false;
+  document.getElementById('charCount').textContent='0 / 600 characters';
+  document.getElementById('shareSubmitBtn').disabled=false;
+  document.getElementById('shareSubmitBtn').innerHTML='<i class="bi bi-send-heart me-2"></i>Submit My Story';
+  document.getElementById('shareSuccess').classList.remove('show');
+}
 </script>
 {% endblock %}

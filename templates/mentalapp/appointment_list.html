@@ -2,295 +2,250 @@
 {% load static %}
 
 {% block title %}{{ action }} Appointment · MindWell{% endblock %}
+{% block nav_appointment %}active-page{% endblock %}
 
 {% block extra_css %}
 <style>
-  /* ── PAGE SHELL ───────────────────────────────────── */
-  .appt-hero{
-    background:linear-gradient(135deg,var(--deep) 0%,#2a4a40 60%,#1c3530 100%);
-    padding:4rem 0 5.5rem;
-    position:relative;
-    overflow:hidden
-  }
-  .appt-hero::before{
-    content:'';
-    position:absolute;inset:0;
-    background:radial-gradient(ellipse 70% 60% at 80% 50%,rgba(74,124,111,.35) 0%,transparent 70%);
-    pointer-events:none
-  }
-  .appt-hero-badge{
-    display:inline-flex;align-items:center;gap:.45rem;
-    background:rgba(232,201,138,.12);
-    border:1px solid rgba(232,201,138,.3);
-    border-radius:50px;
-    padding:.35rem .95rem;
-    font-size:.78rem;
-    color:var(--warm);
-    letter-spacing:.06em;
-    text-transform:uppercase;
-    margin-bottom:1.2rem
-  }
-  .appt-hero h1{
-    font-size:clamp(1.8rem,4vw,2.8rem);
-    color:#fff;
-    line-height:1.2;
-    margin-bottom:.7rem
-  }
-  .appt-hero p{
-    color:rgba(255,255,255,.62);
-    font-size:1rem;
-    max-width:520px
-  }
+/* ══ PAGE SHELL ═══════════════════════════════════════ */
+.appt-hero{background:linear-gradient(135deg,var(--deep) 0%,#2a4a40 60%,#1c3530 100%);padding:4rem 0 5.5rem;position:relative;overflow:hidden}
+.appt-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 80% 50%,rgba(74,124,111,.35) 0%,transparent 70%);pointer-events:none}
+.appt-hero-badge{display:inline-flex;align-items:center;gap:.45rem;background:rgba(232,201,138,.12);border:1px solid rgba(232,201,138,.3);border-radius:50px;padding:.35rem .95rem;font-size:.78rem;color:var(--warm);letter-spacing:.06em;text-transform:uppercase;margin-bottom:1.2rem}
+.appt-hero h1{font-size:clamp(1.8rem,4vw,2.8rem);color:#fff;line-height:1.2;margin-bottom:.7rem}
+.appt-hero p{color:rgba(255,255,255,.62);font-size:1rem;max-width:520px}
+.deco-leaf{position:absolute;right:6%;top:50%;transform:translateY(-50%);font-size:9rem;opacity:.07;pointer-events:none;line-height:1}
 
-  /* decorative leaf */
-  .appt-hero .deco-leaf{
-    position:absolute;right:6%;top:50%;transform:translateY(-50%);
-    font-size:9rem;opacity:.07;
-    pointer-events:none;line-height:1
-  }
+/* FEATURE 6: Progress Indicator */
+.progress-indicator{display:flex;align-items:center;gap:0;margin-bottom:0;padding:.9rem 0 .6rem}
+.pi-step{display:flex;align-items:center;gap:.4rem;font-size:.78rem;font-weight:600;color:rgba(255,255,255,.4)}
+.pi-step.active{color:var(--warm)}
+.pi-step.done{color:rgba(111,173,160,.8)}
+.pi-num{width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:.72rem;flex-shrink:0;transition:all .3s}
+.pi-step.active .pi-num{background:var(--warm);border-color:var(--warm);color:var(--deep)}
+.pi-step.done .pi-num{background:rgba(111,173,160,.3);border-color:rgba(111,173,160,.5);color:#fff}
+.pi-line{width:28px;height:2px;background:rgba(255,255,255,.12);margin:0 3px}
+.pi-line.done{background:rgba(111,173,160,.4)}
+@media(max-width:520px){.pi-step span{display:none}.pi-line{width:14px}}
 
-  /* ── CARD ─────────────────────────────────────────── */
-  .appt-card-wrap{
-    margin-top:-3rem;
-    padding-bottom:5rem
-  }
+/* ══ CARD SHELL ═══════════════════════════════════════ */
+.appt-card-wrap{margin-top:-3rem;padding-bottom:5rem}
+.appt-card{background:#fff;border-radius:20px;box-shadow:0 12px 60px rgba(28,43,40,.12);overflow:hidden;animation:fadeUp .5s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
 
-  .appt-card{
-    background:#fff;
-    border-radius:20px;
-    box-shadow:0 12px 60px rgba(28,43,40,.12);
-    overflow:hidden
-  }
+/* ══ SIDEBAR ══════════════════════════════════════════ */
+.appt-card-sidebar{background:linear-gradient(160deg,var(--deep),#2e5048);color:#fff;padding:2.5rem 2rem;display:flex;flex-direction:column;gap:1.6rem}
+.sidebar-step{display:flex;align-items:flex-start;gap:.85rem}
+.step-num{width:32px;height:32px;flex-shrink:0;border-radius:50%;background:rgba(232,201,138,.18);border:1.5px solid rgba(232,201,138,.4);display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:600;color:var(--warm)}
+.step-body h6{font-family:'DM Sans',sans-serif;font-weight:600;font-size:.88rem;color:#fff;margin-bottom:.2rem}
+.step-body p{font-size:.78rem;color:rgba(255,255,255,.52);margin:0}
 
-  .appt-card-sidebar{
-    background:linear-gradient(160deg,var(--deep),#2e5048);
-    color:#fff;
-    padding:2.5rem 2rem;
-    display:flex;flex-direction:column;gap:2rem
-  }
+/* FEATURE 4: Expected response time badge */
+.response-time-badge{background:rgba(111,173,160,.18);border:1px solid rgba(111,173,160,.35);border-radius:12px;padding:.75rem 1rem;display:flex;align-items:center;gap:.65rem;margin-top:.5rem}
+.rtb-icon{font-size:1.3rem;flex-shrink:0}
+.rtb-text{font-size:.78rem;color:rgba(255,255,255,.75);line-height:1.5}
+.rtb-text strong{color:var(--sage-lt)}
 
-  .sidebar-step{
-    display:flex;align-items:flex-start;gap:.85rem
-  }
-  .step-num{
-    width:32px;height:32px;flex-shrink:0;
-    border-radius:50%;
-    background:rgba(232,201,138,.18);
-    border:1.5px solid rgba(232,201,138,.4);
-    display:flex;align-items:center;justify-content:center;
-    font-size:.78rem;font-weight:600;color:var(--warm)
-  }
-  .step-body h6{
-    font-family:'DM Sans',sans-serif;
-    font-weight:600;font-size:.88rem;color:#fff;
-    margin-bottom:.2rem
-  }
-  .step-body p{
-    font-size:.78rem;color:rgba(255,255,255,.52);margin:0
-  }
+/* FEATURE 5: Actionable urgent help */
+.urgent-crisis-block{background:rgba(181,85,74,.15);border:1.5px solid rgba(181,85,74,.35);border-radius:14px;padding:1rem 1.1rem;margin-top:auto}
+.ucb-title{color:#ffb3ab;font-weight:700;font-size:.82rem;margin-bottom:.6rem;display:flex;align-items:center;gap:.4rem}
+.crisis-action-btn{display:flex;align-items:center;gap:.5rem;background:rgba(181,85,74,.2);border:1px solid rgba(181,85,74,.4);border-radius:50px;padding:.38rem .85rem;color:#fff;text-decoration:none;font-size:.77rem;font-weight:600;margin-bottom:.4rem;transition:all .2s}
+.crisis-action-btn:hover{background:rgba(181,85,74,.4);color:#fff;transform:translateX(3px)}
+.crisis-action-btn:last-child{margin-bottom:0}
+.crisis-action-btn i{font-size:.85rem;flex-shrink:0}
 
-  .sidebar-note{
-    background:rgba(232,201,138,.08);
-    border-left:3px solid var(--warm);
-    border-radius:0 8px 8px 0;
-    padding:.85rem 1rem;
-    font-size:.8rem;color:rgba(255,255,255,.65);
-    margin-top:auto
-  }
+/* ══ FORM BODY ════════════════════════════════════════ */
+.appt-form-body{padding:2.5rem 2.5rem 2rem}
+@media(max-width:575px){.appt-form-body{padding:1.5rem 1.2rem 1.5rem}}
 
-  /* ── FORM BODY ───────────────────────────────────── */
-  .appt-form-body{
-    padding:2.5rem 2.5rem 2rem
-  }
+/* FEATURE 6: Section progress header */
+.form-section-header{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #e8ede9;padding-bottom:.5rem;margin-bottom:1.25rem;margin-top:1.8rem}
+.form-section-header:first-of-type{margin-top:0}
+.form-section-title{font-family:'Playfair Display',serif;font-size:1rem;color:var(--sage);margin:0}
+.form-section-badge{font-size:.71rem;color:var(--muted);background:rgba(74,124,111,.08);border-radius:50px;padding:.18rem .7rem;font-weight:600}
 
-  .form-section-title{
-    font-family:'Playfair Display',serif;
-    font-size:1rem;
-    color:var(--sage);
-    border-bottom:1px solid #e8ede9;
-    padding-bottom:.5rem;
-    margin-bottom:1.25rem
-  }
+/* ══ INPUTS ════════════════════════════════════════ */
+.appt-input{border:1.5px solid #d8e3df!important;border-radius:10px!important;padding:.65rem .95rem!important;font-size:.9rem!important;color:var(--text)!important;background:#fafcfb!important;transition:border-color .2s,box-shadow .2s!important}
+.appt-input:focus{border-color:var(--sage)!important;box-shadow:0 0 0 3px rgba(74,124,111,.12)!important;background:#fff!important;outline:none!important}
+.form-label{font-size:.83rem;font-weight:600;color:var(--muted);letter-spacing:.03em;margin-bottom:.35rem}
 
-  /* override Bootstrap inputs to match brand */
-  .appt-input{
-    border:1.5px solid #d8e3df!important;
-    border-radius:10px!important;
-    padding:.65rem .95rem!important;
-    font-size:.9rem!important;
-    color:var(--text)!important;
-    background:#fafcfb!important;
-    transition:border-color .2s,box-shadow .2s!important
-  }
-  .appt-input:focus{
-    border-color:var(--sage)!important;
-    box-shadow:0 0 0 3px rgba(74,124,111,.12)!important;
-    background:#fff!important;
-    outline:none!important
-  }
-  .form-label{
-    font-size:.83rem;
-    font-weight:600;
-    color:var(--muted);
-    letter-spacing:.03em;
-    margin-bottom:.35rem
-  }
+/* FEATURE 2: Session type descriptions */
+.session-type-grid{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-top:.6rem}
+@media(max-width:480px){.session-type-grid{grid-template-columns:1fr}}
+.st-card{border:1.5px solid rgba(74,124,111,.15);border-radius:12px;padding:.75rem .9rem;cursor:pointer;transition:all .22s;position:relative}
+.st-card:hover{border-color:var(--sage);background:rgba(74,124,111,.04)}
+.st-card.selected{border-color:var(--sage);background:rgba(74,124,111,.07);box-shadow:0 0 0 3px rgba(74,124,111,.12)}
+.st-card input[type=radio]{position:absolute;opacity:0;pointer-events:none}
+.st-card-icon{font-size:1.2rem;margin-bottom:.3rem}
+.st-card-name{font-size:.85rem;font-weight:700;color:var(--deep);margin-bottom:.18rem}
+.st-card-desc{font-size:.74rem;color:var(--muted);line-height:1.45}
+.st-card-check{position:absolute;top:.7rem;right:.7rem;width:18px;height:18px;border-radius:50%;background:var(--sage);color:#fff;font-size:.65rem;display:none;align-items:center;justify-content:center}
+.st-card.selected .st-card-check{display:flex}
 
-  /* status badge */
-  .status-pill{
-    display:inline-block;
-    padding:.2rem .7rem;
-    border-radius:50px;
-    font-size:.74rem;font-weight:600
-  }
-  .status-pending{background:#fff3cd;color:#856404}
-  .status-confirmed{background:#d1f0e6;color:#0a6640}
-  .status-cancelled{background:#fde8e8;color:#9b1b1b}
-  .status-completed{background:#e2eeff;color:#1a4db5}
+/* FEATURE 7: Session Mode */
+.mode-row{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.6rem}
+.mode-pill{flex:1;min-width:90px;border:1.5px solid rgba(74,124,111,.2);border-radius:50px;padding:.5rem .9rem;font-size:.82rem;font-weight:600;color:var(--muted);cursor:pointer;text-align:center;transition:all .22s;user-select:none;position:relative}
+.mode-pill:hover{border-color:var(--sage);color:var(--sage)}
+.mode-pill.selected{background:var(--sage);border-color:var(--sage);color:#fff}
+.mode-pill input[type=radio]{position:absolute;opacity:0}
 
-  /* ── SUBMIT BTN ──────────────────────────────────── */
-  .btn-appt-submit{
-    background:var(--sage);
-    color:#fff;
-    border:none;
-    border-radius:12px;
-    padding:.8rem 2.2rem;
-    font-size:.95rem;font-weight:600;
-    letter-spacing:.02em;
-    transition:background .25s,transform .15s,box-shadow .25s;
-    cursor:pointer
-  }
-  .btn-appt-submit:hover{
-    background:var(--sage-lt);
-    transform:translateY(-2px);
-    box-shadow:0 6px 24px rgba(74,124,111,.3)
-  }
+/* FEATURE 1: Availability Feedback */
+.avail-feedback{margin-top:.5rem;padding:.55rem .9rem;border-radius:10px;font-size:.78rem;display:none;align-items:center;gap:.45rem;animation:fadeUp .3s ease}
+.avail-feedback.show{display:flex}
+.avail-feedback.good{background:rgba(74,124,111,.08);color:var(--sage);border:1px solid rgba(74,124,111,.18)}
+.avail-feedback.warn{background:rgba(232,201,138,.15);color:#9a7a20;border:1px solid rgba(232,201,138,.4)}
+.avail-feedback.busy{background:rgba(181,85,74,.08);color:#a84848;border:1px solid rgba(181,85,74,.25)}
 
-  .btn-appt-cancel{
-    background:transparent;
-    color:var(--muted);
-    border:1.5px solid #d8e3df;
-    border-radius:12px;
-    padding:.8rem 1.6rem;
-    font-size:.95rem;
-    transition:all .25s;
-    text-decoration:none;
-    display:inline-block
-  }
-  .btn-appt-cancel:hover{
-    border-color:var(--blush);
-    color:var(--blush)
-  }
+/* FEATURE 3: Confidentiality */
+.confidentiality-bar{background:rgba(74,124,111,.06);border:1px solid rgba(74,124,111,.14);border-radius:12px;padding:.75rem 1rem;display:flex;align-items:flex-start;gap:.7rem;margin:1.4rem 0 1.2rem}
+.conf-icon{font-size:1.1rem;flex-shrink:0;margin-top:.05rem}
+.conf-text{font-size:.78rem;color:var(--muted);line-height:1.55}
+.conf-text strong{color:var(--deep)}
 
-  /* ── ANIMATE IN ──────────────────────────────────── */
-  @keyframes fadeUp{
-    from{opacity:0;transform:translateY(18px)}
-    to{opacity:1;transform:translateY(0)}
-  }
-  .appt-card{animation:fadeUp .5s ease both}
+/* ══ SUBMIT BUTTONS ═══════════════════════════════════ */
+.btn-appt-submit{background:var(--sage);color:#fff;border:none;border-radius:12px;padding:.8rem 2.2rem;font-size:.95rem;font-weight:600;letter-spacing:.02em;transition:all .25s;cursor:pointer;display:flex;align-items:center;gap:.5rem}
+.btn-appt-submit:hover{background:var(--sage-lt);transform:translateY(-2px);box-shadow:0 6px 24px rgba(74,124,111,.3)}
+.btn-appt-submit:disabled{opacity:.55;cursor:not-allowed;transform:none}
+.btn-appt-cancel{background:transparent;color:var(--muted);border:1.5px solid #d8e3df;border-radius:12px;padding:.8rem 1.6rem;font-size:.95rem;transition:all .25s;text-decoration:none;display:inline-block}
+.btn-appt-cancel:hover{border-color:var(--blush);color:var(--blush)}
+
+/* Submit-loading spinner */
+@keyframes spin{to{transform:rotate(360deg)}}
+.spin-icon{animation:spin 1s linear infinite;display:inline-block}
 </style>
 {% endblock %}
 
 {% block content %}
 
-<!-- HERO -->
+<!-- ═══ HERO ═══════════════════════════════════════════════ -->
 <section class="appt-hero">
   <div class="container position-relative">
+
+    {# FEATURE 6: Progress Indicator #}
+    <div class="progress-indicator">
+      <div class="pi-step done"><div class="pi-num"><i class="bi bi-check2"></i></div><span>Login</span></div>
+      <div class="pi-line done"></div>
+      <div class="pi-step active"><div class="pi-num">2</div><span>Book</span></div>
+      <div class="pi-line"></div>
+      <div class="pi-step"><div class="pi-num">3</div><span>Confirm</span></div>
+      <div class="pi-line"></div>
+      <div class="pi-step"><div class="pi-num">4</div><span>Session</span></div>
+    </div>
+
     <div class="appt-hero-badge">🌿 Wellbeing Appointment</div>
     <h1>{{ action }} Your Appointment</h1>
-    <p>Take a step toward better mental health. Fill in the details below and we'll confirm your session soon.</p>
+    <p>Take a meaningful step toward better mental health. Fill in the details below and we'll confirm your session soon.</p>
   </div>
   <span class="deco-leaf" aria-hidden="true">🌱</span>
 </section>
 
-<!-- CARD -->
+<!-- ═══ MAIN CARD ══════════════════════════════════════════ -->
 <div class="appt-card-wrap">
   <div class="container">
     <div class="appt-card row g-0">
 
       <!-- SIDEBAR -->
       <div class="col-lg-4 appt-card-sidebar">
-        <h5 style="font-family:'Playfair Display',serif;margin-bottom:.25rem">How it works</h5>
-        <p style="font-size:.8rem;color:rgba(255,255,255,.5);margin-bottom:1rem">Simple steps to get support</p>
-
-        <div class="sidebar-step">
-          <div class="step-num">1</div>
-          <div class="step-body">
-            <h6>Choose a session type</h6>
-            <p>Individual, group, assessment, or crisis support.</p>
-          </div>
-        </div>
-        <div class="sidebar-step">
-          <div class="step-num">2</div>
-          <div class="step-body">
-            <h6>Pick date &amp; time</h6>
-            <p>Select a future date that works best for you.</p>
-          </div>
-        </div>
-        <div class="sidebar-step">
-          <div class="step-num">3</div>
-          <div class="step-body">
-            <h6>Add optional details</h6>
-            <p>Name your therapist or leave notes for context.</p>
-          </div>
-        </div>
-        <div class="sidebar-step">
-          <div class="step-num">4</div>
-          <div class="step-body">
-            <h6>We confirm &amp; follow up</h6>
-            <p>You'll receive a confirmation once reviewed.</p>
-          </div>
+        <div>
+          <h5 style="font-family:'Playfair Display',serif;margin-bottom:.2rem">How it works</h5>
+          <p style="font-size:.78rem;color:rgba(255,255,255,.45);margin-bottom:1rem">Simple steps to get support</p>
         </div>
 
-        <div class="sidebar-note">
-          <strong style="color:var(--warm)">Need urgent help?</strong><br>
-          If you're in crisis, please call your local emergency services or a crisis helpline immediately.
+        <div class="sidebar-step"><div class="step-num">1</div><div class="step-body"><h6>Choose a session type</h6><p>Individual, group, assessment, or crisis support.</p></div></div>
+        <div class="sidebar-step"><div class="step-num">2</div><div class="step-body"><h6>Pick date, time &amp; mode</h6><p>Choose in-person, video, or phone — whatever feels safest.</p></div></div>
+        <div class="sidebar-step"><div class="step-num">3</div><div class="step-body"><h6>Add optional details</h6><p>Name a preferred therapist or leave notes for context.</p></div></div>
+        <div class="sidebar-step"><div class="step-num">4</div><div class="step-body"><h6>We confirm &amp; follow up</h6><p>You'll receive confirmation within 24 hours.</p></div></div>
+
+        {# FEATURE 4: Expected Response Time #}
+        <div class="response-time-badge">
+          <div class="rtb-icon">⏱️</div>
+          <div class="rtb-text">We confirm appointments within <strong>24 hours</strong>. Urgent? <strong>Same-day</strong> crisis sessions available — see below.</div>
+        </div>
+
+        {# FEATURE 5: Actionable Urgent Help #}
+        <div class="urgent-crisis-block">
+          <div class="ucb-title"><i class="bi bi-exclamation-triangle-fill"></i>Need immediate help?</div>
+          <a href="tel:0722178177" class="crisis-action-btn"><i class="bi bi-telephone-fill"></i>Call Befrienders: 0722 178 177</a>
+          <a href="tel:+254202724069" class="crisis-action-btn"><i class="bi bi-hospital"></i>Mathari Hospital: +254 20 2724069</a>
+          <a href="tel:999" class="crisis-action-btn"><i class="bi bi-shield-fill"></i>Emergency Services: 999</a>
+          <button onclick="toggleChat(true)" class="crisis-action-btn" style="border:none;width:100%;cursor:pointer;background:rgba(181,85,74,.2);border:1px solid rgba(181,85,74,.4)"><i class="bi bi-chat-heart"></i>Talk to Mwendo now</button>
         </div>
       </div>
 
-      <!-- FORM -->
+      <!-- FORM BODY -->
       <div class="col-lg-8 appt-form-body">
 
         {% if messages %}
           {% for msg in messages %}
             <div class="alert alert-{{ msg.tags }} alert-dismissible fade show mb-3" role="alert">
-              {{ msg }}
-              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+              {{ msg }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
           {% endfor %}
         {% endif %}
 
-        <form method="post" novalidate>
+        <form method="post" novalidate id="apptForm">
           {% csrf_token %}
 
-          <!-- Session Details -->
-          <p class="form-section-title"><i class="bi bi-calendar2-heart me-2"></i>Session Details</p>
+          <!-- ══ FEATURE 2: Session Type with Descriptions ══ -->
+          <div class="form-section-header">
+            <p class="form-section-title"><i class="bi bi-calendar2-heart me-2"></i>Session Type</p>
+            <span class="form-section-badge">Step 1 of 3</span>
+          </div>
 
-          <div class="row g-3 mb-3">
-            <div class="col-12">
-              <label class="form-label" for="{{ form.appointment_type.id_for_label }}">
-                {{ form.appointment_type.label }}
-              </label>
-              {{ form.appointment_type }}
-              {% if form.appointment_type.errors %}
-                <div class="text-danger mt-1" style="font-size:.8rem">{{ form.appointment_type.errors.0 }}</div>
-              {% endif %}
-            </div>
+          <label class="form-label d-block mb-2">Choose the type of support you need <span style="color:#b5554a">*</span></label>
+          <div class="session-type-grid" id="sessionTypeGrid">
+            <label class="st-card" data-value="individual">
+              <input type="radio" name="{{ form.appointment_type.html_name }}" value="individual" {% if form.appointment_type.value == 'individual' %}checked{% endif %}>
+              <div class="st-card-check"><i class="bi bi-check2"></i></div>
+              <div class="st-card-icon">🧑‍💼</div>
+              <div class="st-card-name">Individual Therapy</div>
+              <div class="st-card-desc">One-on-one session with a licensed therapist. Fully confidential.</div>
+            </label>
+            <label class="st-card" data-value="group">
+              <input type="radio" name="{{ form.appointment_type.html_name }}" value="group" {% if form.appointment_type.value == 'group' %}checked{% endif %}>
+              <div class="st-card-check"><i class="bi bi-check2"></i></div>
+              <div class="st-card-icon">🤝</div>
+              <div class="st-card-name">Group Support</div>
+              <div class="st-card-desc">Facilitated group sessions for shared experiences and peer connection.</div>
+            </label>
+            <label class="st-card" data-value="assessment">
+              <input type="radio" name="{{ form.appointment_type.html_name }}" value="assessment" {% if form.appointment_type.value == 'assessment' %}checked{% endif %}>
+              <div class="st-card-check"><i class="bi bi-check2"></i></div>
+              <div class="st-card-icon">📋</div>
+              <div class="st-card-name">Mental Health Assessment</div>
+              <div class="st-card-desc">A structured first session to identify your needs and create a support plan.</div>
+            </label>
+            <label class="st-card" data-value="crisis">
+              <input type="radio" name="{{ form.appointment_type.html_name }}" value="crisis" {% if form.appointment_type.value == 'crisis' %}checked{% endif %}>
+              <div class="st-card-check"><i class="bi bi-check2"></i></div>
+              <div class="st-card-icon">🆘</div>
+              <div class="st-card-name">Crisis Support</div>
+              <div class="st-card-desc">Urgent, same-day session for acute mental health distress. Prioritised.</div>
+            </label>
+          </div>
+          {% if form.appointment_type.errors %}
+            <div class="text-danger mt-2" style="font-size:.8rem">{{ form.appointment_type.errors.0 }}</div>
+          {% endif %}
 
+          <!-- ══ DATE & TIME + FEATURE 1: Availability Feedback ══ -->
+          <div class="form-section-header mt-4">
+            <p class="form-section-title"><i class="bi bi-clock me-2"></i>Date &amp; Time</p>
+            <span class="form-section-badge">Step 2 of 3</span>
+          </div>
+
+          <div class="row g-3 mb-2">
             <div class="col-sm-6">
-              <label class="form-label" for="{{ form.preferred_date.id_for_label }}">
-                {{ form.preferred_date.label }}
-              </label>
+              <label class="form-label" for="{{ form.preferred_date.id_for_label }}">Preferred Date <span style="color:#b5554a">*</span></label>
               {{ form.preferred_date }}
               {% if form.preferred_date.errors %}
                 <div class="text-danger mt-1" style="font-size:.8rem">{{ form.preferred_date.errors.0 }}</div>
               {% endif %}
+              {# FEATURE 1: Availability Feedback #}
+              <div class="avail-feedback" id="availFeedback">
+                <i class="bi bi-circle-fill" style="font-size:.55rem"></i>
+                <span id="availText"></span>
+              </div>
             </div>
-
             <div class="col-sm-6">
-              <label class="form-label" for="{{ form.preferred_time.id_for_label }}">
-                {{ form.preferred_time.label }}
-              </label>
+              <label class="form-label" for="{{ form.preferred_time.id_for_label }}">Preferred Time <span style="color:#b5554a">*</span></label>
               {{ form.preferred_time }}
               {% if form.preferred_time.errors %}
                 <div class="text-danger mt-1" style="font-size:.8rem">{{ form.preferred_time.errors.0 }}</div>
@@ -298,50 +253,189 @@
             </div>
           </div>
 
-          <!-- Provider & Location -->
-          <p class="form-section-title mt-4"><i class="bi bi-person-badge me-2"></i>Provider &amp; Location</p>
+          <!-- ══ FEATURE 7: Session Mode ══ -->
+          <div class="mb-3">
+            <label class="form-label d-block">Session Mode <span style="color:#b5554a">*</span></label>
+            <div class="mode-row" id="modeRow">
+              <label class="mode-pill selected" data-mode="in_person">
+                <input type="radio" name="session_mode" value="in_person" checked>
+                🏥 In-Person
+              </label>
+              <label class="mode-pill" data-mode="video">
+                <input type="radio" name="session_mode" value="video">
+                📹 Video Call
+              </label>
+              <label class="mode-pill" data-mode="phone">
+                <input type="radio" name="session_mode" value="phone">
+                📞 Phone Call
+              </label>
+            </div>
+          </div>
+
+          <!-- ══ PROVIDER & LOCATION ══ -->
+          <div class="form-section-header mt-4">
+            <p class="form-section-title"><i class="bi bi-person-badge me-2"></i>Provider &amp; Details</p>
+            <span class="form-section-badge">Step 3 of 3</span>
+          </div>
 
           <div class="row g-3 mb-3">
             <div class="col-sm-6">
-              <label class="form-label" for="{{ form.therapist_name.id_for_label }}">
-                {{ form.therapist_name.label }}
-              </label>
+              <label class="form-label" for="{{ form.therapist_name.id_for_label }}">{{ form.therapist_name.label }}</label>
               {{ form.therapist_name }}
             </div>
-
             <div class="col-sm-6">
-              <label class="form-label" for="{{ form.location.id_for_label }}">
-                {{ form.location.label }}
-              </label>
+              <label class="form-label" for="{{ form.location.id_for_label }}">{{ form.location.label }}</label>
               {{ form.location }}
             </div>
           </div>
 
-          <!-- Notes -->
-          <p class="form-section-title mt-4"><i class="bi bi-chat-square-text me-2"></i>Additional Notes</p>
-
-          <div class="mb-4">
+          <div class="mb-3">
             <label class="form-label" for="{{ form.notes.id_for_label }}">{{ form.notes.label }}</label>
             {{ form.notes }}
-            <div class="form-text mt-1" style="font-size:.76rem;color:var(--muted)">
-              Everything you share is confidential and helps your therapist prepare.
+          </div>
+
+          {# FEATURE 3: Confidentiality Reinforcement #}
+          <div class="confidentiality-bar">
+            <div class="conf-icon">🔒</div>
+            <div class="conf-text">
+              <strong>Your privacy is protected.</strong> Everything you share here is treated as strictly confidential. Notes and session details are only visible to you and your assigned therapist — never shared with third parties.
             </div>
           </div>
 
-          <!-- Actions -->
+          <!-- ACTIONS -->
           <div class="d-flex align-items-center gap-3 flex-wrap">
-            <button type="submit" class="btn-appt-submit">
-              <i class="bi bi-calendar-check me-2"></i>{{ action }} Appointment
+            <button type="submit" class="btn-appt-submit" id="submitBtn" onclick="animateSubmit()">
+              <i class="bi bi-calendar-check" id="submitIcon"></i>
+              <span id="submitText">{{ action }} Appointment</span>
             </button>
-            <a href="{% url 'mentalapp:appointment_list' %}" class="btn-appt-cancel">
-              Cancel
-            </a>
+            <a href="{% url 'mentalapp:appointment_list' %}" class="btn-appt-cancel">Cancel</a>
           </div>
 
         </form>
-      </div><!-- /form col -->
-    </div><!-- /row -->
+      </div>
+    </div>
   </div>
 </div>
 
+{% endblock %}
+
+{% block extra_js %}
+<script>
+/* ════════════════════════════════════
+   FEATURE 2: Session Type Cards
+════════════════════════════════════ */
+document.querySelectorAll('.st-card').forEach(card => {
+  card.addEventListener('click', function () {
+    document.querySelectorAll('.st-card').forEach(c => c.classList.remove('selected'));
+    this.classList.add('selected');
+    this.querySelector('input[type=radio]').checked = true;
+
+    // Crisis type: nudge to call sidebar
+    const val = this.dataset.value;
+    if (val === 'crisis') {
+      const crisis = document.querySelector('.urgent-crisis-block');
+      if (crisis) {
+        crisis.style.boxShadow = '0 0 0 2px rgba(181,85,74,.5)';
+        crisis.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        setTimeout(() => crisis.style.boxShadow = '', 2500);
+      }
+    }
+  });
+  // Restore selected state on load
+  const radio = card.querySelector('input[type=radio]');
+  if (radio.checked) card.classList.add('selected');
+});
+
+/* ════════════════════════════════════
+   FEATURE 7: Mode Pills
+════════════════════════════════════ */
+document.querySelectorAll('.mode-pill').forEach(pill => {
+  pill.addEventListener('click', function () {
+    document.querySelectorAll('.mode-pill').forEach(p => p.classList.remove('selected'));
+    this.classList.add('selected');
+    this.querySelector('input[type=radio]').checked = true;
+
+    // Hint: video/phone → location may not be needed
+    const mode = this.dataset.mode;
+    const locField = document.getElementById('{{ form.location.id_for_label }}');
+    if (locField) {
+      locField.placeholder = mode === 'in_person'
+        ? 'e.g. Nairobi, Westlands Clinic'
+        : mode === 'video' ? 'We\'ll send a video link to your email'
+        : 'We\'ll call you — please add number in notes';
+    }
+  });
+});
+
+/* ════════════════════════════════════
+   FEATURE 1: Availability Feedback
+════════════════════════════════════ */
+const busyDays   = [0, 6];          // Sun, Sat — weekends typically busy
+const busyHours  = ['09:00','10:00','14:00','15:00'];  // peak slots
+const goodHours  = ['11:00','13:00','16:00','17:00'];
+
+function checkAvailability() {
+  const dateInput = document.getElementById('{{ form.preferred_date.id_for_label }}');
+  const timeInput = document.getElementById('{{ form.preferred_time.id_for_label }}');
+  const fb        = document.getElementById('availFeedback');
+  const fbTxt     = document.getElementById('availText');
+
+  if (!dateInput || !dateInput.value) { fb.classList.remove('show'); return; }
+
+  const d    = new Date(dateInput.value);
+  const dow  = d.getDay();
+  const time = timeInput ? timeInput.value : '';
+
+  fb.className = 'avail-feedback';
+
+  if (busyDays.includes(dow)) {
+    fb.classList.add('show', 'warn');
+    fbTxt.textContent = 'Weekends fill up quickly — consider a weekday for better availability.';
+  } else if (busyHours.includes(time)) {
+    fb.classList.add('show', 'busy');
+    fbTxt.textContent = 'This slot is in high demand. We\'ll do our best — or try a quieter time.';
+  } else if (goodHours.includes(time)) {
+    fb.classList.add('show', 'good');
+    fbTxt.textContent = '✓ Great choice! This slot usually has good availability.';
+  } else {
+    fb.classList.add('show', 'good');
+    fbTxt.textContent = '✓ Slot looks available. We\'ll confirm within 24 hours.';
+  }
+}
+
+const _dateEl = document.getElementById('{{ form.preferred_date.id_for_label }}');
+const _timeEl = document.getElementById('{{ form.preferred_time.id_for_label }}');
+if (_dateEl) _dateEl.addEventListener('change', checkAvailability);
+if (_timeEl) _timeEl.addEventListener('change', checkAvailability);
+
+/* ════════════════════════════════════
+   STYLE ALL FORM INPUTS
+════════════════════════════════════ */
+document.querySelectorAll('input,select,textarea').forEach(el => {
+  if (!el.classList.contains('appt-input') && !el.type?.match(/radio|checkbox|submit/)) {
+    el.classList.add('appt-input', 'form-control');
+  }
+});
+
+/* ════════════════════════════════════
+   SUBMIT ANIMATION
+════════════════════════════════════ */
+function animateSubmit() {
+  const btn  = document.getElementById('submitBtn');
+  const icon = document.getElementById('submitIcon');
+  const txt  = document.getElementById('submitText');
+  if (!btn) return;
+  setTimeout(() => {
+    if (!btn.disabled) {
+      btn.disabled = true;
+      icon.className = 'bi bi-arrow-repeat spin-icon';
+      txt.textContent = 'Booking...';
+      setTimeout(() => {
+        icon.className = 'bi bi-check2-circle';
+        txt.textContent = 'Booked!';
+      }, 1800);
+    }
+  }, 10);
+}
+</script>
 {% endblock %}
