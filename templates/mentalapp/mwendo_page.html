@@ -1,0 +1,405 @@
+{% extends 'mentalapp/base.html' %}
+{% block title %}Talk to Mwendo — MindWell AI{% endblock %}
+{% block nav_mwendo %}active-page{% endblock %}
+
+{% block extra_css %}
+<style>
+/* ══ HERO ══════════════════════════════════════════════ */
+.mw-hero{
+  background:linear-gradient(135deg,var(--deep) 0%,#1a3530 60%,#2d5a4e 100%);
+  padding:3.5rem 0 3rem;
+  position:relative;
+  overflow:hidden;
+}
+.mw-hero::before{
+  content:'';
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse 60% 70% at 80% 40%,rgba(74,124,111,.3) 0%,transparent 65%);
+}
+.mw-hero h1{color:#fff;font-size:clamp(1.8rem,4vw,2.6rem);position:relative}
+.mw-hero p{color:rgba(255,255,255,.6);font-size:.95rem;max-width:540px;line-height:1.75;position:relative}
+.mw-status{
+  display:inline-flex;align-items:center;gap:.5rem;
+  background:rgba(74,184,111,.15);border:1px solid rgba(74,184,111,.3);
+  border-radius:50px;padding:.3rem .9rem;font-size:.78rem;color:#4ade80;
+  margin-bottom:1rem;position:relative;
+}
+.mw-dot{width:7px;height:7px;background:#4ade80;border-radius:50%;animation:pulse-dot 2s ease infinite}
+
+/* ══ LAYOUT ════════════════════════════════════════════ */
+.mwendo-layout{padding:2rem 0 4rem}
+.chat-page-card{
+  background:#fff;border-radius:24px;
+  box-shadow:0 8px 40px rgba(28,43,40,.1);
+  overflow:hidden;height:100%;
+  display:flex;flex-direction:column;
+}
+
+/* ══ CHAT HEAD ═════════════════════════════════════════ */
+.chat-page-head{
+  background:linear-gradient(135deg,#1e3a35,#2a4a42);
+  padding:1.2rem 1.6rem;display:flex;align-items:center;gap:1rem;
+  flex-shrink:0;
+}
+.cph-avatar{
+  width:48px;height:48px;
+  background:linear-gradient(135deg,var(--sage),var(--warm));
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:1.4rem;flex-shrink:0;
+}
+.cph-name{color:#fff;font-weight:700;font-size:1rem}
+.cph-sub{color:rgba(255,255,255,.55);font-size:.75rem;display:flex;align-items:center;gap:.35rem;margin-top:.1rem}
+
+/* ══ MOOD BAR ══════════════════════════════════════════ */
+.page-mood-bar{
+  background:rgba(74,124,111,.04);
+  border-bottom:1px solid rgba(74,124,111,.09);
+  padding:.8rem 1.4rem;
+  display:flex;align-items:center;gap:.5rem;
+  flex-wrap:wrap;flex-shrink:0;
+}
+.pm-label{font-size:.78rem;color:var(--muted);font-weight:600;white-space:nowrap}
+.pm-chip{
+  background:#fff;border:1.5px solid rgba(74,124,111,.18);
+  border-radius:50px;padding:.3rem .9rem;font-size:.84rem;
+  cursor:pointer;font-family:inherit;transition:all .2s;color:var(--deep);
+}
+.pm-chip:hover{background:var(--sage);border-color:var(--sage);color:#fff;transform:translateY(-2px)}
+
+/* ══ MESSAGES ══════════════════════════════════════════ */
+.page-msgs{
+  flex:1;overflow-y:auto;
+  padding:1.4rem;
+  display:flex;flex-direction:column;gap:.85rem;
+  min-height:300px;max-height:400px;
+}
+.page-msgs::-webkit-scrollbar{width:3px}
+.page-msgs::-webkit-scrollbar-thumb{background:rgba(74,124,111,.2);border-radius:50px}
+.pmsg{
+  max-width:82%;padding:.8rem 1.1rem;
+  border-radius:18px;font-size:.9rem;line-height:1.6;
+  animation:msg-pop .28s ease;
+}
+@keyframes msg-pop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.pmsg.bot{background:linear-gradient(135deg,#f0f5f3,#eaf2ee);color:var(--deep);border-bottom-left-radius:4px;align-self:flex-start}
+.pmsg.user{background:linear-gradient(135deg,#3d8b7a,#1e3a35);color:#fff;border-bottom-right-radius:4px;align-self:flex-end}
+.pmsg.crisis{background:rgba(181,85,74,.08);border:1.5px solid rgba(181,85,74,.3);border-bottom-left-radius:4px;align-self:flex-start}
+.page-typing{
+  display:flex;gap:5px;align-items:center;
+  padding:.75rem 1rem;background:#f0f5f3;
+  border-radius:18px;border-bottom-left-radius:4px;
+  align-self:flex-start;width:56px;flex-shrink:0;
+}
+.page-typing span{width:7px;height:7px;background:var(--sage);border-radius:50%;animation:tdot .9s ease infinite}
+.page-typing span:nth-child(2){animation-delay:.18s}
+.page-typing span:nth-child(3){animation-delay:.36s}
+@keyframes tdot{0%,100%{transform:translateY(0);opacity:.5}50%{transform:translateY(-5px);opacity:1}}
+
+/* ══ QUICK REPLIES ═════════════════════════════════════ */
+.page-quick{
+  padding:.6rem 1.4rem;display:flex;flex-wrap:wrap;gap:7px;
+  border-top:1px solid rgba(74,124,111,.08);flex-shrink:0;
+}
+.pqr-btn{
+  background:rgba(74,124,111,.07);border:1px solid rgba(74,124,111,.2);
+  color:var(--sage);font-size:.8rem;border-radius:50px;padding:.32rem .9rem;
+  cursor:pointer;font-family:inherit;transition:all .2s;
+}
+.pqr-btn:hover{background:var(--sage);color:#fff;border-color:var(--sage)}
+
+/* ══ INPUT ═════════════════════════════════════════════ */
+.page-input-row{
+  display:flex;gap:8px;padding:.9rem 1.4rem;
+  border-top:1px solid rgba(74,124,111,.09);
+  background:#fafcfb;flex-shrink:0;
+}
+.page-text-input{
+  flex:1;border:1.5px solid rgba(74,124,111,.2);
+  border-radius:50px;padding:.6rem 1.1rem;font-size:.9rem;
+  outline:none;font-family:inherit;
+  transition:border-color .2s,box-shadow .2s;background:#fff;
+}
+.page-text-input:focus{border-color:var(--sage);box-shadow:0 0 0 3px rgba(74,124,111,.1)}
+.page-send-btn{
+  background:var(--sage);border:none;border-radius:50%;
+  width:42px;height:42px;color:#fff;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.95rem;flex-shrink:0;transition:all .2s;
+}
+.page-send-btn:hover{background:var(--deep);transform:scale(1.1)}
+.page-crisis-bar{
+  background:#fff8f8;border-top:1px solid #ffe0de;
+  padding:.6rem 1.4rem;font-size:.78rem;color:#b5554a;
+  text-align:center;flex-shrink:0;
+}
+.page-crisis-bar a{color:#b5554a;font-weight:700;text-decoration:none}
+.page-crisis-bar a:hover{text-decoration:underline}
+
+/* ══ SIDE CARDS ════════════════════════════════════════ */
+.side-card{
+  background:#fff;border-radius:18px;
+  border:1px solid rgba(74,124,111,.12);
+  padding:1.4rem;
+  box-shadow:0 4px 18px rgba(28,43,40,.06);
+  margin-bottom:1.2rem;
+}
+.sc-title{
+  font-size:.74rem;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--sage);font-weight:700;margin-bottom:.9rem;
+  display:flex;align-items:center;gap:.4rem;
+}
+.tip-chip{
+  background:rgba(74,124,111,.06);border:1px solid rgba(74,124,111,.14);
+  border-radius:10px;padding:.6rem .8rem;font-size:.82rem;color:var(--deep);
+  margin-bottom:.5rem;cursor:pointer;transition:all .2s;
+  display:block;line-height:1.5;text-decoration:none;
+}
+.tip-chip:hover{background:var(--sage);color:#fff;border-color:var(--sage)}
+
+/* Premium teaser */
+.premium-teaser{
+  background:linear-gradient(135deg,rgba(232,201,138,.1),rgba(74,124,111,.06));
+  border:1.5px dashed rgba(232,201,138,.4);border-radius:14px;
+  padding:1.2rem 1.4rem;text-align:center;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- ══ HERO ══════════════════════════════════════════════ -->
+<section class="mw-hero">
+  <div class="container position-relative">
+    <div class="mw-status"><div class="mw-dot"></div>Mwendo is online · Available 24/7</div>
+    <h1>🌿 Talk to Mwendo</h1>
+    <p>Your AI-powered mental wellness companion. Share how you're feeling — Mwendo listens, responds, and guides you toward support.</p>
+  </div>
+</section>
+
+<!-- ══ MAIN LAYOUT ════════════════════════════════════════ -->
+<div class="mwendo-layout">
+  <div class="container">
+    <div class="row g-4 align-items-start">
+
+      <!-- Main chat -->
+      <div class="col-lg-8">
+        <div class="chat-page-card">
+          <div class="chat-page-head">
+            <div class="cph-avatar">🌿</div>
+            <div>
+              <div class="cph-name">Mwendo</div>
+              <div class="cph-sub"><div class="mw-dot"></div>MindWell AI Companion · Always here</div>
+            </div>
+            <button onclick="clearPageChat()" style="margin-left:auto;background:rgba(255,255,255,.1);border:none;color:rgba(255,255,255,.7);border-radius:8px;padding:.32rem .8rem;font-size:.78rem;cursor:pointer;font-family:inherit">↺ New Chat</button>
+          </div>
+
+          <div class="page-mood-bar">
+            <span class="pm-label">How are you feeling?</span>
+            <button class="pm-chip" onclick="pageQuickMood('I am feeling pretty good today')">😊 Good</button>
+            <button class="pm-chip" onclick="pageQuickMood('I am feeling anxious and stressed')">😰 Anxious</button>
+            <button class="pm-chip" onclick="pageQuickMood('I am feeling sad and low')">😔 Sad</button>
+            <button class="pm-chip" onclick="pageQuickMood('I am exhausted and drained')">😴 Tired</button>
+            <button class="pm-chip" onclick="pageQuickMood('I need crisis support right now')">🆘 Crisis</button>
+          </div>
+
+          <div class="page-msgs" id="pageMsgs"></div>
+          <div class="page-quick" id="pageQuick"></div>
+
+          <div class="page-input-row">
+            <input class="page-text-input" id="pageInput" type="text"
+              placeholder="Tell Mwendo how you're feeling..."
+              onkeydown="if(event.key==='Enter')pageSend()">
+            <button class="page-send-btn" onclick="pageSend()">
+              <i class="bi bi-send-fill"></i>
+            </button>
+          </div>
+          <div class="page-crisis-bar">
+            🆘 In crisis? Call <a href="tel:0722178177">0722 178 177</a> — Befrienders Kenya · Free · 24/7
+          </div>
+        </div>
+      </div>
+
+      <!-- Side panel -->
+      <div class="col-lg-4">
+
+        <div class="side-card">
+          <div class="sc-title"><i class="bi bi-lightning-charge"></i>Quick Topics</div>
+          <a class="tip-chip" onclick="pageQuickMood('I need help with anxiety and stress')">😰 Help with anxiety</a>
+          <a class="tip-chip" onclick="pageQuickMood('I feel depressed and sad')">😔 I feel depressed</a>
+          <a class="tip-chip" onclick="pageQuickMood('I need to do a breathing exercise')">🧘 Breathing exercise</a>
+          <a class="tip-chip" onclick="pageQuickMood('Can you suggest a journal prompt')">📓 Journal prompts</a>
+          <a class="tip-chip" onclick="pageQuickMood('I need crisis support resources')">🆘 Crisis resources</a>
+          <a class="tip-chip" onclick="pageQuickMood('I want to build better daily habits')">✅ Build better habits</a>
+        </div>
+
+        <div class="side-card">
+          <div class="sc-title"><i class="bi bi-compass"></i>While You're Here</div>
+          <div class="d-flex flex-column gap-2">
+            <a href="{% url 'mentalapp:checklist_today' %}" class="tip-chip">✅ Today's Self-Care Checklist</a>
+            <a href="{% url 'mentalapp:mood_create' %}" class="tip-chip">😊 Log Your Mood</a>
+            <a href="{% url 'mentalapp:journal_create' %}" class="tip-chip">📓 Write a Journal Entry</a>
+            <a href="{% url 'mentalapp:resources' %}" class="tip-chip">💚 Crisis Resources</a>
+            <a href="{% url 'mentalapp:appointment_create' %}" class="tip-chip">📅 Book a Session</a>
+          </div>
+        </div>
+
+        <div class="side-card">
+          <div class="premium-teaser">
+            <div style="font-size:1.8rem;margin-bottom:.5rem">🔒</div>
+            <div style="font-size:.88rem;font-weight:700;color:var(--deep);margin-bottom:.3rem">AI Deep Insights</div>
+            <p style="font-size:.78rem;color:var(--muted);line-height:1.55;margin-bottom:.9rem">Personalised mental health pattern analysis and weekly AI wellness reports.</p>
+            <button style="background:rgba(232,201,138,.15);border:1px solid rgba(232,201,138,.4);color:#9a7a20;border-radius:50px;padding:.35rem 1.1rem;font-size:.78rem;font-weight:600;cursor:not-allowed" disabled>Coming Soon ✨</button>
+          </div>
+          <p style="font-size:.73rem;color:var(--muted);margin-top:.9rem;line-height:1.6;text-align:center">Core support is <strong style="color:var(--sage)">always free</strong>. Advanced AI insights are a future premium feature.</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let _pageHistory = [];
+const _CSRF = document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '';
+
+// Auto-greet on load
+window.addEventListener('DOMContentLoaded', () => {
+  const name = MW_USER.authenticated && MW_USER.name ? MW_USER.name : '';
+  const greeting = name
+    ? 'Hi **' + name + '** 💚 I\'m **Mwendo** — your mental wellness companion.\n\nThis is a safe space. Tell me how you\'re feeling right now.'
+    : 'Hi there 💚 I\'m **Mwendo** — your mental wellness companion.\n\nThis is a safe space. You can tell me anything. I\'m here.';
+  setTimeout(() => pageAddBot(greeting, [
+    '😊 I\'m doing well',
+    '😰 I feel anxious',
+    '😔 I feel sad',
+    '😴 I\'m exhausted',
+    '🆘 I need crisis support',
+  ]), 500);
+});
+
+function pageAddBot(text, quickReplies = []) {
+  const msgs = document.getElementById('pageMsgs');
+  const qrow = document.getElementById('pageQuick');
+
+  const isCrisis = /crisis|suicid|harm|hurt|die|end it/i.test(text);
+  const m = document.createElement('div');
+  m.className = 'pmsg ' + (isCrisis ? 'crisis' : 'bot');
+  m.innerHTML = text
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\n/g, '<br>');
+  msgs.appendChild(m);
+  msgs.scrollTop = msgs.scrollHeight;
+
+  qrow.innerHTML = '';
+  quickReplies.forEach(r => {
+    const b = document.createElement('button');
+    b.className = 'pqr-btn'; b.textContent = r;
+    b.onclick = () => pageUserSend(r);
+    qrow.appendChild(b);
+  });
+
+  if (/breath|breathe|relax/i.test(text)) {
+    const bb = document.createElement('button');
+    bb.className = 'pqr-btn';
+    bb.style.background = 'rgba(74,124,111,.12)';
+    bb.textContent = '🧘 Open Breathing Exercise';
+    bb.onclick = startBreathe;
+    msgs.appendChild(bb);
+    msgs.scrollTop = msgs.scrollHeight;
+  }
+}
+
+function pageUserSend(text) {
+  const msgs = document.getElementById('pageMsgs');
+  const qrow = document.getElementById('pageQuick');
+  const m = document.createElement('div');
+  m.className = 'pmsg user'; m.textContent = text;
+  msgs.appendChild(m); msgs.scrollTop = msgs.scrollHeight;
+  qrow.innerHTML = '';
+  _pageHistory.push({ role: 'user', text });
+  pageFetch(text);
+}
+
+async function pageFetch(message) {
+  const msgs = document.getElementById('pageMsgs');
+  const dots = document.createElement('div');
+  dots.className = 'page-typing';
+  dots.innerHTML = '<span></span><span></span><span></span>';
+  msgs.appendChild(dots); msgs.scrollTop = msgs.scrollHeight;
+
+  try {
+    const res = await fetch('/mwendo-chat/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': _CSRF },
+      body: JSON.stringify({ message, history: _pageHistory.slice(-6) })
+    });
+    dots.remove();
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+    pageAddBot(data.reply, data.quick || []);
+    if (data.action === 'breathe') setTimeout(startBreathe, 600);
+    if (data.redirect && MW_URLS[data.redirect]) {
+      setTimeout(() => window.location.href = MW_URLS[data.redirect], 1200);
+    }
+    _pageHistory.push({ role: 'bot', text: data.reply });
+  } catch {
+    dots.remove();
+    pageFallback(message);
+  }
+}
+
+function pageFallback(message) {
+  const low = message.toLowerCase();
+  let reply = "I hear you. 💚 Whatever you're carrying — it matters.\n\nWhat would feel most helpful right now?";
+  let quick = ['🧘 Breathing exercise', 'Find resources', 'Self-care guide', 'Tell me more'];
+
+  if (/crisis|suicid|kill|harm|hurt myself|end it|want to die|give up/i.test(low)) {
+    reply = "You matter deeply.\n\n🆘 **Call: 0722 178 177** (Befrienders Kenya · Free · 24/7)\n📍 Mathari Hospital: **+254 20 2724069**\n🚑 Emergency: **999 / 112**\n\nI'm right here with you.";
+    quick = ['Call 0722 178 177', "I'm scared but safe", '🧘 Help me breathe', 'Stay with me'];
+  } else if (/anxi|panic|stress|worry|overwhelm|scared/i.test(low)) {
+    reply = "Anxiety can feel relentless. 💙 Let's slow things down together.\n\nWould a breathing exercise help right now?";
+    quick = ['🧘 Yes, let\'s breathe', 'Tell me about anxiety', 'I need more support'];
+  } else if (/sad|depress|hopeless|cry|empty|numb|alone/i.test(low)) {
+    reply = "Thank you for trusting me. 💚 Sadness means something hurts — and that deserves care.\n\nAre you safe right now?";
+    quick = ["Yes, I'm safe", 'I need crisis support', '🧘 Help me breathe'];
+  } else if (/tired|exhaust|burnout|drain/i.test(low)) {
+    reply = "Your mind and body are asking for rest. 🌙 Rest isn't weakness — it's how you come back.";
+    quick = ['Self-care guide', '🧘 Try breathing', 'Find resources'];
+  } else if (/breath|breathe/i.test(low)) {
+    reply = "Let's breathe together. 🌿 Starting now...";
+    quick = []; setTimeout(startBreathe, 600);
+  } else if (/good|great|happy|fine|well|better/i.test(low)) {
+    reply = "That makes my heart happy! 🌟\n\nWhat would you like to explore today?";
+    quick = ['Self-care guide', 'Prevention tips', 'Track my mood', 'Just checking in 😊'];
+  }
+
+  pageAddBot(reply, quick);
+  _pageHistory.push({ role: 'bot', text: reply });
+}
+
+function pageSend() {
+  const inp = document.getElementById('pageInput');
+  const txt = inp.value.trim();
+  if (!txt) return;
+  inp.value = '';
+  pageUserSend(txt);
+}
+
+function pageQuickMood(text) {
+  pageUserSend(text);
+}
+
+function clearPageChat() {
+  document.getElementById('pageMsgs').innerHTML = '';
+  document.getElementById('pageQuick').innerHTML = '';
+  _pageHistory = [];
+  setTimeout(() => pageAddBot(
+    'Fresh start. 🌿 Tell me how you\'re feeling right now.',
+    ['😊 Pretty good', '😰 Anxious', '😔 Feeling low', '🆘 I need support']
+  ), 300);
+}
+</script>
+{% endblock %}

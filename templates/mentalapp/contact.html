@@ -1,42 +1,84 @@
 {% extends 'mentalapp/base.html' %}
 {% block title %}Contact Us · MindWell{% endblock %}
+{% block nav_contact %}active-page{% endblock %}
 {% block extra_css %}
 <style>
-.contact-hero{background:linear-gradient(135deg,var(--deep) 0%,#2a4a42 70%,var(--sage) 100%);padding:3.5rem 0 5.5rem;position:relative;overflow:hidden}
+.contact-hero{background:linear-gradient(135deg,var(--deep) 0%,#2a4a42 70%,var(--sage) 100%);padding:3.5rem 0 3rem;position:relative;overflow:hidden}
 .contact-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 55% 65% at 80% 40%,rgba(111,173,160,.22) 0%,transparent 65%)}
 .contact-hero h1{color:#fff;position:relative}
 .contact-hero p{color:rgba(255,255,255,.6);position:relative;max-width:520px;line-height:1.75}
 
-.contact-wrap{margin-top:-3rem;padding-bottom:5rem}
-.contact-card{background:#fff;border-radius:24px;box-shadow:0 12px 50px rgba(28,43,40,.1);overflow:hidden;max-width:900px;margin:0 auto}
+.contact-wrap{padding:2rem 0 5rem}
+.contact-card{background:#fff;border-radius:24px;box-shadow:0 12px 50px rgba(28,43,40,.1);overflow:hidden;max-width:960px;margin:0 auto}
 
 /* Info column */
-.contact-info{background:linear-gradient(160deg,var(--deep),#2e5048);padding:2.5rem;display:flex;flex-direction:column;gap:1.5rem;height:100%}
-.ci-title{font-family:'Playfair Display',serif;color:#fff;font-size:1.3rem;margin-bottom:.3rem}
-.ci-sub{color:rgba(255,255,255,.55);font-size:.86rem;line-height:1.65}
+.contact-info{background:linear-gradient(160deg,var(--deep),#2e5048);padding:2.5rem;display:flex;flex-direction:column;gap:1.4rem;height:100%}
+.ci-title{font-family:'Playfair Display',serif;color:#fff;font-size:1.3rem;margin-bottom:.2rem}
+.ci-sub{color:rgba(255,255,255,.5);font-size:.86rem;line-height:1.65}
 .ci-row{display:flex;align-items:flex-start;gap:.85rem}
-.ci-icon{width:38px;height:38px;background:rgba(111,173,160,.2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;color:var(--warm);flex-shrink:0}
+.ci-icon{width:38px;height:38px;background:rgba(111,173,160,.2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;color:var(--warm);flex-shrink:0;transition:all .2s}
+.ci-row:hover .ci-icon{background:rgba(111,173,160,.4);transform:scale(1.1)}
 .ci-text strong{display:block;color:#fff;font-size:.88rem}
-.ci-text span{color:rgba(255,255,255,.55);font-size:.82rem}
-.crisis-mini{background:rgba(181,85,74,.18);border:1px solid rgba(181,85,74,.35);border-radius:14px;padding:1rem 1.1rem;margin-top:.5rem}
+.ci-text span{color:rgba(255,255,255,.5);font-size:.82rem}
+.ci-text a{color:rgba(255,255,255,.65);text-decoration:none;font-size:.82rem;transition:color .2s}
+.ci-text a:hover{color:var(--warm)}
+.crisis-mini{background:rgba(181,85,74,.18);border:1px solid rgba(181,85,74,.35);border-radius:14px;padding:1rem 1.1rem;margin-top:.3rem}
 .crisis-mini .cm-title{color:#ffb3ab;font-weight:700;font-size:.82rem;margin-bottom:.5rem;display:flex;align-items:center;gap:.4rem}
-.crisis-mini .cm-line{font-size:.8rem;color:rgba(255,255,255,.65);line-height:2}
+.crisis-mini .cm-line{font-size:.8rem;color:rgba(255,255,255,.65);line-height:2.1}
 .crisis-mini a{color:#ffb3ab;font-weight:700;text-decoration:none}
 .crisis-mini a:hover{text-decoration:underline}
 
-/* Form column */
+/* Subject cards */
+.subject-grid{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:1.4rem}
+@media(max-width:480px){.subject-grid{grid-template-columns:1fr}}
+.subj-card{border:1.5px solid rgba(74,124,111,.18);border-radius:14px;padding:.75rem 1rem;cursor:pointer;transition:all .22s;position:relative;background:#fff}
+.subj-card:hover{border-color:var(--sage);background:rgba(74,124,111,.04)}
+.subj-card.selected{border-color:var(--sage);background:rgba(74,124,111,.07);box-shadow:0 0 0 3px rgba(74,124,111,.12)}
+.subj-card input[type=radio]{position:absolute;opacity:0;pointer-events:none}
+.subj-card .sc-icon{font-size:1.2rem;margin-bottom:.3rem}
+.subj-card .sc-name{font-size:.85rem;font-weight:700;color:var(--deep)}
+.subj-card .sc-desc{font-size:.74rem;color:var(--muted);margin-top:.1rem;line-height:1.4}
+.subj-card.selected .sc-name{color:var(--sage)}
+.subj-check{position:absolute;top:.6rem;right:.6rem;width:18px;height:18px;border-radius:50%;background:var(--sage);color:#fff;font-size:.65rem;display:none;align-items:center;justify-content:center}
+.subj-card.selected .subj-check{display:flex}
+
+/* Form */
 .contact-form-col{padding:2.5rem}
 .cf-label{font-size:.82rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.35rem;display:block}
 .cf-input{width:100%;border:1.5px solid rgba(74,124,111,.18);border-radius:12px;padding:.65rem 1rem;font-size:.9rem;font-family:inherit;outline:none;background:#fafcfb;transition:border-color .2s,box-shadow .2s}
 .cf-input:focus{border-color:var(--sage);box-shadow:0 0 0 3px rgba(74,124,111,.1);background:#fff}
-textarea.cf-input{resize:vertical;min-height:130px;line-height:1.65}
-.cf-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='%234a7c6f' d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .8rem center;background-size:12px;cursor:pointer}
+textarea.cf-input{resize:vertical;min-height:120px;line-height:1.65}
+.char-count{font-size:.75rem;color:var(--muted);text-align:right;margin-top:.25rem}
+.char-count.warn{color:#b5892a}
 .submit-btn{background:linear-gradient(135deg,var(--sage),#3d8b7a);color:#fff;border:none;border-radius:12px;padding:.8rem 2.2rem;font-size:.95rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all .28s;box-shadow:0 4px 16px rgba(74,124,111,.3);width:100%}
 .submit-btn:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(74,124,111,.4)}
 .submit-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+
+/* FAQ accordion */
+#faq-section{background:rgba(74,124,111,.04);border-radius:20px;padding:1.8rem;margin-top:1rem}
+.faq-title{font-family:'Playfair Display',serif;font-size:1rem;color:var(--deep);margin-bottom:1rem}
+.faq-item{border:1px solid rgba(74,124,111,.12);border-radius:12px;margin-bottom:.6rem;overflow:hidden;background:#fff}
+.faq-q{width:100%;background:none;border:none;padding:.85rem 1.1rem;font-family:inherit;font-size:.88rem;font-weight:600;color:var(--deep);cursor:pointer;text-align:left;display:flex;align-items:center;justify-content:space-between;transition:background .2s}
+.faq-q:hover{background:rgba(74,124,111,.04)}
+.faq-q.open{background:rgba(74,124,111,.06);color:var(--sage)}
+.faq-q i{transition:transform .25s;font-size:.8rem;flex-shrink:0}
+.faq-q.open i{transform:rotate(180deg)}
+.faq-a{display:none;padding:.6rem 1.1rem 1rem;font-size:.85rem;color:var(--muted);line-height:1.7;border-top:1px solid rgba(74,124,111,.08)}
+.faq-a.show{display:block;animation:fp .3s ease}
+@keyframes fp{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+
+/* Mood/urgency selector */
+.urgency-row{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.2rem}
+.urg-btn{background:#fff;border:1.5px solid rgba(74,124,111,.18);border-radius:50px;padding:.32rem .9rem;font-size:.82rem;cursor:pointer;font-family:inherit;color:var(--deep);transition:all .22s}
+.urg-btn:hover,.urg-btn.active{background:var(--sage);border-color:var(--sage);color:#fff}
+
+/* Success state */
 .success-state{text-align:center;padding:3rem 1rem;display:none}
-.success-state.show{display:block;animation:fadeUp .4s ease}
-@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.success-state.show{display:block;animation:fp .45s ease}
+
+/* Mwendo suggestion */
+.mwendo-suggest{background:linear-gradient(135deg,rgba(74,124,111,.07),rgba(74,124,111,.03));border:1.5px solid rgba(74,124,111,.15);border-radius:14px;padding:1rem 1.2rem;margin-bottom:1.2rem;display:flex;align-items:center;gap:.75rem;font-size:.85rem;color:var(--deep)}
+.ms-avatar{width:34px;height:34px;background:linear-gradient(135deg,var(--sage),var(--warm));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
 </style>
 {% endblock %}
 
@@ -45,7 +87,7 @@ textarea.cf-input{resize:vertical;min-height:130px;line-height:1.65}
   <div class="container position-relative">
     <span class="badge-pill">Get in Touch</span>
     <h1>Contact MindWell</h1>
-    <p>Have a question, suggestion, or need to reach the team? We read every message and aim to respond within 24 hours.</p>
+    <p>Have a question, suggestion, or feedback? We read every message and respond within 24 hours.</p>
   </div>
 </section>
 
@@ -58,26 +100,23 @@ textarea.cf-input{resize:vertical;min-height:130px;line-height:1.65}
         <div class="col-lg-4">
           <div class="contact-info">
             <div>
-              <div class="ci-title">MindWell</div>
-              <div class="ci-sub">mentalhealthcare_ke — built with compassion by a team of 12. We're a student hackathon project with a mission to make mental health support accessible to everyone.</div>
+              <div class="ci-title">MindWell 🌿</div>
+              <div class="ci-sub">mentalhealthcare_ke — built by a team of 12 to make mental health support accessible to every Kenyan.</div>
             </div>
-
             <div class="ci-row">
               <div class="ci-icon"><i class="bi bi-instagram"></i></div>
               <div class="ci-text">
                 <strong>Instagram</strong>
-                <span><a href="https://www.instagram.com/mentalhealthcare_ke2026" target="_blank" style="color:rgba(255,255,255,.55);text-decoration:none">@mentalhealthcare_ke2026</a></span>
+                <a href="https://www.instagram.com/mentalhealthcare_ke2026" target="_blank">@mentalhealthcare_ke2026</a>
               </div>
             </div>
-
             <div class="ci-row">
               <div class="ci-icon"><i class="bi bi-whatsapp"></i></div>
               <div class="ci-text">
                 <strong>WhatsApp Community</strong>
-                <span><a href="https://chat.whatsapp.com/CraUGUNCZENIdojRePLiNK" target="_blank" style="color:rgba(255,255,255,.55);text-decoration:none">Join our support group</a></span>
+                <a href="https://chat.whatsapp.com/CraUGUNCZENIdojRePLiNK" target="_blank">Join our support group →</a>
               </div>
             </div>
-
             <div class="ci-row">
               <div class="ci-icon"><i class="bi bi-clock"></i></div>
               <div class="ci-text">
@@ -85,7 +124,13 @@ textarea.cf-input{resize:vertical;min-height:130px;line-height:1.65}
                 <span>Within 24 hours on weekdays</span>
               </div>
             </div>
-
+            <div class="ci-row">
+              <div class="ci-icon"><i class="bi bi-geo-alt"></i></div>
+              <div class="ci-text">
+                <strong>Based in</strong>
+                <span>Nairobi, Kenya 🇰🇪</span>
+              </div>
+            </div>
             <div class="crisis-mini">
               <div class="cm-title"><i class="bi bi-telephone-fill"></i>Need immediate help?</div>
               <div class="cm-line">
@@ -94,6 +139,11 @@ textarea.cf-input{resize:vertical;min-height:130px;line-height:1.65}
                 Emergency: <a href="tel:999">999</a> / <a href="tel:112">112</a>
               </div>
             </div>
+
+            <!-- Quick Mwendo link -->
+            <button onclick="toggleChat(true)" style="background:rgba(74,184,111,.15);border:1px solid rgba(74,184,111,.3);color:#4ade80;border-radius:50px;padding:.5rem 1.1rem;font-size:.82rem;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:.5rem;transition:all .2s;width:100%;justify-content:center">
+              <span>🌿</span>Need to talk now? Chat with Mwendo
+            </button>
           </div>
         </div>
 
@@ -101,64 +151,146 @@ textarea.cf-input{resize:vertical;min-height:130px;line-height:1.65}
         <div class="col-lg-8">
           <div class="contact-form-col">
 
+            <!-- Success state -->
             <div id="successState" class="success-state">
               <div style="font-size:3rem;margin-bottom:1rem">💚</div>
               <h4 style="font-family:'Playfair Display',serif;color:var(--deep)">Message Sent!</h4>
-              <p style="color:var(--muted);font-size:.9rem;line-height:1.7;margin-bottom:1.5rem">Thank you for reaching out. We'll get back to you within 24 hours. In the meantime, Mwendo is always available.</p>
+              <p style="color:var(--muted);font-size:.9rem;line-height:1.7;margin-bottom:1.5rem">Thank you for reaching out. We'll reply within 24 hours. While you wait, Mwendo is always available.</p>
               <div class="d-flex gap-2 justify-content-center flex-wrap">
                 <a href="{% url 'mentalapp:home' %}" class="btn-sage" style="border-radius:12px">Return Home</a>
-                <button onclick="document.getElementById('successState').classList.remove('show');document.getElementById('contactForm').style.display='block'" style="background:rgba(74,124,111,.08);border:1.5px solid rgba(74,124,111,.2);color:var(--sage);border-radius:12px;padding:.65rem 1.4rem;cursor:pointer;font-family:inherit">Send Another</button>
+                <button onclick="resetForm()" style="background:rgba(74,124,111,.08);border:1.5px solid rgba(74,124,111,.2);color:var(--sage);border-radius:12px;padding:.65rem 1.4rem;cursor:pointer;font-family:inherit">Send Another</button>
               </div>
             </div>
 
-            <form method="post" id="contactForm">
-              {% csrf_token %}
+            <!-- Form -->
+            <div id="contactFormWrap">
               <h4 style="font-family:'Playfair Display',serif;color:var(--deep);margin-bottom:.3rem">Send Us a Message</h4>
-              <p style="color:var(--muted);font-size:.88rem;margin-bottom:1.5rem;line-height:1.6">Every message is read by a real person. We care about what you have to say.</p>
+              <p style="color:var(--muted);font-size:.88rem;margin-bottom:1.4rem">Every message is read by a real person. 💚</p>
 
               {% if messages %}
                 {% for msg in messages %}<div class="alert alert-{{ msg.tags }} alert-dismissible fade show mb-3" style="border-radius:12px;font-size:.88rem">{{ msg }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>{% endfor %}
               {% endif %}
 
-              <div class="row g-3 mb-3">
-                <div class="col-sm-6">
-                  <label class="cf-label">Your Name <span style="color:#b5554a">*</span></label>
-                  <input class="cf-input" type="text" name="name" placeholder="Jane Wanjiku" value="{{ form.name.value|default:'' }}" required>
-                  {% if form.name.errors %}<div style="color:#c62828;font-size:.8rem;margin-top:.3rem">{{ form.name.errors.0 }}</div>{% endif %}
-                </div>
-                <div class="col-sm-6">
-                  <label class="cf-label">Email Address <span style="color:#b5554a">*</span></label>
-                  <input class="cf-input" type="email" name="email" placeholder="jane@example.com" value="{{ form.email.value|default:'' }}" required>
-                  {% if form.email.errors %}<div style="color:#c62828;font-size:.8rem;margin-top:.3rem">{{ form.email.errors.0 }}</div>{% endif %}
+              <!-- Mwendo suggestion (shown for crisis/urgent topics) -->
+              <div class="mwendo-suggest" id="mwendoSuggest" style="display:none">
+                <div class="ms-avatar">🌿</div>
+                <div>If this is urgent or you need to talk right now — <button onclick="toggleChat(true)" style="background:none;border:none;color:var(--sage);font-weight:700;cursor:pointer;font-family:inherit;font-size:inherit;padding:0">Mwendo is available immediately</button>, 24/7.
                 </div>
               </div>
 
-              <div class="mb-3">
-                <label class="cf-label">Subject <span style="color:#b5554a">*</span></label>
-                <select class="cf-input cf-select" name="subject">
-                  <option value="">What is this about?</option>
-                  <option value="General Question">General Question</option>
-                  <option value="Mental Health Support">Mental Health Support</option>
-                  <option value="Technical Issue">Technical Issue / Bug Report</option>
-                  <option value="Feedback & Suggestions">Feedback &amp; Suggestions</option>
-                  <option value="Partnership">Partnership / Collaboration</option>
-                  <option value="Media Enquiry">Media Enquiry</option>
-                  <option value="Other">Other</option>
-                </select>
+              <form method="post" id="contactForm" novalidate>
+                {% csrf_token %}
+
+                <!-- Subject cards (interactive) -->
+                <div class="mb-3">
+                  <label class="cf-label">What's this about? <span style="color:#b5554a">*</span></label>
+                  <div class="subject-grid" id="subjectGrid">
+                    <label class="subj-card" data-value="General Question" onclick="selectSubject(this)">
+                      <input type="radio" name="subject" value="General Question">
+                      <div class="subj-check"><i class="bi bi-check2"></i></div>
+                      <div class="sc-icon">💬</div>
+                      <div class="sc-name">General Question</div>
+                      <div class="sc-desc">Something you want to know</div>
+                    </label>
+                    <label class="subj-card" data-value="Mental Health Support" onclick="selectSubject(this)">
+                      <input type="radio" name="subject" value="Mental Health Support">
+                      <div class="subj-check"><i class="bi bi-check2"></i></div>
+                      <div class="sc-icon">💙</div>
+                      <div class="sc-name">Mental Health Support</div>
+                      <div class="sc-desc">Need guidance or resources</div>
+                    </label>
+                    <label class="subj-card" data-value="Feedback & Suggestions" onclick="selectSubject(this)">
+                      <input type="radio" name="subject" value="Feedback & Suggestions">
+                      <div class="subj-check"><i class="bi bi-check2"></i></div>
+                      <div class="sc-icon">⭐</div>
+                      <div class="sc-name">Feedback</div>
+                      <div class="sc-desc">Help us improve MindWell</div>
+                    </label>
+                    <label class="subj-card" data-value="Technical Issue" onclick="selectSubject(this)">
+                      <input type="radio" name="subject" value="Technical Issue">
+                      <div class="subj-check"><i class="bi bi-check2"></i></div>
+                      <div class="sc-icon">🔧</div>
+                      <div class="sc-name">Technical Issue</div>
+                      <div class="sc-desc">Bug or problem with the app</div>
+                    </label>
+                    <label class="subj-card" data-value="Partnership" onclick="selectSubject(this)">
+                      <input type="radio" name="subject" value="Partnership">
+                      <div class="subj-check"><i class="bi bi-check2"></i></div>
+                      <div class="sc-icon">🤝</div>
+                      <div class="sc-name">Partnership</div>
+                      <div class="sc-desc">Collaboration opportunity</div>
+                    </label>
+                    <label class="subj-card" data-value="Media Enquiry" onclick="selectSubject(this)">
+                      <input type="radio" name="subject" value="Media Enquiry">
+                      <div class="subj-check"><i class="bi bi-check2"></i></div>
+                      <div class="sc-icon">📰</div>
+                      <div class="sc-name">Media Enquiry</div>
+                      <div class="sc-desc">Press or media request</div>
+                    </label>
+                  </div>
+                  <div id="subjectError" style="color:#c62828;font-size:.8rem;margin-top:.3rem;display:none">Please select a subject.</div>
+                </div>
+
+                <!-- Name + Email -->
+                <div class="row g-3 mb-3">
+                  <div class="col-sm-6">
+                    <label class="cf-label">Your Name <span style="color:#b5554a">*</span></label>
+                    <input class="cf-input" type="text" name="name" id="fieldName" placeholder="Jane Wanjiku" value="{{ form.name.value|default:'' }}" required>
+                    {% if form.name.errors %}<div style="color:#c62828;font-size:.8rem;margin-top:.3rem">{{ form.name.errors.0 }}</div>{% endif %}
+                  </div>
+                  <div class="col-sm-6">
+                    <label class="cf-label">Email Address <span style="color:#b5554a">*</span></label>
+                    <input class="cf-input" type="email" name="email" id="fieldEmail" placeholder="jane@example.com" value="{{ form.email.value|default:'' }}" required>
+                    {% if form.email.errors %}<div style="color:#c62828;font-size:.8rem;margin-top:.3rem">{{ form.email.errors.0 }}</div>{% endif %}
+                  </div>
+                </div>
+
+                <!-- Urgency -->
+                <div class="mb-3">
+                  <label class="cf-label">How urgent is this?</label>
+                  <div class="urgency-row" id="urgencyRow">
+                    <button type="button" class="urg-btn" onclick="selectUrgency(this,'low')">🟢 Not urgent</button>
+                    <button type="button" class="urg-btn" onclick="selectUrgency(this,'medium')">🟡 Fairly urgent</button>
+                    <button type="button" class="urg-btn" onclick="selectUrgency(this,'high')">🔴 Very urgent</button>
+                  </div>
+                </div>
+
+                <!-- Message -->
+                <div class="mb-3">
+                  <label class="cf-label">Your Message <span style="color:#b5554a">*</span></label>
+                  <textarea class="cf-input" name="message" id="fieldMessage" oninput="updateChar()" placeholder="Tell us what's on your mind..." required>{{ form.message.value|default:'' }}</textarea>
+                  <div class="char-count" id="charCount">0 characters</div>
+                  {% if form.message.errors %}<div style="color:#c62828;font-size:.8rem;margin-top:.3rem">{{ form.message.errors.0 }}</div>{% endif %}
+                </div>
+
+                <button type="button" class="submit-btn" id="submitBtn" onclick="submitContact()">
+                  <i class="bi bi-send-heart me-2"></i>Send Message
+                </button>
+                <p style="font-size:.76rem;color:var(--muted);text-align:center;margin-top:.8rem">🔒 Your message is private. We never share your details.</p>
+              </form>
+
+              <!-- FAQ -->
+              <div id="faq-section">
+                <div class="faq-title">💡 Quick Answers</div>
+                <div class="faq-item">
+                  <button class="faq-q" onclick="toggleFaq(this)">How long before you respond? <i class="bi bi-chevron-down"></i></button>
+                  <div class="faq-a">We aim to reply within 24 hours on weekdays. For urgent mental health support, please call Befrienders Kenya on 0722 178 177 — they're available 24/7 for free.</div>
+                </div>
+                <div class="faq-item">
+                  <button class="faq-q" onclick="toggleFaq(this)">Is MindWell free to use? <i class="bi bi-chevron-down"></i></button>
+                  <div class="faq-a">Yes — all core features including Mwendo AI, mood tracking, journaling, and the checklist are completely free. Advanced AI insights are planned for a future premium tier, but essential support will always be free.</div>
+                </div>
+                <div class="faq-item">
+                  <button class="faq-q" onclick="toggleFaq(this)">Can I talk to a real therapist through MindWell? <i class="bi bi-chevron-down"></i></button>
+                  <div class="faq-a">You can book an appointment through our system and we'll connect you with a professional. Mwendo is an AI companion — not a licensed therapist — but can help you prepare for sessions or find resources.</div>
+                </div>
+                <div class="faq-item">
+                  <button class="faq-q" onclick="toggleFaq(this)">Is my data private? <i class="bi bi-chevron-down"></i></button>
+                  <div class="faq-a">Absolutely. Your journal entries, mood logs, and checklist data are private by default. We never sell or share your personal information with third parties.</div>
+                </div>
               </div>
 
-              <div class="mb-4">
-                <label class="cf-label">Your Message <span style="color:#b5554a">*</span></label>
-                <textarea class="cf-input" name="message" placeholder="Tell us what's on your mind..." required>{{ form.message.value|default:'' }}</textarea>
-                {% if form.message.errors %}<div style="color:#c62828;font-size:.8rem;margin-top:.3rem">{{ form.message.errors.0 }}</div>{% endif %}
-              </div>
-
-              <button type="submit" class="submit-btn" id="submitBtn" onclick="animateSubmit()">
-                <i class="bi bi-send-heart me-2"></i>Send Message
-              </button>
-
-              <p style="font-size:.76rem;color:var(--muted);text-align:center;margin-top:1rem;line-height:1.6">🔒 Your message is private. We never share your details with third parties.</p>
-            </form>
+            </div>{# /contactFormWrap #}
           </div>
         </div>
 
@@ -170,22 +302,106 @@ textarea.cf-input{resize:vertical;min-height:130px;line-height:1.65}
 
 {% block extra_js %}
 <script>
-function animateSubmit(){
-  const btn=document.getElementById('submitBtn');
-  if(btn){
-    setTimeout(()=>{
-      btn.disabled=true;
-      btn.innerHTML='<i class="bi bi-hourglass-split me-2"></i>Sending...';
-    },10);
+let _selectedSubject = '';
+let _selectedUrgency = 'low';
+
+/* Subject cards */
+function selectSubject(card){
+  document.querySelectorAll('.subj-card').forEach(c=>c.classList.remove('selected'));
+  card.classList.add('selected');
+  card.querySelector('input[type=radio]').checked = true;
+  _selectedSubject = card.dataset.value;
+  document.getElementById('subjectError').style.display = 'none';
+
+  // Show Mwendo suggestion for mental health support
+  const sug = document.getElementById('mwendoSuggest');
+  if(_selectedSubject === 'Mental Health Support'){
+    sug.style.display = 'flex';
+  } else {
+    sug.style.display = 'none';
+  }
+
+  // Micro animation
+  card.style.transform = 'scale(.97)';
+  setTimeout(()=>card.style.transform = '', 150);
+}
+
+/* Urgency */
+function selectUrgency(btn, level){
+  document.querySelectorAll('.urg-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  _selectedUrgency = level;
+
+  // Show Mwendo suggestion for high urgency
+  const sug = document.getElementById('mwendoSuggest');
+  if(level === 'high'){
+    sug.style.display = 'flex';
+  } else if(_selectedSubject !== 'Mental Health Support'){
+    sug.style.display = 'none';
   }
 }
 
-// Show success state if messages contain success
+/* Char count */
+function updateChar(){
+  const ta = document.getElementById('fieldMessage');
+  const cc = document.getElementById('charCount');
+  const l  = ta.value.length;
+  cc.textContent = l + ' character' + (l===1?'':'s');
+  cc.className = 'char-count' + (l > 400 ? ' warn' : '');
+}
+
+/* FAQ toggle */
+function toggleFaq(btn){
+  const answer = btn.nextElementSibling;
+  const isOpen = answer.classList.contains('show');
+  document.querySelectorAll('.faq-a').forEach(a=>a.classList.remove('show'));
+  document.querySelectorAll('.faq-q').forEach(b=>b.classList.remove('open'));
+  if(!isOpen){
+    answer.classList.add('show');
+    btn.classList.add('open');
+  }
+}
+
+/* Submit */
+function submitContact(){
+  const name    = document.getElementById('fieldName').value.trim();
+  const email   = document.getElementById('fieldEmail').value.trim();
+  const message = document.getElementById('fieldMessage').value.trim();
+
+  if(!_selectedSubject){
+    document.getElementById('subjectError').style.display = 'block';
+    document.getElementById('subjectGrid').scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+  if(!name){ alert('Please enter your name.'); document.getElementById('fieldName').focus(); return; }
+  if(!email || !email.includes('@')){ alert('Please enter a valid email.'); document.getElementById('fieldEmail').focus(); return; }
+  if(message.length < 10){ alert('Please write a message of at least 10 characters.'); document.getElementById('fieldMessage').focus(); return; }
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Sending...';
+
+  // Submit the actual form
+  document.getElementById('contactForm').submit();
+}
+
+function resetForm(){
+  document.getElementById('contactFormWrap').style.display = 'block';
+  document.getElementById('successState').classList.remove('show');
+  document.querySelectorAll('.subj-card').forEach(c=>c.classList.remove('selected'));
+  document.getElementById('fieldName').value = '';
+  document.getElementById('fieldEmail').value = '';
+  document.getElementById('fieldMessage').value = '';
+  _selectedSubject = '';
+  updateChar();
+}
+
+/* Show success if Django redirected with success message */
 {% if messages %}
   {% for msg in messages %}
     {% if 'success' in msg.tags %}
       window.addEventListener('DOMContentLoaded',()=>{
-        document.getElementById('contactForm').style.display='none';
+        document.getElementById('contactFormWrap').style.display='none';
         document.getElementById('successState').classList.add('show');
       });
     {% endif %}

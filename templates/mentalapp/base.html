@@ -42,6 +42,8 @@ h1,h2,h3,h4,h5{font-family:'Playfair Display',serif}
 .user-dropdown .dropdown-menu{background:var(--deep);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:.4rem;min-width:190px;margin-top:.4rem!important;box-shadow:0 8px 32px rgba(0,0,0,.35)}
 .user-dropdown .dropdown-item{color:rgba(255,255,255,.75);border-radius:8px;font-size:.87rem;padding:.5rem .85rem;display:flex;align-items:center;gap:.55rem;transition:all .2s}
 .user-dropdown .dropdown-item:hover{background:rgba(255,255,255,.08);color:var(--warm)}
+.navbar .dropdown-item:hover{background:rgba(255,255,255,.08)!important;color:var(--warm)!important}
+.navbar .dropdown-menu .dropdown-item.active-page{color:var(--warm)!important;background:rgba(255,255,255,.07)!important}
 .user-dropdown .dropdown-divider{border-color:rgba(255,255,255,.1);margin:.3rem 0}
 .user-dropdown .dropdown-item.text-danger-soft{color:#f48fb1}
 .user-dropdown .dropdown-item.text-danger-soft:hover{background:rgba(244,143,177,.1);color:#f48fb1}
@@ -179,14 +181,26 @@ h1,h2,h3,h4,h5{font-family:'Playfair Display',serif}
     </button>
     <div class="collapse navbar-collapse" id="mainNav">
       <ul class="navbar-nav mx-auto gap-1">
-        <li class="nav-item"><a class="nav-link {% block nav_about %}{% endblock %}" href="{% url 'mentalapp:about' %}">About</a></li>
-        <li class="nav-item"><a class="nav-link {% block nav_conditions %}{% endblock %}" href="{% url 'mentalapp:conditions' %}">Conditions</a></li>
-        <li class="nav-item"><a class="nav-link {% block nav_signs %}{% endblock %}" href="{% url 'mentalapp:signs' %}">Warning Signs</a></li>
-        <li class="nav-item"><a class="nav-link {% block nav_prevention %}{% endblock %}" href="{% url 'mentalapp:prevention' %}">Prevention</a></li>
-        <li class="nav-item"><a class="nav-link {% block nav_selfcare %}{% endblock %}" href="{% url 'mentalapp:selfcare' %}">Self-Care</a></li>
+
+        {# ── Learn dropdown ── #}
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle {% block nav_learn %}{% endblock %}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Learn
+          </a>
+          <ul class="dropdown-menu" style="background:var(--deep);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:.4rem;min-width:200px">
+            <li><a class="dropdown-item {% block nav_about %}{% endblock %}" href="{% url 'mentalapp:about' %}" style="color:rgba(255,255,255,.75);border-radius:8px;font-size:.87rem;padding:.5rem .85rem;display:flex;align-items:center;gap:.5rem;transition:all .2s"><i class="bi bi-heart-pulse"></i>About Mental Health</a></li>
+            <li><a class="dropdown-item {% block nav_conditions %}{% endblock %}" href="{% url 'mentalapp:conditions' %}" style="color:rgba(255,255,255,.75);border-radius:8px;font-size:.87rem;padding:.5rem .85rem;display:flex;align-items:center;gap:.5rem;transition:all .2s"><i class="bi bi-journal-medical"></i>Conditions</a></li>
+            <li><a class="dropdown-item {% block nav_signs %}{% endblock %}" href="{% url 'mentalapp:signs' %}" style="color:rgba(255,255,255,.75);border-radius:8px;font-size:.87rem;padding:.5rem .85rem;display:flex;align-items:center;gap:.5rem;transition:all .2s"><i class="bi bi-exclamation-triangle"></i>Warning Signs</a></li>
+            <li><a class="dropdown-item {% block nav_prevention %}{% endblock %}" href="{% url 'mentalapp:prevention' %}" style="color:rgba(255,255,255,.75);border-radius:8px;font-size:.87rem;padding:.5rem .85rem;display:flex;align-items:center;gap:.5rem;transition:all .2s"><i class="bi bi-shield-check"></i>Prevention</a></li>
+            <li><a class="dropdown-item {% block nav_selfcare %}{% endblock %}" href="{% url 'mentalapp:selfcare' %}" style="color:rgba(255,255,255,.75);border-radius:8px;font-size:.87rem;padding:.5rem .85rem;display:flex;align-items:center;gap:.5rem;transition:all .2s"><i class="bi bi-stars"></i>Self-Care Guide</a></li>
+          </ul>
+        </li>
+
         <li class="nav-item"><a class="nav-link {% block nav_resources %}{% endblock %}" href="{% url 'mentalapp:resources' %}">Resources</a></li>
-        <li class="nav-item"><a class="nav-link {% block nav_appointment %}{% endblock %}" href="{% url 'mentalapp:appointment_list' %}">Make an Appointment</a></li>
-        <li class="nav-item"><a class="nav-link {% block nav_mwendo %}{% endblock %}" href="{% url 'mentalapp:mwendo_page' %}" style="color:var(--warm)!important">🌿 Mwendo AI</a></li>
+        <li class="nav-item"><a class="nav-link {% block nav_appointment %}{% endblock %}" href="{% url 'mentalapp:appointment_list' %}">Appointments</a></li>
+        <li class="nav-item"><a class="nav-link {% block nav_contact %}{% endblock %}" href="{% url 'mentalapp:contact' %}">Contact</a></li>
+        <li class="nav-item"><a class="nav-link {% block nav_mwendo %}{% endblock %}" href="{% url 'mentalapp:mwendo_page' %}" style="color:var(--warm)!important;font-weight:600">🌿 Mwendo AI</a></li>
+
       </ul>
       <div class="d-flex align-items-center gap-2 mt-2 mt-lg-0">
         {% if user.is_authenticated %}
@@ -241,15 +255,18 @@ h1,h2,h3,h4,h5{font-family:'Playfair Display',serif}
         </div>
       </div>
       <div class="col-6 col-lg-2">
-        <div class="footer-col-title">Explore</div>
+        <div class="footer-col-title">Learn</div>
         <ul class="footer-list">
           <li><a href="{% url 'mentalapp:home' %}">🏠 Home</a></li>
           <li><a href="{% url 'mentalapp:about' %}">About Mental Health</a></li>
           <li><a href="{% url 'mentalapp:conditions' %}">Conditions</a></li>
           <li><a href="{% url 'mentalapp:signs' %}">Warning Signs</a></li>
           <li><a href="{% url 'mentalapp:prevention' %}">Prevention</a></li>
-          <li><a href="{% url 'mentalapp:selfcare' %}">Self-Care</a></li>
+          <li><a href="{% url 'mentalapp:selfcare' %}">Self-Care Guide</a></li>
           <li><a href="{% url 'mentalapp:resources' %}">Resources</a></li>
+          <li><a href="{% url 'mentalapp:appointment_list' %}">Appointments</a></li>
+          <li><a href="{% url 'mentalapp:contact' %}">Contact Us</a></li>
+          <li><a href="{% url 'mentalapp:mwendo_page' %}">🌿 Mwendo AI</a></li>
         </ul>
       </div>
       <div class="col-6 col-lg-2">
@@ -266,6 +283,7 @@ h1,h2,h3,h4,h5{font-family:'Playfair Display',serif}
           <li><a href="{% url 'mentalapp:register' %}">My Progress</a></li>
           <li><a href="{% url 'mentalapp:register' %}">Achievements</a></li>
           <li><a href="{% url 'mentalapp:appointment_list' %}">Make Appointment</a></li>
+          <li><a href="{% url 'mentalapp:contact' %}">Contact Us</a></li>
           {% endif %}
         </ul>
       </div>
