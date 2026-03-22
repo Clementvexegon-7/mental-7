@@ -1,14 +1,15 @@
+# ================================================================
+#  mental/wsgi.py
+# ================================================================
 """
-WSGI config for mental project.
+WSGI config for the MindWell project.
+Exposes the WSGI callable as a module-level variable named ``application``.
+Used by Gunicorn in production (Render, Railway, Heroku).
 
-It exposes the WSGI callable as a module-level variable named ``application``.
-
-For more information on this file, see
-https://docs.djangoproject.com/en/6.0/howto/deployment/wsgi/
+  Procfile:  web: gunicorn mental.wsgi
 """
 
 import os
-
 from django.core.wsgi import get_wsgi_application
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mental.settings')

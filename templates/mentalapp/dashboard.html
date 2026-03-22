@@ -3,76 +3,103 @@
 
 {% block extra_css %}
 <style>
-  .dash-hero{
-    background:linear-gradient(135deg,var(--deep) 0%,#2a4a42 100%);
-    color:#fff;
-    padding:3rem 0 2.5rem;
-  }
-  .dash-hero h1{color:var(--warm);font-size:2rem}
-  .dash-hero p{color:rgba(255,255,255,.65);font-size:.95rem}
+/* ══ HERO ══════════════════════════════════════════════ */
+.dash-hero{background:linear-gradient(135deg,var(--deep) 0%,#2a4a42 100%);color:#fff;padding:3rem 0 5rem;position:relative;overflow:hidden}
+.dash-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 70% at 85% 40%,rgba(74,124,111,.3) 0%,transparent 65%)}
+.dash-hero h1{color:var(--warm);font-size:2rem;position:relative}
+.dash-hero p{color:rgba(255,255,255,.55);font-size:.9rem;position:relative}
 
-  .stat-card{
-    background:#fff;
-    border-radius:16px;
-    padding:1.4rem 1.6rem;
-    border:1px solid rgba(74,124,111,.15);
-    transition:transform .2s,box-shadow .2s;
-  }
-  .stat-card:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(74,124,111,.12)}
-  .stat-card .icon{
-    width:46px;height:46px;border-radius:12px;
-    display:flex;align-items:center;justify-content:center;
-    font-size:1.3rem;margin-bottom:.8rem
-  }
-  .stat-card h6{font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:.2rem}
-  .stat-card .val{font-family:'Playfair Display',serif;font-size:1.7rem;color:var(--deep)}
+/* ══ INSIGHT CARD ══════════════════════════════════════ */
+.insight-card{background:#fff;border-radius:20px;box-shadow:0 8px 40px rgba(28,43,40,.1);margin-top:-2.8rem;margin-bottom:1.5rem;overflow:hidden;position:relative}
+.insight-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--sage),var(--warm))}
+.insight-inner{padding:1.4rem 1.6rem;display:flex;align-items:flex-start;gap:1rem}
+.insight-bot{width:42px;height:42px;background:linear-gradient(135deg,var(--sage),var(--warm));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.15rem;flex-shrink:0}
+.insight-text-wrap{flex:1}
+.insight-label{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--sage);font-weight:700;margin-bottom:.3rem}
+.insight-text{font-size:.95rem;color:var(--deep);line-height:1.6;font-style:italic}
+.insight-actions{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.7rem}
+.insight-cta{background:rgba(74,124,111,.09);border:1px solid rgba(74,124,111,.22);color:var(--sage);border-radius:50px;padding:.28rem .85rem;font-size:.78rem;text-decoration:none;transition:all .2s}
+.insight-cta:hover{background:var(--sage);color:#fff}
 
-  .section-card{
-    background:#fff;border-radius:16px;
-    border:1px solid rgba(74,124,111,.12);
-    overflow:hidden;
-  }
-  .section-card .card-header-custom{
-    background:var(--sage);color:#fff;
-    padding:.85rem 1.25rem;
-    display:flex;align-items:center;gap:.5rem;
-    font-size:.92rem;font-weight:600
-  }
-  .mood-badge{
-    display:inline-block;padding:.25rem .7rem;border-radius:20px;
-    font-size:.78rem;font-weight:500
-  }
-  .mood-1{background:#fce4ec;color:#c62828}
-  .mood-2{background:#fff3e0;color:#e65100}
-  .mood-3{background:#fff9c4;color:#f57f17}
-  .mood-4{background:#e8f5e9;color:#2e7d32}
-  .mood-5{background:#e3f2fd;color:#1565c0}
+/* ══ STAT CARDS ════════════════════════════════════════ */
+.stat-card{background:#fff;border-radius:18px;padding:1.3rem 1.5rem;border:1px solid rgba(74,124,111,.12);transition:all .3s;position:relative;overflow:hidden}
+.stat-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--sage),var(--warm));transform:scaleX(0);transform-origin:left;transition:transform .3s}
+.stat-card:hover{transform:translateY(-4px);box-shadow:0 10px 32px rgba(74,124,111,.14)}
+.stat-card:hover::after{transform:scaleX(1)}
+.stat-card .icon{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin-bottom:.8rem}
+.stat-card h6{font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:.2rem}
+.stat-card .val{font-family:'Playfair Display',serif;font-size:1.9rem;color:var(--deep);line-height:1.1}
+.stat-card .val-sub{font-size:.75rem;color:var(--muted);margin-top:.2rem}
 
-  .quick-link{
-    display:flex;align-items:center;gap:.75rem;
-    padding:.85rem 1rem;border-radius:12px;
-    background:#fff;border:1px solid rgba(74,124,111,.15);
-    color:var(--text);text-decoration:none;
-    transition:all .2s;font-size:.9rem
-  }
-  .quick-link:hover{background:var(--sage);color:#fff;border-color:var(--sage)}
-  .quick-link .ql-icon{font-size:1.2rem}
+/* ══ PATTERN DETECTION ═════════════════════════════════ */
+.pattern-card{background:linear-gradient(135deg,rgba(74,124,111,.07),rgba(74,124,111,.03));border:1.5px solid rgba(74,124,111,.15);border-radius:18px;padding:1.4rem 1.6rem;margin-bottom:1.5rem}
+.pattern-title{font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;color:var(--sage);font-weight:700;margin-bottom:.9rem;display:flex;align-items:center;gap:.5rem}
+.pattern-chips{display:flex;flex-wrap:wrap;gap:.5rem}
+.p-chip{background:#fff;border:1px solid rgba(74,124,111,.18);border-radius:50px;padding:.32rem .9rem;font-size:.8rem;color:var(--deep);display:flex;align-items:center;gap:.4rem}
+.p-chip.positive{border-color:rgba(74,124,111,.3);background:rgba(74,124,111,.06);color:var(--sage)}
+.p-chip.caution{border-color:rgba(232,201,138,.5);background:rgba(232,201,138,.1);color:#9a7a20}
 
-  .checklist-pill{
-    display:flex;align-items:center;gap:.5rem;
-    padding:.4rem .8rem;border-radius:20px;
-    font-size:.82rem;
-  }
-  .pill-done{background:#e8f5e9;color:#2e7d32}
-  .pill-skip{background:#fafafa;color:var(--muted);border:1px solid #eee}
+/* ══ SECTION CARDS ═════════════════════════════════════ */
+.section-card{background:#fff;border-radius:18px;border:1px solid rgba(74,124,111,.12);overflow:hidden;transition:box-shadow .2s}
+.section-card:hover{box-shadow:0 8px 28px rgba(74,124,111,.1)}
+.card-header-custom{background:linear-gradient(135deg,var(--sage),#3d8b7a);color:#fff;padding:.9rem 1.25rem;display:flex;align-items:center;gap:.5rem;font-size:.9rem;font-weight:600}
+.card-header-custom a{color:rgba(255,255,255,.7);text-decoration:none;font-size:.78rem;margin-left:auto;transition:color .2s}
+.card-header-custom a:hover{color:#fff}
+
+/* ══ MOOD BADGES ═══════════════════════════════════════ */
+.mood-badge{display:inline-block;padding:.22rem .65rem;border-radius:20px;font-size:.78rem;font-weight:500}
+.mood-1,.mood-2{background:#fce4ec;color:#c62828}
+.mood-3{background:#fff9c4;color:#f57f17}
+.mood-4,.mood-5{background:#e8f5e9;color:#2e7d32}
+.mood-6,.mood-7{background:#e3f2fd;color:#1565c0}
+.mood-8,.mood-9,.mood-10{background:linear-gradient(135deg,rgba(74,124,111,.12),rgba(232,201,138,.2));color:var(--sage)}
+
+/* ══ QUICK LINKS ═══════════════════════════════════════ */
+.quick-link{display:flex;align-items:center;gap:.75rem;padding:.85rem 1rem;border-radius:14px;background:#fff;border:1.5px solid rgba(74,124,111,.14);color:var(--text);text-decoration:none;transition:all .22s;font-size:.9rem;font-weight:500}
+.quick-link:hover{background:var(--sage);color:#fff;border-color:var(--sage);transform:translateY(-3px);box-shadow:0 8px 22px rgba(74,124,111,.25)}
+.quick-link .ql-icon{font-size:1.2rem;flex-shrink:0}
+
+/* ══ CHECKLIST PILLS ═══════════════════════════════════ */
+.checklist-pill{display:flex;align-items:center;gap:.4rem;padding:.38rem .85rem;border-radius:20px;font-size:.82rem;font-weight:500;transition:transform .2s}
+.checklist-pill:hover{transform:scale(1.05)}
+.pill-done{background:rgba(74,124,111,.1);color:var(--sage);border:1px solid rgba(74,124,111,.2)}
+.pill-skip{background:#fafafa;color:var(--muted);border:1px solid #eee}
+
+/* ══ CONNECT SUGGESTION ════════════════════════════════ */
+.connect-suggestion{background:linear-gradient(135deg,rgba(232,201,138,.12),rgba(74,124,111,.06));border:1.5px solid rgba(232,201,138,.35);border-radius:14px;padding:.85rem 1.1rem;font-size:.84rem;color:var(--deep);margin-top:.8rem;display:flex;align-items:center;gap:.65rem}
+.connect-suggestion a{color:var(--sage);font-weight:700;text-decoration:none}
+.connect-suggestion a:hover{text-decoration:underline}
+
+/* ══ EMPTY STATES ══════════════════════════════════════ */
+.empty-state-emo{text-align:center;padding:1.8rem 1rem}
+.empty-state-emo .es-em{font-size:2rem;margin-bottom:.5rem}
+.empty-state-emo p{color:var(--muted);font-size:.88rem;margin-bottom:.6rem;line-height:1.6}
+.empty-state-emo a{color:var(--sage);font-weight:600;text-decoration:none}
+.empty-state-emo a:hover{text-decoration:underline}
+
+/* ══ APPOINTMENTS ══════════════════════════════════════ */
+.appt-row{display:flex;align-items:center;gap:.85rem;padding:.75rem 0;border-bottom:1px solid rgba(74,124,111,.07)}
+.appt-row:last-child{border-bottom:none}
+.appt-date-badge{background:rgba(74,124,111,.08);border-radius:12px;padding:.4rem .75rem;text-align:center;flex-shrink:0;min-width:52px}
+.appt-date-badge .ad-day{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--sage);line-height:1}
+.appt-date-badge .ad-month{font-size:.65rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.appt-info .ai-type{font-weight:600;font-size:.88rem;color:var(--deep)}
+.appt-info .ai-meta{font-size:.77rem;color:var(--muted);margin-top:.1rem}
+.status-badge{font-size:.72rem;padding:.18rem .65rem;border-radius:50px;font-weight:600;white-space:nowrap}
+.status-pending{background:#fff3cd;color:#856404}
+.status-confirmed{background:#d1f0e6;color:#0a6640}
+.status-cancelled{background:#fde8e8;color:#9b1b1b}
 </style>
 {% endblock %}
 
 {% block content %}
+
+<!-- ══ HERO ════════════════════════════════════════════ -->
 <section class="dash-hero">
-  <div class="container">
+  <div class="container position-relative">
+    <span class="badge-pill">My Dashboard</span>
     <h1>Welcome back, {{ request.user.first_name|default:request.user.username }} 👋</h1>
-    <p>{{ today|date:"l, F j, Y" }} · Here's your wellness snapshot</p>
+    <p>{{ today|date:"l, F j, Y" }} · Your wellness snapshot is ready</p>
   </div>
 </section>
 
@@ -80,13 +107,100 @@
 
   {% if messages %}
     {% for msg in messages %}
-      <div class="alert alert-{{ msg.tags }} alert-dismissible fade show" role="alert">
+      <div class="alert alert-{{ msg.tags }} alert-dismissible fade show">
         {{ msg }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
       </div>
     {% endfor %}
   {% endif %}
 
-  <!-- Quick Actions -->
+  {# ══ FEATURE 1: AI INSIGHT CARD ══ #}
+  <div class="insight-card animate-in">
+    <div class="insight-inner">
+      <div class="insight-bot">🌿</div>
+      <div class="insight-text-wrap">
+        <div class="insight-label">Mwendo's Insight · Today</div>
+        <div class="insight-text" id="dashInsight">
+          {% if insight %}{{ insight }}{% else %}🌿 Start tracking habits to unlock personalised insights from Mwendo.{% endif %}
+        </div>
+        <div class="insight-actions">
+          {% if today_checklist and today_score < 8 %}
+            <a href="{% url 'mentalapp:checklist_today' %}" class="insight-cta">✅ Update Checklist</a>
+          {% endif %}
+          {% if not recent_moods %}
+            <a href="{% url 'mentalapp:mood_create' %}" class="insight-cta">😊 Log Mood</a>
+          {% endif %}
+          <button onclick="toggleChat(true)" class="insight-cta" style="border:none;cursor:pointer;font-family:inherit">🌿 Talk to Mwendo</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {# ══ FEATURE 3: STAT CARDS (Streak + Score + Journal + Moods) ══ #}
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+      <div class="stat-card">
+        <div class="icon" style="background:rgba(232,201,138,.2)">🔥</div>
+        <h6>Current Streak</h6>
+        <div class="val">{{ streak|default:"0" }}</div>
+        <div class="val-sub">days in a row</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card">
+        <div class="icon" style="background:rgba(74,124,111,.12)">🧠</div>
+        <h6>Today's Score</h6>
+        <div class="val">{{ today_score|default:"0" }}<span style="font-size:1rem;color:var(--muted)">/11</span></div>
+        <div class="val-sub">self-care habits</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card">
+        <div class="icon" style="background:rgba(100,149,237,.12)">📓</div>
+        <h6>Journal Entries</h6>
+        <div class="val">{{ recent_journals|length }}</div>
+        <div class="val-sub">recent entries</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card">
+        <div class="icon" style="background:rgba(232,165,152,.15)">😊</div>
+        <h6>Moods Logged</h6>
+        <div class="val">{{ recent_moods|length }}</div>
+        <div class="val-sub">recent check-ins</div>
+      </div>
+    </div>
+  </div>
+
+  {# ══ FEATURE 5: PATTERN DETECTION ══ #}
+  {% if today_checklist or recent_moods %}
+  <div class="pattern-card">
+    <div class="pattern-title"><i class="bi bi-graph-up-arrow"></i>Mwendo Pattern Detection</div>
+    <div class="pattern-chips">
+      {% if today_checklist %}
+        {% if today_checklist.slept_well and today_checklist.exercised %}
+          <span class="p-chip positive">💡 Sleep + Exercise = your best days</span>
+        {% endif %}
+        {% if not today_checklist.slept_well %}
+          <span class="p-chip caution">⚠️ Poor sleep today — mood may be affected</span>
+        {% endif %}
+        {% if not today_checklist.stayed_hydrated %}
+          <span class="p-chip caution">💧 Low hydration linked to lower focus & mood</span>
+        {% endif %}
+        {% if today_checklist.meditated %}
+          <span class="p-chip positive">🧘 Mindfulness logged — anxiety risk is lower</span>
+        {% endif %}
+        {% if today_score >= 8 %}
+          <span class="p-chip positive">🌟 High habit score — statistically your mood is better today</span>
+        {% endif %}
+      {% endif %}
+      {% if not today_checklist %}
+        <span class="p-chip caution">📋 No checklist today — <a href="{% url 'mentalapp:checklist_today' %}" style="color:inherit;font-weight:700">track now to unlock insights</a></span>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+
+  {# ══ QUICK ACTIONS ══ #}
   <div class="row g-3 mb-4">
     <div class="col-6 col-md-3">
       <a href="{% url 'mentalapp:mood_create' %}" class="quick-link">
@@ -104,92 +218,157 @@
       </a>
     </div>
     <div class="col-6 col-md-3">
-      <a href="{% url 'mentalapp:saved_resources' %}" class="quick-link">
-        <span class="ql-icon">🔖</span> Saved Resources
+      <a href="{% url 'mentalapp:appointment_list' %}" class="quick-link">
+        <span class="ql-icon">📅</span> Appointments
       </a>
     </div>
   </div>
 
   <div class="row g-4">
 
-    <!-- Recent Moods -->
+    {# ══ RECENT MOODS ══ #}
     <div class="col-lg-6">
       <div class="section-card h-100">
         <div class="card-header-custom">
           <i class="bi bi-emoji-smile"></i> Recent Moods
-          <a href="{% url 'mentalapp:mood_list' %}" class="ms-auto text-white-50 text-decoration-none" style="font-size:.8rem">View all →</a>
+          <a href="{% url 'mentalapp:mood_list' %}">View all →</a>
         </div>
         <div class="p-3">
           {% if recent_moods %}
             {% for mood in recent_moods %}
-            <div class="d-flex align-items-center justify-content-between py-2 border-bottom border-light">
+            <div class="d-flex align-items-center justify-content-between py-2 border-bottom" style="border-color:rgba(74,124,111,.08)!important">
               <div>
-                <span class="mood-badge mood-{{ mood.score }}">{{ mood.get_score_display }}</span>
+                <span class="mood-badge mood-{{ mood.mood_score }}">{{ mood.get_mood_score_display }}</span>
                 <span class="ms-2 text-muted" style="font-size:.8rem">{{ mood.date|date:"M j" }}</span>
+                {% if mood.notes %}<span class="ms-1 text-muted" style="font-size:.78rem">· {{ mood.notes|truncatechars:30 }}</span>{% endif %}
               </div>
               <div class="d-flex gap-2">
-                <a href="{% url 'mentalapp:mood_edit' mood.pk %}" class="text-muted"><i class="bi bi-pencil" style="font-size:.85rem"></i></a>
-                <a href="{% url 'mentalapp:mood_delete' mood.pk %}" class="text-danger"><i class="bi bi-trash" style="font-size:.85rem"></i></a>
+                <a href="{% url 'mentalapp:mood_edit' mood.pk %}" class="text-muted" title="Edit"><i class="bi bi-pencil" style="font-size:.85rem"></i></a>
+                <a href="{% url 'mentalapp:mood_delete' mood.pk %}" class="text-danger" title="Delete"><i class="bi bi-trash" style="font-size:.85rem"></i></a>
               </div>
             </div>
             {% endfor %}
+            {# FEATURE 7: Connect from low mood to journal #}
+            {% if recent_moods.0.mood_score <= 4 %}
+            <div class="connect-suggestion">
+              <span>💙</span>
+              <span>Your recent mood is low — <a href="{% url 'mentalapp:journal_create' %}">writing about it</a> can help process your feelings.</span>
+            </div>
+            {% endif %}
           {% else %}
-            <p class="text-muted py-3 text-center" style="font-size:.88rem">No moods logged yet. <a href="{% url 'mentalapp:mood_create' %}">Log your first one!</a></p>
+            <div class="empty-state-emo">
+              <div class="es-em">💭</div>
+              <p>You haven't logged your mood yet — how are you feeling today?</p>
+              <a href="{% url 'mentalapp:mood_create' %}">Log your first mood →</a>
+            </div>
           {% endif %}
         </div>
       </div>
     </div>
 
-    <!-- Recent Journals -->
+    {# ══ RECENT JOURNALS ══ #}
     <div class="col-lg-6">
       <div class="section-card h-100">
         <div class="card-header-custom">
           <i class="bi bi-journal-text"></i> Recent Journal Entries
-          <a href="{% url 'mentalapp:journal_list' %}" class="ms-auto text-white-50 text-decoration-none" style="font-size:.8rem">View all →</a>
+          <a href="{% url 'mentalapp:journal_list' %}">View all →</a>
         </div>
         <div class="p-3">
           {% if recent_journals %}
             {% for entry in recent_journals %}
-            <div class="py-2 border-bottom border-light">
+            <div class="py-2 border-bottom" style="border-color:rgba(74,124,111,.08)!important">
               <div class="d-flex justify-content-between align-items-start">
-                <a href="{% url 'mentalapp:journal_detail' entry.pk %}" class="text-decoration-none text-dark fw-500" style="font-size:.9rem">
+                <a href="{% url 'mentalapp:journal_detail' entry.pk %}" class="text-decoration-none fw-600" style="font-size:.9rem;color:var(--deep)">
                   {{ entry.title|default:"Untitled Entry" }}
                 </a>
                 <span class="text-muted ms-2" style="font-size:.78rem;white-space:nowrap">{{ entry.created_at|date:"M j" }}</span>
               </div>
-              <p class="text-muted mb-0" style="font-size:.8rem">{{ entry.content|truncatechars:60 }}</p>
+              <p class="text-muted mb-0" style="font-size:.8rem;line-height:1.5">{{ entry.content|truncatechars:70 }}</p>
             </div>
             {% endfor %}
           {% else %}
-            <p class="text-muted py-3 text-center" style="font-size:.88rem">No journal entries yet. <a href="{% url 'mentalapp:journal_create' %}">Write your first!</a></p>
+            <div class="empty-state-emo">
+              <div class="es-em">📖</div>
+              <p>Your journal is empty — writing even one sentence a day builds self-awareness over time.</p>
+              <a href="{% url 'mentalapp:journal_create' %}">Write your first entry →</a>
+            </div>
           {% endif %}
         </div>
       </div>
     </div>
 
-    <!-- Today's Checklist -->
-    <div class="col-12">
+    {# ══ TODAY'S CHECKLIST ══ #}
+    <div class="col-lg-6">
       <div class="section-card">
         <div class="card-header-custom">
-          <i class="bi bi-check2-square"></i> Today's Self-Care Checklist
-          <a href="{% url 'mentalapp:checklist_today' %}" class="ms-auto text-white-50 text-decoration-none" style="font-size:.8rem">Update →</a>
+          <i class="bi bi-check2-square"></i> Today's Self-Care
+          <a href="{% url 'mentalapp:checklist_today' %}">Update →</a>
         </div>
         <div class="p-3">
           {% if today_checklist %}
-          <div class="d-flex flex-wrap gap-2">
-            {% if today_checklist.drank_water %}<span class="checklist-pill pill-done"><i class="bi bi-droplet-fill"></i> Water</span>{% else %}<span class="checklist-pill pill-skip"><i class="bi bi-droplet"></i> Water</span>{% endif %}
-            {% if today_checklist.exercised %}<span class="checklist-pill pill-done"><i class="bi bi-activity"></i> Exercise</span>{% else %}<span class="checklist-pill pill-skip"><i class="bi bi-activity"></i> Exercise</span>{% endif %}
-            {% if today_checklist.slept_well %}<span class="checklist-pill pill-done"><i class="bi bi-moon-stars-fill"></i> Sleep</span>{% else %}<span class="checklist-pill pill-skip"><i class="bi bi-moon-stars"></i> Sleep</span>{% endif %}
-            {% if today_checklist.ate_well %}<span class="checklist-pill pill-done"><i class="bi bi-egg-fried"></i> Nutrition</span>{% else %}<span class="checklist-pill pill-skip"><i class="bi bi-egg-fried"></i> Nutrition</span>{% endif %}
-            {% if today_checklist.meditated %}<span class="checklist-pill pill-done"><i class="bi bi-peace-fill"></i> Meditation</span>{% else %}<span class="checklist-pill pill-skip"><i class="bi bi-peace"></i> Meditation</span>{% endif %}
+          <div class="d-flex flex-wrap gap-2 mb-2">
+            {% if today_checklist.slept_well %}<span class="checklist-pill pill-done">🌙 Sleep</span>{% else %}<span class="checklist-pill pill-skip">🌙 Sleep</span>{% endif %}
+            {% if today_checklist.exercised %}<span class="checklist-pill pill-done">🏃 Exercise</span>{% else %}<span class="checklist-pill pill-skip">🏃 Exercise</span>{% endif %}
+            {% if today_checklist.ate_well %}<span class="checklist-pill pill-done">🥗 Nutrition</span>{% else %}<span class="checklist-pill pill-skip">🥗 Nutrition</span>{% endif %}
+            {% if today_checklist.stayed_hydrated %}<span class="checklist-pill pill-done">💧 Water</span>{% else %}<span class="checklist-pill pill-skip">💧 Water</span>{% endif %}
+            {% if today_checklist.meditated %}<span class="checklist-pill pill-done">🧘 Mindful</span>{% else %}<span class="checklist-pill pill-skip">🧘 Mindful</span>{% endif %}
+            {% if today_checklist.journaled %}<span class="checklist-pill pill-done">📓 Journaled</span>{% else %}<span class="checklist-pill pill-skip">📓 Journal</span>{% endif %}
+            {% if today_checklist.connected_others %}<span class="checklist-pill pill-done">🤝 Social</span>{% else %}<span class="checklist-pill pill-skip">🤝 Social</span>{% endif %}
           </div>
+          {# FEATURE 7: Connect missed habits to history #}
+          {% if today_score < 5 %}
+          <div class="connect-suggestion">
+            <span>📊</span>
+            <span>You've missed some habits today — <a href="{% url 'mentalapp:checklist_history' %}">view your history</a> to see patterns.</span>
+          </div>
+          {% endif %}
           {% else %}
-          <p class="text-muted text-center py-2" style="font-size:.88rem">No checklist for today yet. <a href="{% url 'mentalapp:checklist_today' %}">Start now!</a></p>
+          <div class="empty-state-emo">
+            <div class="es-em">🌱</div>
+            <p>No self-care logged today yet. Small habits compound into big change.</p>
+            <a href="{% url 'mentalapp:checklist_today' %}">Start today's checklist →</a>
+          </div>
           {% endif %}
         </div>
       </div>
     </div>
 
-  </div>
+    {# ══ UPCOMING APPOINTMENTS ══ #}
+    <div class="col-lg-6">
+      <div class="section-card">
+        <div class="card-header-custom">
+          <i class="bi bi-calendar-heart"></i> Upcoming Appointments
+          <a href="{% url 'mentalapp:appointment_list' %}">View all →</a>
+        </div>
+        <div class="p-3">
+          {% if upcoming_appointments %}
+            {% for appt in upcoming_appointments %}
+            <div class="appt-row">
+              <div class="appt-date-badge">
+                <div class="ad-day">{{ appt.preferred_date|date:"j" }}</div>
+                <div class="ad-month">{{ appt.preferred_date|date:"M" }}</div>
+              </div>
+              <div class="appt-info flex-1">
+                <div class="ai-type">{{ appt.get_appointment_type_display }}</div>
+                <div class="ai-meta">
+                  {{ appt.preferred_time|time:"g:i A" }}
+                  {% if appt.therapist_name %} · {{ appt.therapist_name }}{% endif %}
+                </div>
+              </div>
+              <span class="status-badge status-{{ appt.status }}">{{ appt.get_status_display }}</span>
+            </div>
+            {% endfor %}
+          {% else %}
+            <div class="empty-state-emo">
+              <div class="es-em">📅</div>
+              <p>No upcoming appointments. Booking a session is a powerful act of self-care.</p>
+              <a href="{% url 'mentalapp:appointment_create' %}">Book a session →</a>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+  </div>{# /row #}
 </div>
 {% endblock %}

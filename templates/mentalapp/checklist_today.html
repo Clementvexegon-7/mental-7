@@ -1,125 +1,419 @@
 {% extends 'mentalapp/base.html' %}
 {% block title %}Today's Checklist · MindWell{% endblock %}
-
 {% block extra_css %}
 <style>
-  .page-hero{background:linear-gradient(135deg,var(--deep),#2a4a42);padding:2.5rem 0;color:#fff}
-  .page-hero h1{color:var(--warm);font-size:1.9rem}
-  .page-hero p{color:rgba(255,255,255,.6);font-size:.9rem}
+/* ══ HERO ══════════════════════════════════════════ */
+.ct-hero{background:linear-gradient(135deg,var(--deep) 0%,#2a4a40 70%,var(--sage) 100%);padding:3rem 0 5rem;position:relative;overflow:hidden}
+.ct-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 55% 65% at 85% 45%,rgba(111,173,160,.2) 0%,transparent 65%)}
+.ct-hero h1{font-size:clamp(1.7rem,4vw,2.4rem);color:#fff;margin-bottom:.3rem}
+.ct-hero .date-label{color:rgba(255,255,255,.55);font-size:.88rem}
 
-  .checklist-card{
-    background:#fff;border-radius:16px;
-    border:1px solid rgba(74,124,111,.12);
-    padding:2rem;max-width:560px;margin:0 auto
-  }
+/* ══ SCORE CIRCLE ══════════════════════════════════ */
+.score-circle-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center}
+.score-circle{position:relative;width:100px;height:100px}
+.score-circle svg{transform:rotate(-90deg)}
+.score-circle .track{stroke:rgba(255,255,255,.1)}
+.score-circle .fill{stroke:var(--warm);stroke-linecap:round;transition:stroke-dashoffset .6s cubic-bezier(.22,1,.36,1)}
+.score-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.score-num{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;color:var(--warm);line-height:1}
+.score-denom{font-size:.65rem;color:rgba(255,255,255,.5);letter-spacing:.08em}
+.score-label{font-size:.75rem;color:rgba(255,255,255,.5);margin-top:.35rem;letter-spacing:.06em;text-transform:uppercase}
 
-  .check-item{
-    display:flex;align-items:center;gap:1rem;
-    padding:1rem 1.25rem;border-radius:12px;
-    border:1.5px solid #e0dbd0;margin-bottom:.75rem;
-    cursor:pointer;transition:all .2s;
-  }
-  .check-item:has(input:checked){
-    border-color:var(--sage);background:#f0f8f5
-  }
-  .check-item input[type=checkbox]{
-    width:20px;height:20px;accent-color:var(--sage);cursor:pointer;flex-shrink:0
-  }
-  .check-item .item-info{flex:1}
-  .check-item .item-label{font-weight:500;font-size:.93rem;color:var(--deep)}
-  .check-item .item-sub{font-size:.78rem;color:var(--muted)}
-  .check-item .item-icon{font-size:1.4rem}
+/* ══ MAIN CARD ══════════════════════════════════════ */
+.ct-card-wrap{margin-top:-2.8rem;padding-bottom:4rem}
+.ct-card{background:#fff;border-radius:22px;box-shadow:0 12px 60px rgba(28,43,40,.11);overflow:hidden;max-width:600px;margin:0 auto}
 
-  .progress-ring{text-align:center;margin-bottom:1.5rem}
-  .progress-bar-wrap{background:#e0dbd0;border-radius:20px;height:8px;margin-bottom:.5rem;overflow:hidden}
-  .progress-fill{background:var(--sage);height:100%;border-radius:20px;transition:width .4s}
-  .progress-label{font-size:.82rem;color:var(--muted)}
+/* ══ MOOD SELECTOR ══════════════════════════════════ */
+.mood-selector-strip{background:linear-gradient(135deg,rgba(74,124,111,.06),rgba(74,124,111,.02));border-bottom:1px solid rgba(74,124,111,.09);padding:1.1rem 1.5rem}
+.ms-label{font-size:.78rem;font-weight:700;color:var(--deep);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.6rem}
+.ms-options{display:flex;gap:.5rem;flex-wrap:wrap}
+.ms-btn{background:#fff;border:1.5px solid rgba(74,124,111,.18);border-radius:50px;padding:.35rem .9rem;font-size:.85rem;cursor:pointer;transition:all .22s;font-family:inherit;color:var(--deep);display:flex;align-items:center;gap:.35rem}
+.ms-btn:hover,.ms-btn.active{background:var(--sage);border-color:var(--sage);color:#fff;transform:translateY(-2px);box-shadow:0 6px 18px rgba(74,124,111,.25)}
 
-  .btn-sage{background:var(--sage);color:#fff;border:none;border-radius:10px;padding:.6rem 1.5rem;font-size:.9rem;transition:background .2s}
-  .btn-sage:hover{background:var(--sage-lt);color:#fff}
-  .btn-outline-back{background:transparent;color:var(--muted);border:1.5px solid #ddd;border-radius:10px;padding:.6rem 1.2rem;font-size:.9rem;text-decoration:none}
-  .btn-outline-back:hover{border-color:var(--sage);color:var(--sage)}
+/* ══ GOAL BAR ══════════════════════════════════════ */
+.goal-bar{background:rgba(74,124,111,.07);border:1.5px solid rgba(74,124,111,.2);border-radius:14px;padding:.75rem 1.2rem;margin:1.2rem 1.5rem .5rem;display:flex;align-items:center;gap:.7rem}
+.goal-icon{font-size:1.2rem;flex-shrink:0}
+.goal-text{font-size:.82rem;color:var(--deep);line-height:1.4}
+.goal-text strong{color:var(--sage)}
+
+/* ══ AI INSIGHT ══════════════════════════════════════ */
+.ai-insight-strip{margin:0 1.5rem 1rem;border-radius:14px;padding:.85rem 1.1rem;display:flex;align-items:flex-start;gap:.65rem;transition:all .4s;min-height:52px}
+.ai-insight-strip.neutral{background:rgba(100,149,237,.07);border:1px solid rgba(100,149,237,.18)}
+.ai-insight-strip.good{background:rgba(74,124,111,.08);border:1px solid rgba(74,124,111,.2)}
+.ai-insight-strip.great{background:linear-gradient(135deg,rgba(232,201,138,.18),rgba(74,124,111,.08));border:1px solid rgba(232,201,138,.35)}
+.ai-insight-strip.low{background:rgba(232,165,152,.1);border:1px solid rgba(232,165,152,.25)}
+.ai-bot-icon{width:28px;height:28px;background:linear-gradient(135deg,var(--sage),var(--warm));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.82rem;flex-shrink:0;margin-top:.05rem}
+.ai-insight-text{font-size:.84rem;color:var(--deep);line-height:1.55;flex:1}
+
+/* ══ PROGRESS BAR ═══════════════════════════════════ */
+.progress-wrap{padding:0 1.5rem 1rem}
+.progress-track{background:#ece8e0;border-radius:20px;height:8px;overflow:hidden}
+.progress-fill{background:linear-gradient(90deg,var(--sage),var(--warm));height:100%;border-radius:20px;transition:width .5s cubic-bezier(.22,1,.36,1);width:0}
+.progress-meta{display:flex;justify-content:space-between;margin-top:.4rem}
+.progress-meta span{font-size:.75rem;color:var(--muted)}
+.progress-meta .pct{font-weight:700;color:var(--sage)}
+
+/* ══ CHECKLIST ITEMS ════════════════════════════════ */
+.checklist-body{padding:.5rem 1.5rem 0}
+.section-divider{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:700;padding:.8rem 0 .4rem;display:flex;align-items:center;gap:.6rem}
+.section-divider::after{content:'';flex:1;height:1px;background:rgba(74,124,111,.1)}
+
+.check-item{display:flex;align-items:center;gap:.85rem;padding:.85rem 1rem;border-radius:14px;border:1.5px solid rgba(74,124,111,.12);margin-bottom:.5rem;cursor:pointer;transition:all .22s;background:#fff;position:relative;overflow:hidden}
+.check-item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--sage),var(--warm));transform:scaleY(0);transform-origin:bottom;transition:transform .3s}
+.check-item:has(input:checked){border-color:var(--sage);background:linear-gradient(135deg,rgba(74,124,111,.06),rgba(74,124,111,.02))}
+.check-item:has(input:checked)::before{transform:scaleY(1)}
+.check-item:hover{border-color:rgba(74,124,111,.3);transform:translateX(3px)}
+.check-item input[type=checkbox]{width:19px;height:19px;accent-color:var(--sage);cursor:pointer;flex-shrink:0}
+.check-item .ci-icon{font-size:1.35rem;flex-shrink:0;transition:transform .25s}
+.check-item:has(input:checked) .ci-icon{transform:scale(1.15) rotate(-5deg)}
+.check-item .ci-info{flex:1}
+.check-item .ci-label{font-weight:600;font-size:.9rem;color:var(--deep)}
+.check-item .ci-sub{font-size:.75rem;color:var(--muted);margin-top:.1rem;line-height:1.4}
+.check-item .ci-points{font-size:.72rem;color:var(--sage);font-weight:700;white-space:nowrap}
+.check-item:has(input:checked) .ci-label{color:var(--sage)}
+
+/* ══ FORM FOOTER ════════════════════════════════════ */
+.form-footer{padding:1.3rem 1.5rem;border-top:1px solid rgba(74,124,111,.08);background:rgba(74,124,111,.02)}
+.why-matters{text-align:center;padding:.9rem 1.5rem 1.2rem;font-size:.8rem;color:var(--muted);line-height:1.6;border-top:1px solid rgba(74,124,111,.07)}
+.why-matters strong{color:var(--sage)}
+
+/* ══ GAMIFICATION MILESTONE ═════════════════════════ */
+.milestone-toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:linear-gradient(135deg,#1e3a35,#2a4a42);color:#fff;border-radius:50px;padding:.65rem 1.6rem;font-size:.88rem;font-weight:600;z-index:9999;opacity:0;pointer-events:none;transition:all .4s var(--ease);white-space:nowrap;box-shadow:0 8px 28px rgba(28,43,40,.3)}
+.milestone-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ══ CONNECT FLOW BANNER ═════════════════════════════ */
+.flow-banner{background:linear-gradient(135deg,var(--deep),#2a4a42);border-radius:16px;padding:1.2rem 1.5rem;margin:0 1.5rem 1.5rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+.flow-step{display:flex;align-items:center;gap:.4rem;font-size:.78rem;color:rgba(255,255,255,.65)}
+.flow-step.active-step{color:var(--warm);font-weight:700}
+.flow-arrow{color:rgba(255,255,255,.3);font-size:.8rem}
 </style>
 {% endblock %}
 
 {% block content %}
-<section class="page-hero">
-  <div class="container">
-    <h1>✅ Today's Self-Care</h1>
-    <p>{{ today|date:"l, F j, Y" }}</p>
+
+<!-- ══ HERO ══════════════════════════════════════════ -->
+<section class="ct-hero">
+  <div class="container position-relative">
+    <div class="row align-items-center gy-3">
+      <div class="col">
+        <span class="badge-pill">Daily Self-Care</span>
+        <h1>✅ Today's Self-Care</h1>
+        <p class="date-label">{{ today|date:"l, F j, Y" }}</p>
+      </div>
+      <!-- Feature 3: Score Circle -->
+      <div class="col-auto">
+        <div class="score-circle-wrap">
+          <div class="score-circle">
+            <svg width="100" height="100" viewBox="0 0 100 100">
+              <circle class="track" cx="50" cy="50" r="42" fill="none" stroke-width="8"/>
+              <circle class="fill" id="scoreArc" cx="50" cy="50" r="42" fill="none" stroke-width="8"
+                stroke-dasharray="264" stroke-dashoffset="264"/>
+            </svg>
+            <div class="score-center">
+              <div class="score-num" id="scoreNum">0</div>
+              <div class="score-denom">/{{ form|length }}</div>
+            </div>
+          </div>
+          <div class="score-label">today's score</div>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
-<div class="container py-4">
+<!-- ══ MAIN CARD ══════════════════════════════════════ -->
+<div class="ct-card-wrap">
+  <div class="container">
+    <div class="ct-card">
 
-  {% if messages %}
-    {% for msg in messages %}
-      <div class="alert alert-{{ msg.tags }} alert-dismissible fade show" style="max-width:560px;margin:0 auto 1rem">
-        {{ msg }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-      </div>
-    {% endfor %}
-  {% endif %}
-
-  <div class="checklist-card">
-
-    <!-- Progress bar (JS-driven) -->
-    <div class="progress-ring">
-      <div class="progress-bar-wrap">
-        <div class="progress-fill" id="progressFill" style="width:0%"></div>
-      </div>
-      <span class="progress-label" id="progressLabel">0 of 5 completed</span>
-    </div>
-
-    <form method="post" id="checklistForm">
-      {% csrf_token %}
-
-      {% for field in form %}
-      <label class="check-item" for="{{ field.id_for_label }}">
-        {{ field }}
-        <div class="item-icon">
-          {% if field.name == 'drank_water' %}💧
-          {% elif field.name == 'exercised' %}🏃
-          {% elif field.name == 'slept_well' %}🌙
-          {% elif field.name == 'ate_well' %}🥗
-          {% elif field.name == 'meditated' %}🧘
-          {% else %}✔️
-          {% endif %}
+      <!-- Feature 2: Emotional Hook / Mood selector -->
+      <div class="mood-selector-strip">
+        <div class="ms-label">How are you feeling right now?</div>
+        <div class="ms-options" id="moodOptions">
+          <button type="button" class="ms-btn" data-mood="happy" onclick="selectMood(this)">😊 Happy</button>
+          <button type="button" class="ms-btn" data-mood="okay" onclick="selectMood(this)">😐 Okay</button>
+          <button type="button" class="ms-btn" data-mood="stressed" onclick="selectMood(this)">😰 Stressed</button>
+          <button type="button" class="ms-btn" data-mood="sad" onclick="selectMood(this)">😔 Low</button>
+          <button type="button" class="ms-btn" data-mood="tired" onclick="selectMood(this)">😴 Tired</button>
         </div>
-        <div class="item-info">
-          <div class="item-label">{{ field.label }}</div>
-          <div class="item-sub">
-            {% if field.name == 'drank_water' %}Stay hydrated throughout the day
-            {% elif field.name == 'exercised' %}Any movement counts — walk, stretch, workout
-            {% elif field.name == 'slept_well' %}Aim for 7–9 hours of quality sleep
-            {% elif field.name == 'ate_well' %}Nourishing meals & balanced nutrition
-            {% elif field.name == 'meditated' %}Mindfulness, breathing, or quiet time
+      </div>
+
+      <!-- Feature 6: Gamification goal -->
+      <div class="goal-bar">
+        <div class="goal-icon">🎯</div>
+        <div class="goal-text">
+          <strong>Today's goal:</strong> Complete at least <strong>{{ form|length|add:"-3" }}</strong> habits to hit your daily target and keep your streak alive.
+        </div>
+      </div>
+
+      <!-- Feature 1: AI Insight strip -->
+      <div class="ai-insight-strip neutral" id="aiInsight">
+        <div class="ai-bot-icon">🌿</div>
+        <div class="ai-insight-text" id="aiText">Start ticking habits and Mwendo will give you personalised feedback... 💚</div>
+      </div>
+
+      <!-- Progress bar -->
+      <div class="progress-wrap">
+        <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="progress-meta">
+          <span id="progressLabel">0 of {{ form|length }} completed</span>
+          <span class="pct" id="progressPct">0%</span>
+        </div>
+      </div>
+
+      {% if messages %}
+        <div style="padding:0 1.5rem">
+          {% for msg in messages %}
+            <div class="alert alert-{{ msg.tags }} alert-dismissible fade show" style="border-radius:12px;font-size:.88rem">
+              {{ msg }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <form method="post" id="checklistForm">
+        {% csrf_token %}
+
+        <!-- Body section -->
+        <div class="checklist-body">
+          <div class="section-divider">🏃 Body</div>
+          {% for field in form %}
+            {% if field.name in "slept_well,exercised,ate_well,stayed_hydrated" %}
+            <label class="check-item" for="{{ field.id_for_label }}">
+              {{ field }}
+              <div class="ci-icon">
+                {% if field.name == 'slept_well' %}🌙{% elif field.name == 'exercised' %}🏃{% elif field.name == 'ate_well' %}🥗{% elif field.name == 'stayed_hydrated' %}💧{% endif %}
+              </div>
+              <div class="ci-info">
+                <div class="ci-label">{{ field.label }}</div>
+                <div class="ci-sub">
+                  {% if field.name == 'slept_well' %}Aim for 7–9 hours — sleep is your mental health superpower
+                  {% elif field.name == 'exercised' %}Any movement counts — walk, stretch, dance, workout
+                  {% elif field.name == 'ate_well' %}Nourishing meals and balanced nutrition fuel your mind
+                  {% elif field.name == 'stayed_hydrated' %}Dehydration directly affects mood and anxiety
+                  {% endif %}
+                </div>
+              </div>
+              <div class="ci-points">+1</div>
+            </label>
             {% endif %}
+          {% endfor %}
+
+          <div class="section-divider">🧠 Mind</div>
+          {% for field in form %}
+            {% if field.name in "meditated,journaled,limited_screens" %}
+            <label class="check-item" for="{{ field.id_for_label }}">
+              {{ field }}
+              <div class="ci-icon">
+                {% if field.name == 'meditated' %}🧘{% elif field.name == 'journaled' %}📓{% elif field.name == 'limited_screens' %}📵{% endif %}
+              </div>
+              <div class="ci-info">
+                <div class="ci-label">{{ field.label }}</div>
+                <div class="ci-sub">
+                  {% if field.name == 'meditated' %}Even 5 minutes of breathing can reduce anxiety by up to 40%
+                  {% elif field.name == 'journaled' %}Writing gives your thoughts somewhere to live besides your head
+                  {% elif field.name == 'limited_screens' %}Less screen time = better sleep and reduced anxiety
+                  {% endif %}
+                </div>
+              </div>
+              <div class="ci-points">+1</div>
+            </label>
+            {% endif %}
+          {% endfor %}
+
+          <div class="section-divider">🤝 Social & Spirit</div>
+          {% for field in form %}
+            {% if field.name in "connected_others,set_boundaries,spent_time_outside,expressed_gratitude" %}
+            <label class="check-item" for="{{ field.id_for_label }}">
+              {{ field }}
+              <div class="ci-icon">
+                {% if field.name == 'connected_others' %}🤝{% elif field.name == 'set_boundaries' %}🛡️{% elif field.name == 'spent_time_outside' %}🌿{% elif field.name == 'expressed_gratitude' %}💙{% endif %}
+              </div>
+              <div class="ci-info">
+                <div class="ci-label">{{ field.label }}</div>
+                <div class="ci-sub">
+                  {% if field.name == 'connected_others' %}Isolation amplifies mental health struggles — small connections matter
+                  {% elif field.name == 'set_boundaries' %}Protecting your energy is an act of self-love
+                  {% elif field.name == 'spent_time_outside' %}Natural light and fresh air lower cortisol levels
+                  {% elif field.name == 'expressed_gratitude' %}Gratitude rewires the brain toward positivity over time
+                  {% endif %}
+                </div>
+              </div>
+              <div class="ci-points">+1</div>
+            </label>
+            {% endif %}
+          {% endfor %}
+
+          {# Fallback: render any remaining fields not caught above #}
+          {% for field in form %}
+            {% if field.name not in "slept_well,exercised,ate_well,stayed_hydrated,meditated,journaled,limited_screens,connected_others,set_boundaries,spent_time_outside,expressed_gratitude" %}
+            <label class="check-item" for="{{ field.id_for_label }}">
+              {{ field }}
+              <div class="ci-icon">✔️</div>
+              <div class="ci-info">
+                <div class="ci-label">{{ field.label }}</div>
+              </div>
+              <div class="ci-points">+1</div>
+            </label>
+            {% endif %}
+          {% endfor %}
+        </div>
+
+        <!-- Connect flow banner -->
+        <div class="flow-banner">
+          <div class="flow-step"><span>📚</span>Learn</div>
+          <div class="flow-arrow">›</div>
+          <div class="flow-step active-step"><span>✅</span>Track</div>
+          <div class="flow-arrow">›</div>
+          <div class="flow-step"><span>📈</span>History</div>
+          <div class="flow-arrow">›</div>
+          <div class="flow-step"><span>🧠</span>AI Insight</div>
+        </div>
+
+        <!-- Form actions -->
+        <div class="form-footer">
+          <div class="d-flex gap-2 flex-wrap">
+            <button type="submit" class="btn-sage flex-fill" style="border-radius:12px;padding:.7rem">
+              <i class="bi bi-check2-circle me-1"></i>Save Today's Checklist
+            </button>
+            <a href="{% url 'mentalapp:checklist_history' %}" style="background:rgba(74,124,111,.08);border:1.5px solid rgba(74,124,111,.2);color:var(--sage);border-radius:12px;padding:.7rem 1.2rem;text-decoration:none;font-size:.88rem;display:inline-flex;align-items:center;gap:.3rem;white-space:nowrap">
+              📊 View History
+            </a>
           </div>
         </div>
-      </label>
-      {% endfor %}
+      </form>
 
-      <div class="d-flex gap-2 mt-3">
-        <button type="submit" class="btn-sage btn">Save Checklist</button>
-        <a href="{% url 'mentalapp:checklist_history' %}" class="btn-outline-back">View History</a>
+      <!-- Feature 5: Why this matters -->
+      <div class="why-matters">
+        💡 <strong>Small daily habits compound.</strong> Research shows that consistently tracking 5+ healthy behaviours reduces anxiety symptoms by up to 35% over 8 weeks. Every checkbox is a vote for the person you're becoming.
       </div>
-    </form>
+
+    </div>{# /ct-card #}
   </div>
 </div>
+
+<!-- Milestone toast -->
+<div class="milestone-toast" id="milestoneToast"></div>
+
 {% endblock %}
 
 {% block extra_js %}
 <script>
-  function updateProgress(){
-    const boxes = document.querySelectorAll('#checklistForm input[type=checkbox]');
-    const total = boxes.length;
-    const done = [...boxes].filter(b=>b.checked).length;
-    document.getElementById('progressFill').style.width = (done/total*100)+'%';
-    document.getElementById('progressLabel').textContent = done+' of '+total+' completed';
+const TOTAL = document.querySelectorAll('#checklistForm input[type=checkbox]').length;
+const CIRCUMFERENCE = 264; // 2π×42
+let _selectedMood = '';
+let _milestones = new Set();
+
+/* ════════════════════════════════════════════
+   MOOD SELECTOR
+════════════════════════════════════════════ */
+function selectMood(btn){
+  document.querySelectorAll('.ms-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  _selectedMood = btn.dataset.mood;
+  updateInsight();
+
+  // Micro feedback
+  btn.style.transform='scale(.95)';
+  setTimeout(()=>btn.style.transform='',150);
+}
+
+/* ════════════════════════════════════════════
+   PROGRESS + SCORE CIRCLE + AI INSIGHT
+════════════════════════════════════════════ */
+function updateProgress(){
+  const boxes = document.querySelectorAll('#checklistForm input[type=checkbox]');
+  const done  = [...boxes].filter(b=>b.checked).length;
+  const pct   = Math.round((done/TOTAL)*100);
+
+  // Progress bar
+  document.getElementById('progressFill').style.width = pct+'%';
+  document.getElementById('progressLabel').textContent = done+' of '+TOTAL+' completed';
+  document.getElementById('progressPct').textContent   = pct+'%';
+
+  // Score circle
+  const offset = CIRCUMFERENCE - (done/TOTAL)*CIRCUMFERENCE;
+  document.getElementById('scoreArc').style.strokeDashoffset = offset;
+  document.getElementById('scoreNum').textContent = done;
+
+  // AI Insight
+  updateInsight(done);
+
+  // Milestone toasts
+  checkMilestone(done);
+}
+
+function updateInsight(done){
+  const boxes = document.querySelectorAll('#checklistForm input[type=checkbox]');
+  const score = done !== undefined ? done : [...boxes].filter(b=>b.checked).length;
+  const pct   = score/TOTAL;
+  const el    = document.getElementById('aiInsight');
+  const txt   = document.getElementById('aiText');
+  const mood  = _selectedMood;
+
+  let msg='', cls='neutral';
+
+  if(score === 0){
+    msg = mood === 'stressed'
+      ? "💙 You're feeling stressed — that's valid. Start with just one small habit. Even drinking water counts."
+      : mood === 'tired'
+      ? "😴 Tired days are part of life. Rest is also self-care. Try ticking 'slept well' as your first win."
+      : "🌿 A fresh start! Tick your first habit to begin building today's momentum.";
+    cls = 'neutral';
+
+  } else if(pct < .4){
+    msg = mood === 'stressed'
+      ? "💙 Good — you're taking steps even when stressed. That takes real strength. Keep going."
+      : "🙂 You've started! Small steps build big changes. Try adding one more habit right now.";
+    cls = 'low';
+
+  } else if(pct < .7){
+    msg = mood === 'happy'
+      ? "😊 You're feeling good AND building habits — this is how wellness works. Push for one more!"
+      : "🙂 You're on the right track. "+Math.ceil(TOTAL - score)+" more habits and you'll hit your target. You've got this.";
+    cls = 'good';
+
+  } else if(pct < 1){
+    msg = "🔥 Almost there! Just "+(TOTAL-score)+" more habit"+(TOTAL-score===1?'':'s')+" for a near-perfect day. Finish strong!";
+    cls = 'great';
+
+  } else {
+    msg = mood === 'happy'
+      ? "🌟 A perfect day AND you're feeling happy — you're building something real. This is what wellness looks like."
+      : "🌟 PERFECT score! You've completed all "+TOTAL+" habits today. Your mental health is thriving. Share this win with yourself.";
+    cls = 'great';
   }
-  document.querySelectorAll('#checklistForm input[type=checkbox]').forEach(cb=>{
-    cb.addEventListener('change', updateProgress);
-  });
-  updateProgress();
+
+  el.className = 'ai-insight-strip '+cls;
+  txt.textContent = msg;
+}
+
+/* Milestone system */
+function checkMilestone(done){
+  const milestones = {
+    1:  '🌱 First habit done! The journey starts here.',
+    3:  '🎯 Goal reached! You\'ve hit your daily target.',
+    5:  '🔥 Half way! You\'re crushing it today.',
+    8:  '⭐ Almost perfect! Keep going...',
+    11: '🏆 PERFECT DAY! All habits complete. You\'re a champion.'
+  };
+  if(milestones[done] && !_milestones.has(done)){
+    _milestones.add(done);
+    showToast(milestones[done]);
+  }
+}
+
+function showToast(msg){
+  const t=document.getElementById('milestoneToast');
+  t.textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+/* Init + bind */
+document.querySelectorAll('#checklistForm input[type=checkbox]').forEach(cb=>{
+  cb.addEventListener('change', updateProgress);
+});
+updateProgress();
 </script>
 {% endblock %}

@@ -2,25 +2,82 @@
 {% load static %}
 {% block title %}Mental Health Conditions — MindWell{% endblock %}
 {% block nav_conditions %}active-page{% endblock %}
-{% block extra_css %}
-    <style>
-  #conditions{background:var(--deep);padding:90px 0}
-  .cond-pill{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:1.8rem;height:100%;transition:all .3s;cursor:default}
-  .cond-pill:hover{background:rgba(111,173,160,.18);border-color:var(--sage-lt);transform:translateY(-3px)}
-  .cond-pill h5{color:var(--warm);font-size:1.05rem;margin-bottom:.6rem}
-  .cond-pill p{color:rgba(255,255,255,.62);font-size:.88rem;margin:0;line-height:1.65}
-  .cond-tag{display:inline-block;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;background:rgba(111,173,160,.2);color:var(--sage-lt);border-radius:50px;padding:.2rem .65rem;margin-bottom:.8rem}
-  #facts{background:#f0ebe0;padding:90px 0}
-  .fact-card{background:#fff;border-radius:20px;padding:2rem;height:100%;border:1px solid rgba(74,124,111,.1);text-align:center;transition:all .3s}
-  .fact-card:hover{box-shadow:0 12px 36px rgba(74,124,111,.14);transform:translateY(-4px)}
-  .fact-card .big{font-family:'Playfair Display',serif;font-size:2.8rem;font-weight:900;color:var(--sage);line-height:1;margin-bottom:.5rem}
-  .fact-card p{color:var(--muted);font-size:.9rem;line-height:1.6;margin:0}
-  #note{background:var(--cream);padding:80px 0}
-  .note-box{background:linear-gradient(135deg,rgba(74,124,111,.1),rgba(111,173,160,.08));border:1.5px solid rgba(74,124,111,.2);border-radius:20px;padding:3rem;text-align:center}
-    </style>
 
+{% block extra_css %}
+<style>
+/* ══ SECTIONS ══════════════════════════════════════════ */
+#conditions{background:var(--deep);padding:90px 0}
+#facts{background:#f0ebe0;padding:90px 0}
+#note{background:var(--cream);padding:80px 0}
+#self-check{background:linear-gradient(135deg,#eef5f2 0%,#f7f3eb 100%);padding:90px 0}
+
+/* ══ CONDITION CARDS ══════════════════════════════════ */
+.cond-pill{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:1.8rem;height:100%;transition:all .3s;cursor:default;position:relative;overflow:hidden}
+.cond-pill::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--sage-lt),transparent);opacity:0;transition:opacity .3s}
+.cond-pill:hover{background:rgba(111,173,160,.18);border-color:var(--sage-lt);transform:translateY(-4px);box-shadow:0 12px 30px rgba(0,0,0,.2)}
+.cond-pill:hover::before{opacity:1}
+.cond-pill h5{color:var(--warm);font-size:1.05rem;margin-bottom:.6rem;margin-top:.5rem}
+.cond-pill p{color:rgba(255,255,255,.62);font-size:.88rem;margin:0 0 1rem;line-height:1.65}
+.cond-tag{display:inline-block;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;background:rgba(111,173,160,.2);color:var(--sage-lt);border-radius:50px;padding:.2rem .65rem;margin-bottom:.5rem}
+
+/* Symptom mini-test trigger */
+.check-self-btn{background:rgba(111,173,160,.15);border:1px solid rgba(111,173,160,.3);color:var(--sage-lt);border-radius:50px;padding:.28rem .85rem;font-size:.75rem;cursor:pointer;font-family:inherit;transition:all .2s;display:inline-flex;align-items:center;gap:.3rem}
+.check-self-btn:hover{background:rgba(111,173,160,.3);color:#fff}
+
+/* Quick mini-test inside card */
+.mini-test{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:.9rem 1rem;margin-top:.8rem;display:none;animation:fp .3s ease}
+.mini-test.show{display:block}
+@keyframes fp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.mini-test p{color:rgba(255,255,255,.75);font-size:.82rem;margin-bottom:.6rem;font-style:italic}
+.mt-options{display:flex;gap:.4rem;flex-wrap:wrap}
+.mt-btn{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:50px;padding:.25rem .75rem;font-size:.77rem;color:rgba(255,255,255,.75);cursor:pointer;font-family:inherit;transition:all .2s}
+.mt-btn:hover{background:rgba(111,173,160,.25);color:#fff;border-color:rgba(111,173,160,.4)}
+.mt-btn.yes-chosen{background:rgba(181,85,74,.25);border-color:rgba(181,85,74,.45);color:#ffb3ab}
+.mt-btn.no-chosen{background:rgba(74,124,111,.25);border-color:rgba(74,124,111,.4);color:var(--sage-lt)}
+.mt-result{font-size:.78rem;margin-top:.5rem;line-height:1.55;display:none;padding:.5rem .7rem;border-radius:8px}
+.mt-result.show{display:block}
+.mt-result.concerned{background:rgba(181,85,74,.15);border:1px solid rgba(181,85,74,.25);color:#ffb3ab}
+.mt-result.reassure{background:rgba(74,124,111,.15);border:1px solid rgba(74,124,111,.25);color:var(--sage-lt)}
+
+/* ══ FACTS ══════════════════════════════════════════ */
+.fact-card{background:#fff;border-radius:20px;padding:2rem;height:100%;border:1px solid rgba(74,124,111,.1);text-align:center;transition:all .3s}
+.fact-card:hover{box-shadow:0 12px 36px rgba(74,124,111,.14);transform:translateY(-4px)}
+.fact-card .big{font-family:'Playfair Display',serif;font-size:2.8rem;font-weight:900;color:var(--sage);line-height:1;margin-bottom:.5rem}
+.fact-card p{color:var(--muted);font-size:.9rem;line-height:1.6;margin:0}
+
+/* ══ SELF-CHECK SECTION ══════════════════════════════ */
+.sc-card{background:#fff;border-radius:22px;padding:2rem;border:1px solid rgba(74,124,111,.12);max-width:620px;margin:0 auto;box-shadow:0 8px 32px rgba(74,124,111,.08)}
+.sc-question{font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--deep);margin-bottom:1rem}
+.sc-progress{display:flex;gap:.4rem;margin-bottom:1.2rem;align-items:center}
+.sc-dot{width:8px;height:8px;border-radius:50%;background:rgba(74,124,111,.15);transition:all .3s}
+.sc-dot.done{background:var(--sage)}
+.sc-dot.active{background:var(--warm);transform:scale(1.3)}
+.sc-options{display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:.8rem}
+.sc-opt{flex:1;min-width:80px;border:1.5px solid rgba(74,124,111,.2);border-radius:12px;padding:.65rem .9rem;text-align:center;cursor:pointer;font-size:.88rem;font-family:inherit;color:var(--deep);background:#fff;transition:all .22s}
+.sc-opt:hover{border-color:var(--sage);background:rgba(74,124,111,.05);color:var(--sage)}
+.sc-opt.chosen-yes{border-color:#b5554a;background:rgba(181,85,74,.08);color:#b5554a}
+.sc-opt.chosen-no{border-color:var(--sage);background:rgba(74,124,111,.08);color:var(--sage)}
+.sc-result{background:linear-gradient(135deg,rgba(74,124,111,.08),rgba(74,124,111,.04));border:1.5px solid rgba(74,124,111,.2);border-radius:16px;padding:1.5rem;text-align:center;display:none}
+.sc-result.show{display:block;animation:fp .4s ease}
+.sc-result h5{font-family:'Playfair Display',serif;color:var(--deep);margin-bottom:.5rem}
+.sc-result p{color:var(--muted);font-size:.88rem;line-height:1.7;margin-bottom:1rem}
+
+/* ══ NOTE BOX ═════════════════════════════════════ */
+.note-box{background:linear-gradient(135deg,rgba(74,124,111,.1),rgba(111,173,160,.08));border:1.5px solid rgba(74,124,111,.2);border-radius:20px;padding:3rem;text-align:center}
+
+/* ══ FLOW CONNECTOR ══════════════════════════════════ */
+.page-flow-banner{background:var(--deep);padding:1.2rem 0}
+.flow-steps{display:flex;align-items:center;justify-content:center;gap:.5rem;flex-wrap:wrap}
+.fs-item{display:flex;align-items:center;gap:.4rem;font-size:.8rem;color:rgba(255,255,255,.5);padding:.35rem .8rem;border-radius:50px;transition:all .2s;text-decoration:none}
+.fs-item:hover{color:var(--warm)}
+.fs-item.current{background:rgba(232,201,138,.15);border:1px solid rgba(232,201,138,.3);color:var(--warm)}
+.fs-arrow{color:rgba(255,255,255,.25);font-size:.8rem}
+</style>
 {% endblock %}
+
 {% block content %}
+
+<!-- PAGE HERO -->
 <div class="page-hero">
   <div class="container position-relative">
     <span class="badge-pill">Conditions</span>
@@ -28,25 +85,203 @@
     <p>Mental health conditions are more common than most people realize. Understanding them reduces stigma and helps people seek help sooner.</p>
   </div>
 </div>
+
+<!-- ══ PAGE FLOW CONNECTOR ══════════════════════════ -->
+<div class="page-flow-banner">
+  <div class="container">
+    <div class="flow-steps">
+      <a href="{% url 'mentalapp:about' %}" class="fs-item"><span>📚</span>Learn</a>
+      <span class="fs-arrow">›</span>
+      <span class="fs-item current"><span>🔍</span>Conditions</span>
+      <span class="fs-arrow">›</span>
+      <a href="{% url 'mentalapp:checklist_today' %}" class="fs-item"><span>✅</span>Track</a>
+      <span class="fs-arrow">›</span>
+      <a href="{% url 'mentalapp:checklist_history' %}" class="fs-item"><span>📈</span>History</a>
+      <span class="fs-arrow">›</span>
+      <a href="{% url 'mentalapp:resources' %}" class="fs-item"><span>💚</span>Get Help</a>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CONDITIONS GRID ══════════════════════════════ -->
 <section id="conditions">
   <div class="container">
-    <div class="row justify-content-center mb-5 text-center"><div class="col-lg-7 reveal"><span class="section-label" style="color:var(--sage-lt)">9 Key Conditions</span><h2 class="section-title text-white">Recognized Mental Health Conditions</h2></div></div>
+    <div class="row justify-content-center mb-5 text-center">
+      <div class="col-lg-7 reveal">
+        <span class="section-label" style="color:var(--sage-lt)">9 Key Conditions</span>
+        <h2 class="section-title text-white">Recognized Mental Health Conditions</h2>
+        <p style="color:rgba(255,255,255,.5);margin-top:.8rem;font-size:.9rem">Hover any card and use the "Check yourself" prompt for a quick personal reflection.</p>
+      </div>
+    </div>
     <div class="row g-3">
-      <div class="col-md-6 col-lg-4 reveal"><div class="cond-pill"><span class="cond-tag">Mood</span><h5><i class="bi bi-cloud-rain me-2"></i>Depression</h5><p>Persistent sadness, loss of interest, fatigue, and difficulty functioning. Affects 280 million people globally.</p></div></div>
-      <div class="col-md-6 col-lg-4 reveal"><div class="cond-pill"><span class="cond-tag">Anxiety</span><h5><i class="bi bi-lightning me-2"></i>Anxiety Disorders</h5><p>Excessive worry, fear, or panic that interferes with daily life. Includes GAD, social anxiety, panic disorder.</p></div></div>
-      <div class="col-md-6 col-lg-4 reveal"><div class="cond-pill"><span class="cond-tag">Mood</span><h5><i class="bi bi-arrow-left-right me-2"></i>Bipolar Disorder</h5><p>Episodes of extreme mood swings — from manic highs to depressive lows — affecting sleep, energy, and behavior.</p></div></div>
-      <div class="col-md-6 col-lg-4 reveal"><div class="cond-pill"><span class="cond-tag">Trauma</span><h5><i class="bi bi-exclamation-triangle me-2"></i>PTSD</h5><p>Post-traumatic stress disorder develops after exposure to a traumatic event, causing flashbacks and severe anxiety.</p></div></div>
-      <div class="col-md-6 col-lg-4 reveal"><div class="cond-pill"><span class="cond-tag">Obsessive</span><h5><i class="bi bi-repeat me-2"></i>OCD</h5><p>Recurring, unwanted thoughts (obsessions) and repetitive behaviors (compulsions) that feel impossible to control.</p></div></div>
-      <div class="col-md-6 col-lg-4 reveal"><div class="cond-pill"><span class="cond-tag">Psychosis</span><h5><i class="bi bi-diagram-3 me-2"></i>Schizophrenia</h5><p>A serious disorder affecting thinking, feelings, and behavior. May include hallucinations and delusions.</p></div></div>
-      <div class="col-md-6 col-lg-4 reveal"><div class="cond-pill"><span class="cond-tag">Behavioral</span><h5><i class="bi bi-egg me-2"></i>Eating Disorders</h5><p>Conditions like anorexia, bulimia, and binge-eating disorder involve distorted relationships with food and body image.</p></div></div>
-      <div class="col-md-6 col-lg-4 reveal"><div class="cond-pill"><span class="cond-tag">Neurodevelopmental</span><h5><i class="bi bi-puzzle me-2"></i>ADHD</h5><p>Affects focus, impulse control, and energy regulation. Common in children and often continues into adulthood.</p></div></div>
-      <div class="col-md-6 col-lg-4 reveal"><div class="cond-pill"><span class="cond-tag">Personality</span><h5><i class="bi bi-shield-exclamation me-2"></i>Borderline Personality</h5><p>Intense emotional swings, unstable relationships, impulsive behavior, and an unstable sense of self.</p></div></div>
+
+      <!-- DEPRESSION -->
+      <div class="col-md-6 col-lg-4 reveal">
+        <div class="cond-pill">
+          <span class="cond-tag">Mood</span>
+          <h5><i class="bi bi-cloud-rain me-2"></i>Depression</h5>
+          <p>Persistent sadness, loss of interest, fatigue, and difficulty functioning. Affects 280 million people globally.</p>
+          <button class="check-self-btn" onclick="toggleMiniTest('mt-depression')">🔍 Check yourself</button>
+          <div class="mini-test" id="mt-depression">
+            <p>"Have you felt persistently sad or empty for more than 2 weeks?"</p>
+            <div class="mt-options">
+              <button class="mt-btn" onclick="miniAnswer('mt-depression',true,this)">Yes, often</button>
+              <button class="mt-btn" onclick="miniAnswer('mt-depression',false,this)">Not really</button>
+            </div>
+            <div class="mt-result" id="mt-depression-res"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ANXIETY -->
+      <div class="col-md-6 col-lg-4 reveal">
+        <div class="cond-pill">
+          <span class="cond-tag">Anxiety</span>
+          <h5><i class="bi bi-lightning me-2"></i>Anxiety Disorders</h5>
+          <p>Excessive worry, fear, or panic that interferes with daily life. Includes GAD, social anxiety, panic disorder.</p>
+          <button class="check-self-btn" onclick="toggleMiniTest('mt-anxiety')">🔍 Check yourself</button>
+          <div class="mini-test" id="mt-anxiety">
+            <p>"Do you often feel anxious or worried in a way that's hard to control?"</p>
+            <div class="mt-options">
+              <button class="mt-btn" onclick="miniAnswer('mt-anxiety',true,this)">Yes, frequently</button>
+              <button class="mt-btn" onclick="miniAnswer('mt-anxiety',false,this)">Rarely</button>
+            </div>
+            <div class="mt-result" id="mt-anxiety-res"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BIPOLAR -->
+      <div class="col-md-6 col-lg-4 reveal">
+        <div class="cond-pill">
+          <span class="cond-tag">Mood</span>
+          <h5><i class="bi bi-arrow-left-right me-2"></i>Bipolar Disorder</h5>
+          <p>Episodes of extreme mood swings — from manic highs to depressive lows — affecting sleep, energy, and behavior.</p>
+          <button class="check-self-btn" onclick="toggleMiniTest('mt-bipolar')">🔍 Check yourself</button>
+          <div class="mini-test" id="mt-bipolar">
+            <p>"Do you experience extreme highs (full of energy, little sleep needed) followed by very low periods?"</p>
+            <div class="mt-options">
+              <button class="mt-btn" onclick="miniAnswer('mt-bipolar',true,this)">Yes, this sounds like me</button>
+              <button class="mt-btn" onclick="miniAnswer('mt-bipolar',false,this)">Not really</button>
+            </div>
+            <div class="mt-result" id="mt-bipolar-res"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PTSD -->
+      <div class="col-md-6 col-lg-4 reveal">
+        <div class="cond-pill">
+          <span class="cond-tag">Trauma</span>
+          <h5><i class="bi bi-exclamation-triangle me-2"></i>PTSD</h5>
+          <p>Post-traumatic stress disorder develops after exposure to a traumatic event, causing flashbacks and severe anxiety.</p>
+          <button class="check-self-btn" onclick="toggleMiniTest('mt-ptsd')">🔍 Check yourself</button>
+          <div class="mini-test" id="mt-ptsd">
+            <p>"Do you experience intrusive memories or flashbacks of a past traumatic event?"</p>
+            <div class="mt-options">
+              <button class="mt-btn" onclick="miniAnswer('mt-ptsd',true,this)">Yes, sometimes</button>
+              <button class="mt-btn" onclick="miniAnswer('mt-ptsd',false,this)">No</button>
+            </div>
+            <div class="mt-result" id="mt-ptsd-res"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- OCD -->
+      <div class="col-md-6 col-lg-4 reveal">
+        <div class="cond-pill">
+          <span class="cond-tag">Obsessive</span>
+          <h5><i class="bi bi-repeat me-2"></i>OCD</h5>
+          <p>Recurring, unwanted thoughts (obsessions) and repetitive behaviors (compulsions) that feel impossible to control.</p>
+          <button class="check-self-btn" onclick="toggleMiniTest('mt-ocd')">🔍 Check yourself</button>
+          <div class="mini-test" id="mt-ocd">
+            <p>"Do you feel compelled to repeat certain behaviors to relieve anxiety or distressing thoughts?"</p>
+            <div class="mt-options">
+              <button class="mt-btn" onclick="miniAnswer('mt-ocd',true,this)">Yes, regularly</button>
+              <button class="mt-btn" onclick="miniAnswer('mt-ocd',false,this)">Not really</button>
+            </div>
+            <div class="mt-result" id="mt-ocd-res"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCHIZOPHRENIA -->
+      <div class="col-md-6 col-lg-4 reveal">
+        <div class="cond-pill">
+          <span class="cond-tag">Psychosis</span>
+          <h5><i class="bi bi-diagram-3 me-2"></i>Schizophrenia</h5>
+          <p>A serious disorder affecting thinking, feelings, and behavior. May include hallucinations and delusions.</p>
+          <a href="{% url 'mentalapp:resources' %}" class="check-self-btn">💚 Find professional support</a>
+        </div>
+      </div>
+
+      <!-- EATING DISORDERS -->
+      <div class="col-md-6 col-lg-4 reveal">
+        <div class="cond-pill">
+          <span class="cond-tag">Behavioral</span>
+          <h5><i class="bi bi-egg me-2"></i>Eating Disorders</h5>
+          <p>Conditions like anorexia, bulimia, and binge-eating disorder involve distorted relationships with food and body image.</p>
+          <button class="check-self-btn" onclick="toggleMiniTest('mt-eating')">🔍 Check yourself</button>
+          <div class="mini-test" id="mt-eating">
+            <p>"Do you feel intense anxiety or guilt around eating, or have you restricted/changed eating significantly?"</p>
+            <div class="mt-options">
+              <button class="mt-btn" onclick="miniAnswer('mt-eating',true,this)">Yes</button>
+              <button class="mt-btn" onclick="miniAnswer('mt-eating',false,this)">No</button>
+            </div>
+            <div class="mt-result" id="mt-eating-res"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADHD -->
+      <div class="col-md-6 col-lg-4 reveal">
+        <div class="cond-pill">
+          <span class="cond-tag">Neurodevelopmental</span>
+          <h5><i class="bi bi-puzzle me-2"></i>ADHD</h5>
+          <p>Affects focus, impulse control, and energy regulation. Common in children and often continues into adulthood.</p>
+          <button class="check-self-btn" onclick="toggleMiniTest('mt-adhd')">🔍 Check yourself</button>
+          <div class="mini-test" id="mt-adhd">
+            <p>"Do you struggle to focus, often act impulsively, or feel restless in ways that affect daily life?"</p>
+            <div class="mt-options">
+              <button class="mt-btn" onclick="miniAnswer('mt-adhd',true,this)">Yes, often</button>
+              <button class="mt-btn" onclick="miniAnswer('mt-adhd',false,this)">Not much</button>
+            </div>
+            <div class="mt-result" id="mt-adhd-res"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BPD -->
+      <div class="col-md-6 col-lg-4 reveal">
+        <div class="cond-pill">
+          <span class="cond-tag">Personality</span>
+          <h5><i class="bi bi-shield-exclamation me-2"></i>Borderline Personality</h5>
+          <p>Intense emotional swings, unstable relationships, impulsive behavior, and an unstable sense of self.</p>
+          <button class="check-self-btn" onclick="toggleMiniTest('mt-bpd')">🔍 Check yourself</button>
+          <div class="mini-test" id="mt-bpd">
+            <p>"Do you experience intense and rapidly changing emotions, or fear of being abandoned by people close to you?"</p>
+            <div class="mt-options">
+              <button class="mt-btn" onclick="miniAnswer('mt-bpd',true,this)">Yes, this resonates</button>
+              <button class="mt-btn" onclick="miniAnswer('mt-bpd',false,this)">No</button>
+            </div>
+            <div class="mt-result" id="mt-bpd-res"></div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
+
+<!-- ══ KEY FACTS ══════════════════════════════════════ -->
 <section id="facts">
   <div class="container">
-    <div class="row justify-content-center mb-5 text-center"><div class="col-lg-7 reveal"><span class="section-label">Key Facts</span><h2 class="section-title">The Scale of Mental Health</h2></div></div>
+    <div class="row justify-content-center mb-5 text-center">
+      <div class="col-lg-7 reveal">
+        <span class="section-label">Key Facts</span>
+        <h2 class="section-title">The Scale of Mental Health</h2>
+      </div>
+    </div>
     <div class="row g-4">
       <div class="col-md-6 col-lg-3 reveal"><div class="fact-card"><div class="big">970M</div><p>People worldwide live with a mental health or substance use disorder</p></div></div>
       <div class="col-md-6 col-lg-3 reveal"><div class="fact-card"><div class="big">1 in 8</div><p>People globally live with a mental disorder, according to WHO data</p></div></div>
@@ -55,14 +290,178 @@
     </div>
   </div>
 </section>
+
+<!-- ══ INTERACTIVE SELF-CHECK ══════════════════════════ -->
+<section id="self-check">
+  <div class="container">
+    <div class="row justify-content-center mb-5 text-center">
+      <div class="col-lg-7 reveal">
+        <span class="section-label">Your Mental State</span>
+        <h2 class="section-title">Quick Self-Check</h2>
+        <p class="text-muted mt-2" style="font-size:.95rem;line-height:1.75">This is not a diagnosis tool — only a licensed professional can diagnose. But awareness is the first step to seeking help.</p>
+      </div>
+    </div>
+    <div class="sc-card reveal" id="selfCheckCard">
+      <div class="sc-progress" id="scProgress"></div>
+      <div id="scQuestionWrap">
+        <p class="sc-question" id="scQuestion"></p>
+        <div class="sc-options" id="scOptions"></div>
+        <div style="font-size:.75rem;color:var(--muted);text-align:right" id="scCounter"></div>
+      </div>
+      <div class="sc-result" id="scResult"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ PROFESSIONAL NOTE ══════════════════════════════ -->
 <section id="note">
   <div class="container">
     <div class="note-box reveal">
       <i class="bi bi-info-circle" style="font-size:2.4rem;color:var(--sage);display:block;margin-bottom:1rem"></i>
       <h3 style="color:var(--deep);font-size:1.6rem">Diagnosis Is a Medical Matter</h3>
-      <p class="text-muted mt-3 mb-4" style="max-width:580px;margin:1rem auto 1.5rem;line-height:1.75">Only a qualified mental health professional can diagnose a condition. If you recognize signs in yourself or others, please seek professional guidance.</p>
-      <a href="{% url 'mentalapp:resources' %}" class="btn-sage">Find Professional Resources</a>
+      <p class="text-muted mt-3 mb-4" style="max-width:580px;margin:1rem auto 1.5rem;line-height:1.75">Only a qualified mental health professional can diagnose a condition. If you recognize signs in yourself or others, please seek professional guidance — there is no shame in asking for help.</p>
+      <div class="d-flex justify-content-center gap-3 flex-wrap">
+        <a href="{% url 'mentalapp:resources' %}" class="btn-sage">Find Professional Resources</a>
+        <a href="{% url 'mentalapp:checklist_today' %}" style="background:rgba(74,124,111,.1);color:var(--sage);border:1.5px solid rgba(74,124,111,.2);border-radius:50px;padding:.78rem 2rem;text-decoration:none;font-size:.93rem;display:inline-block;transition:all .25s">🧠 Check Your Mental State Today</a>
+      </div>
     </div>
   </div>
 </section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+/* ════════════════════════════════════════
+   MINI-TEST (per condition card)
+════════════════════════════════════════ */
+function toggleMiniTest(id){
+  const el=document.getElementById(id);
+  el.classList.toggle('show');
+}
+
+const CONCERN_MSG = "💙 This resonates with you. That takes self-awareness — and it matters. Please consider speaking with a mental health professional. You don't have to figure this out alone.";
+const REASSURE_MSG = "💚 Great! But always keep checking in with yourself. Mental health is a spectrum and can shift. Our checklist can help you track daily.";
+
+function miniAnswer(id, isYes, btn){
+  // Style buttons
+  btn.parentElement.querySelectorAll('.mt-btn').forEach(b=>{b.classList.remove('yes-chosen','no-chosen');});
+  btn.classList.add(isYes?'yes-chosen':'no-chosen');
+
+  // Show result
+  const res=document.getElementById(id+'-res');
+  res.textContent = isYes ? CONCERN_MSG : REASSURE_MSG;
+  res.className = 'mt-result show '+(isYes?'concerned':'reassure');
+}
+
+/* ════════════════════════════════════════
+   INTERACTIVE SELF-CHECK QUIZ
+════════════════════════════════════════ */
+const SC_QUESTIONS = [
+  {q:"Have you felt persistently sad, empty, or hopeless most days recently?", weight:2},
+  {q:"Do you experience intense anxiety or worry that feels difficult to control?", weight:2},
+  {q:"Have you lost interest in activities you used to enjoy?", weight:2},
+  {q:"Do you have trouble sleeping, or do you sleep too much?", weight:1},
+  {q:"Have you felt worthless or like a burden to others?", weight:3},
+  {q:"Do you sometimes feel like harming yourself or not wanting to be alive?", weight:5, crisis:true},
+];
+
+let _scIdx=0, _scScore=0, _scAnswers=[];
+
+function initSC(){
+  _scIdx=0;_scScore=0;_scAnswers=[];
+  buildScProgress();
+  renderSCQ();
+  document.getElementById('scResult').classList.remove('show');
+  document.getElementById('scQuestionWrap').style.display='block';
+}
+
+function buildScProgress(){
+  const p=document.getElementById('scProgress');
+  p.innerHTML='';
+  SC_QUESTIONS.forEach((_,i)=>{
+    const d=document.createElement('div');
+    d.className='sc-dot'+(i===_scIdx?' active':i<_scIdx?' done':'');
+    p.appendChild(d);
+  });
+}
+
+function renderSCQ(){
+  const q=SC_QUESTIONS[_scIdx];
+  document.getElementById('scQuestion').textContent=q.q;
+  document.getElementById('scCounter').textContent=(_scIdx+1)+' of '+SC_QUESTIONS.length;
+  const opts=document.getElementById('scOptions');
+  opts.innerHTML='';
+  ['Yes','Sometimes','No'].forEach(opt=>{
+    const b=document.createElement('button');
+    b.className='sc-opt';b.textContent=opt;
+    b.onclick=()=>scAnswer(opt,q);
+    opts.appendChild(b);
+  });
+}
+
+function scAnswer(val, q){
+  const pts = val==='Yes'?q.weight:val==='Sometimes'?Math.round(q.weight/2):0;
+  _scScore+=pts;
+  _scAnswers.push({q:q.q,a:val,crisis:q.crisis&&val!=='No'});
+  _scIdx++;
+
+  // Crisis immediate flag
+  if(q.crisis&&val!=='No'){
+    showSCResult(true);
+    return;
+  }
+
+  if(_scIdx>=SC_QUESTIONS.length){
+    showSCResult(false);
+  } else {
+    buildScProgress();
+    renderSCQ();
+  }
+}
+
+function showSCResult(crisis){
+  document.getElementById('scQuestionWrap').style.display='none';
+  const r=document.getElementById('scResult');
+
+  let title,body,cta1,cta2;
+
+  if(crisis){
+    title="💙 You're not alone in this";
+    body="You mentioned thoughts of self-harm or not wanting to be alive. Please reach out right now — someone is ready to listen. Your life has value, and support is available.";
+    cta1={text:"🆘 Call Befrienders Kenya: 0722 178 177",href:"tel:0722178177"};
+    cta2={text:"💚 Talk to Mwendo",action:"chat"};
+  } else if(_scScore>=10){
+    title="Your responses suggest you may benefit from support";
+    body="Your answers indicate you've been carrying quite a bit lately. These feelings are real and valid — and they deserve professional attention. A mental health professional can help you make sense of what you're experiencing.";
+    cta1={text:"Find Support Resources",href:"{% url 'mentalapp:resources' %}"};
+    cta2={text:"🧘 Try Breathing Exercise",action:"breathe"};
+  } else if(_scScore>=5){
+    title="You're managing, but there's room for more support";
+    body="You're dealing with some challenges. Small, consistent self-care habits can make a meaningful difference — and our daily checklist is a great place to start.";
+    cta1={text:"✅ Start Your Daily Checklist",href:"{% url 'mentalapp:checklist_today' %}"};
+    cta2={text:"Find Resources",href:"{% url 'mentalapp:resources' %}"};
+  } else {
+    title="💚 You seem to be doing reasonably well";
+    body="Your responses suggest you're in a good place right now. Keep nurturing your mental health through daily habits — prevention is the most powerful form of self-care.";
+    cta1={text:"✅ Track Today's Habits",href:"{% url 'mentalapp:checklist_today' %}"};
+    cta2={text:"Prevention Strategies",href:"{% url 'mentalapp:prevention' %}"};
+  }
+
+  r.innerHTML=`
+    <h5>${title}</h5>
+    <p>${body}</p>
+    <div class="d-flex gap-2 flex-wrap justify-content-center" style="margin-bottom:.6rem">
+      ${cta1.href?`<a href="${cta1.href}" class="btn-sage" style="border-radius:12px">${cta1.text}</a>`:`<button onclick="${cta1.action==='chat'?'toggleChat(true)':'startBreathe()'}" class="btn-sage" style="border-radius:12px;border:none">${cta1.text}</button>`}
+      ${cta2.href?`<a href="${cta2.href}" style="background:rgba(74,124,111,.1);color:var(--sage);border:1.5px solid rgba(74,124,111,.2);border-radius:12px;padding:.65rem 1.2rem;text-decoration:none;font-size:.88rem">${cta2.text}</a>`:`<button onclick="${cta2.action==='chat'?'toggleChat(true)':'startBreathe()'}" style="background:rgba(74,124,111,.1);color:var(--sage);border:1.5px solid rgba(74,124,111,.2);border-radius:12px;padding:.65rem 1.2rem;font-family:inherit;cursor:pointer;font-size:.88rem">${cta2.text}</button>`}
+    </div>
+    <button onclick="initSC()" style="background:none;border:none;color:var(--muted);font-size:.78rem;cursor:pointer;font-family:inherit">↻ Retake the check</button>
+    <p style="font-size:.72rem;color:var(--muted);margin-top:.6rem;line-height:1.5">⚠️ This is not a clinical diagnosis. Only a qualified mental health professional can diagnose a condition.</p>
+  `;
+  r.classList.add('show');
+}
+
+// Start quiz automatically
+initSC();
+</script>
 {% endblock %}

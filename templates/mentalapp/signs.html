@@ -3,22 +3,59 @@
 {% block title %}Warning Signs — MindWell{% endblock %}
 {% block nav_signs %}active-page{% endblock %}
 {% block extra_css %}
-    <style>
-  #signs{padding:90px 0;background:#f0ebe0}
-  .sign-row{border-left:3px solid var(--sage);padding:.85rem 1.2rem;margin-bottom:.8rem;background:#fff;border-radius:0 12px 12px 0;display:flex;align-items:flex-start;gap:.75rem;transition:border-color .3s}
-  .sign-row:hover{border-color:var(--blush)}
-  .sign-row i{color:var(--sage);font-size:1.1rem;margin-top:2px;flex-shrink:0}
-  .sign-row p{margin:0;font-size:.92rem;line-height:1.55}
-  .category-head{font-size:.88rem;letter-spacing:.08em;text-transform:uppercase;color:var(--sage);font-weight:600;margin-bottom:1rem;display:block;padding-bottom:.5rem;border-bottom:2px solid rgba(74,124,111,.18)}
-  #crisis{background:var(--deep);padding:80px 0}
-  .crisis-box{background:rgba(232,165,152,.15);border:1.5px solid rgba(232,165,152,.4);border-radius:20px;padding:2.5rem}
-  .crisis-num{font-family:'Playfair Display',serif;font-size:3.5rem;font-weight:900;color:var(--warm);line-height:1}
-  #action{background:var(--cream);padding:90px 0}
-  .step-card{background:#fff;border-radius:16px;padding:1.8rem;border:1px solid rgba(74,124,111,.12);display:flex;gap:1.2rem;align-items:flex-start;transition:all .3s}
-  .step-card:hover{box-shadow:0 10px 32px rgba(74,124,111,.13);transform:translateY(-3px)}
-  .step-num{font-family:'Playfair Display',serif;font-size:2rem;font-weight:900;color:rgba(74,124,111,.2);flex-shrink:0;line-height:1}
+<style>
+#signs{padding:90px 0;background:#f0ebe0}
+.sign-row{border-left:3px solid var(--sage);padding:.85rem 1.2rem;margin-bottom:.8rem;background:#fff;border-radius:0 12px 12px 0;display:flex;align-items:flex-start;gap:.75rem;transition:all .3s;cursor:default}
+.sign-row:hover{border-color:var(--blush);transform:translateX(4px);box-shadow:0 4px 16px rgba(74,124,111,.08)}
+.sign-row i{color:var(--sage);font-size:1.1rem;margin-top:2px;flex-shrink:0}
+.sign-row p{margin:0;font-size:.92rem;line-height:1.55}
+.category-head{font-size:.88rem;letter-spacing:.08em;text-transform:uppercase;color:var(--sage);font-weight:600;margin-bottom:1rem;display:block;padding-bottom:.5rem;border-bottom:2px solid rgba(74,124,111,.18)}
+
+/* Kenya-localized crisis section */
+#crisis{background:var(--deep);padding:80px 0}
+.crisis-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem;margin-top:2.5rem}
+.crisis-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:1.5rem;text-align:center;transition:all .3s;text-decoration:none;display:block}
+.crisis-card:hover{background:rgba(111,173,160,.2);border-color:var(--sage-lt);transform:translateY(-4px)}
+.crisis-card .cc-icon{font-size:1.8rem;margin-bottom:.5rem;display:block}
+.crisis-card .cc-name{font-weight:700;color:#fff;font-size:.9rem;margin-bottom:.25rem}
+.crisis-card .cc-num{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:900;color:var(--warm);line-height:1.1;display:block;margin:.3rem 0}
+.crisis-card .cc-desc{color:rgba(255,255,255,.55);font-size:.78rem;line-height:1.5}
+
+/* Urgent banner */
+.kenya-urgent{background:linear-gradient(135deg,rgba(181,85,74,.2),rgba(181,85,74,.1));border:1.5px solid rgba(181,85,74,.4);border-radius:18px;padding:1.8rem 2rem;text-align:center;margin-bottom:2rem}
+.ku-title{color:#ffb3ab;font-weight:700;font-size:1rem;margin-bottom:.4rem;display:flex;align-items:center;gap:.5rem;justify-content:center}
+.ku-number{font-family:'Playfair Display',serif;font-size:2.8rem;font-weight:900;color:var(--warm);line-height:1;display:block;margin:.3rem 0}
+.ku-sub{color:rgba(255,255,255,.65);font-size:.85rem}
+
+/* Self-check strip */
+.self-check-strip{background:#fff;border-radius:20px;border:1px solid rgba(74,124,111,.12);padding:1.5rem 1.8rem;margin-top:2rem;box-shadow:0 4px 18px rgba(28,43,40,.06)}
+.scs-title{font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--deep);margin-bottom:1rem}
+.scs-item{display:flex;align-items:center;gap:.75rem;padding:.5rem 0;border-bottom:1px solid rgba(74,124,111,.07);font-size:.88rem;color:var(--text);cursor:pointer}
+.scs-item:last-child{border-bottom:none}
+.scs-item input{width:17px;height:17px;accent-color:var(--sage);cursor:pointer;flex-shrink:0}
+.scs-item:has(input:checked){color:var(--sage)}
+.scs-result{margin-top:1rem;border-radius:12px;padding:.85rem 1.1rem;display:none;font-size:.88rem;line-height:1.6}
+.scs-result.show{display:block;animation:fp .35s ease}
+@keyframes fp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.scs-result.concern{background:rgba(181,85,74,.08);border:1px solid rgba(181,85,74,.22);color:#a84848}
+.scs-result.okay{background:rgba(74,124,111,.07);border:1px solid rgba(74,124,111,.2);color:var(--sage)}
+
+/* Actions */
+#action{background:var(--cream);padding:90px 0}
+.step-card{background:#fff;border-radius:18px;padding:1.8rem;border:1px solid rgba(74,124,111,.12);display:flex;gap:1.2rem;align-items:flex-start;transition:all .3s}
+.step-card:hover{box-shadow:0 10px 32px rgba(74,124,111,.13);transform:translateY(-3px)}
+.step-num{font-family:'Playfair Display',serif;font-size:2rem;font-weight:900;color:rgba(74,124,111,.2);flex-shrink:0;line-height:1}
+
+/* Flow connector */
+.page-flow-banner{background:var(--deep);padding:1rem 0}
+.flow-steps{display:flex;align-items:center;justify-content:center;gap:.5rem;flex-wrap:wrap}
+.fs-item{display:flex;align-items:center;gap:.4rem;font-size:.8rem;color:rgba(255,255,255,.5);padding:.35rem .8rem;border-radius:50px;text-decoration:none;transition:all .2s}
+.fs-item:hover{color:var(--warm)}
+.fs-item.current{background:rgba(232,201,138,.15);border:1px solid rgba(232,201,138,.3);color:var(--warm)}
+.fs-arrow{color:rgba(255,255,255,.25)}
 </style>
 {% endblock %}
+
 {% block content %}
 <div class="page-hero">
   <div class="container position-relative">
@@ -27,9 +64,30 @@
     <p>Recognizing early signs — in yourself or someone you care about — is the first and most important step toward getting the right help.</p>
   </div>
 </div>
+
+<!-- Flow connector -->
+<div class="page-flow-banner">
+  <div class="container">
+    <div class="flow-steps">
+      <a href="{% url 'mentalapp:conditions' %}" class="fs-item">🔍 Conditions</a><span class="fs-arrow">›</span>
+      <span class="fs-item current">⚠️ Warning Signs</span><span class="fs-arrow">›</span>
+      <a href="{% url 'mentalapp:prevention' %}" class="fs-item">🛡️ Prevention</a><span class="fs-arrow">›</span>
+      <a href="{% url 'mentalapp:checklist_today' %}" class="fs-item">✅ Track Habits</a><span class="fs-arrow">›</span>
+      <a href="{% url 'mentalapp:resources' %}" class="fs-item">💚 Get Help</a>
+    </div>
+  </div>
+</div>
+
+<!-- WARNING SIGNS -->
 <section id="signs">
   <div class="container">
-    <div class="row justify-content-center mb-5 text-center"><div class="col-lg-7 reveal"><span class="section-label">Signs &amp; Symptoms</span><h2 class="section-title">What to Watch For</h2></div></div>
+    <div class="row justify-content-center mb-5 text-center">
+      <div class="col-lg-7 reveal">
+        <span class="section-label">Signs &amp; Symptoms</span>
+        <h2 class="section-title">What to Watch For</h2>
+        <p class="text-muted mt-2" style="font-size:.9rem">If you recognise several of these in yourself or someone close to you, please reach out for support. Early action saves lives.</p>
+      </div>
+    </div>
     <div class="row g-4">
       <div class="col-lg-6 reveal">
         <span class="category-head"><i class="bi bi-brain me-2"></i>Emotional &amp; Cognitive Signs</span>
@@ -50,39 +108,128 @@
         <div class="sign-row"><i class="bi bi-dot"></i><p>Neglecting personal hygiene or basic self-care for extended periods</p></div>
       </div>
     </div>
-  </div>
-</section>
-<section id="crisis">
-  <div class="container">
-    <div class="row justify-content-center">
-      <div class="col-lg-9 reveal">
-        <div class="crisis-box">
-          <div class="row align-items-center gy-4">
-            <div class="col-md-4 text-center">
-              <i class="bi bi-telephone-fill" style="font-size:2.5rem;color:var(--blush);display:block;margin-bottom:.5rem"></i>
-              <div class="crisis-num">988</div>
-              <p style="color:rgba(255,255,255,.7);font-size:.85rem;margin-top:.3rem">Suicide &amp; Crisis Lifeline (US)</p>
-            </div>
-            <div class="col-md-8">
-              <h4 style="color:#fff;font-size:1.3rem;margin-bottom:.6rem">If you or someone is in crisis right now:</h4>
-              <p style="color:rgba(255,255,255,.68);font-size:.92rem;line-height:1.7;margin-bottom:1rem">Contact a crisis helpline immediately. Dial <strong style="color:var(--warm)">988</strong> in the US, or reach out to your local emergency services or mental health crisis line.</p>
-              <a href="{% url 'mentalapp:resources' %}" class="btn-sage" style="font-size:.88rem;padding:.6rem 1.5rem">View All Crisis Resources</a>
-            </div>
-          </div>
+
+    <!-- Quick self-check -->
+    <div class="row justify-content-center mt-4">
+      <div class="col-lg-8 reveal">
+        <div class="self-check-strip">
+          <div class="scs-title">🔍 Quick Self-Check — Tick what applies to you right now</div>
+          <label class="scs-item"><input type="checkbox" class="scs-check" onchange="updateSelfCheck()"> I've felt persistently sad or empty for more than 2 weeks</label>
+          <label class="scs-item"><input type="checkbox" class="scs-check" onchange="updateSelfCheck()"> I've lost interest in things I used to enjoy</label>
+          <label class="scs-item"><input type="checkbox" class="scs-check" onchange="updateSelfCheck()"> I've been withdrawing from people around me</label>
+          <label class="scs-item"><input type="checkbox" class="scs-check" onchange="updateSelfCheck()"> I've had thoughts of harming myself or not wanting to be here</label>
+          <label class="scs-item"><input type="checkbox" class="scs-check" onchange="updateSelfCheck()"> My sleep, appetite, or daily functioning has changed noticeably</label>
+          <div class="scs-result" id="scsResult"></div>
         </div>
       </div>
     </div>
   </div>
 </section>
-<section id="action">
+
+<!-- KENYA-LOCALIZED CRISIS SECTION -->
+<section id="crisis">
   <div class="container">
-    <div class="row justify-content-center mb-5 text-center"><div class="col-lg-7 reveal"><span class="section-label">Taking Action</span><h2 class="section-title">What to Do If You Notice These Signs</h2></div></div>
-    <div class="row g-3">
-      <div class="col-md-6 col-lg-3 reveal"><div class="step-card"><div class="step-num">01</div><div><h5>Don't Dismiss It</h5><p>Take what you're observing seriously. Trusting your instincts when something feels wrong is a strength.</p></div></div></div>
-      <div class="col-md-6 col-lg-3 reveal"><div class="step-card"><div class="step-num">02</div><div><h5>Talk Openly</h5><p>Approach them with genuine curiosity and compassion — not judgment. Ask directly how they're feeling.</p></div></div></div>
-      <div class="col-md-6 col-lg-3 reveal"><div class="step-card"><div class="step-num">03</div><div><h5>Seek Professional Help</h5><p>Encourage a visit to a doctor, therapist, or mental health professional who can properly assess the situation.</p></div></div></div>
-      <div class="col-md-6 col-lg-3 reveal"><div class="step-card"><div class="step-num">04</div><div><h5>Stay Connected</h5><p>Regular check-ins and emotional presence matter enormously in recovery. Don't disappear after the first conversation.</p></div></div></div>
+    <div class="row justify-content-center mb-4 text-center">
+      <div class="col-lg-7 reveal">
+        <span class="section-label" style="color:var(--sage-lt)">🇰🇪 Kenya Crisis Lines</span>
+        <h2 class="section-title text-white">If You or Someone Is in Crisis Right Now</h2>
+        <p style="color:rgba(255,255,255,.6);margin-top:.8rem;font-size:.9rem">You are not alone. Real people are ready to listen — for free, 24 hours a day.</p>
+      </div>
+    </div>
+
+    <!-- Primary urgent line -->
+    <div class="row justify-content-center reveal">
+      <div class="col-lg-8">
+        <div class="kenya-urgent">
+          <div class="ku-title"><i class="bi bi-telephone-fill"></i>Kenya's Primary Crisis Line</div>
+          <a href="tel:0722178177" class="ku-number" style="text-decoration:none">0722 178 177</a>
+          <div class="ku-sub">Befrienders Kenya · Free · Confidential · Available 24/7</div>
+          <div style="margin-top:1.2rem;display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap">
+            <a href="tel:0722178177" style="background:rgba(181,85,74,.3);border:1.5px solid rgba(181,85,74,.5);color:#fff;border-radius:50px;padding:.5rem 1.4rem;font-size:.88rem;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:.4rem"><i class="bi bi-telephone-fill"></i>Call Now</a>
+            <button onclick="toggleChat(true)" style="background:rgba(74,124,111,.25);border:1.5px solid rgba(74,124,111,.4);color:#fff;border-radius:50px;padding:.5rem 1.4rem;font-size:.88rem;font-weight:700;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:.4rem"><i class="bi bi-chat-heart"></i>Talk to Mwendo</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Kenya crisis grid -->
+    <div class="crisis-grid reveal">
+      <a href="tel:0722178177" class="crisis-card">
+        <span class="cc-icon">🕊️</span>
+        <div class="cc-name">Befrienders Kenya</div>
+        <span class="cc-num">0722 178 177</span>
+        <div class="cc-desc">Emotional support · Free · 24/7</div>
+      </a>
+      <a href="tel:+254202724069" class="crisis-card">
+        <span class="cc-icon">🏥</span>
+        <div class="cc-name">Mathari Hospital</div>
+        <span class="cc-num">+254 20 2724069</span>
+        <div class="cc-desc">Psychiatric emergency care · Nairobi</div>
+      </a>
+      <a href="tel:+254722178177" class="crisis-card">
+        <span class="cc-icon">💙</span>
+        <div class="cc-name">Amani Counselling</div>
+        <span class="cc-num">+254 722 178 177</span>
+        <div class="cc-desc">Professional counselling services</div>
+      </a>
+      <a href="tel:999" class="crisis-card">
+        <span class="cc-icon">🚑</span>
+        <div class="cc-name">Emergency Services</div>
+        <span class="cc-num">999 / 112</span>
+        <div class="cc-desc">Kenya emergency — life-threatening situations</div>
+      </a>
+    </div>
+
+    <div class="text-center mt-4 reveal">
+      <a href="{% url 'mentalapp:resources' %}" class="btn-sage" style="margin-right:.8rem">View All Resources</a>
+      <a href="{% url 'mentalapp:appointment_create' %}" class="btn-outline-w">Book a Session</a>
     </div>
   </div>
 </section>
+
+<!-- WHAT TO DO -->
+<section id="action">
+  <div class="container">
+    <div class="row justify-content-center mb-5 text-center">
+      <div class="col-lg-7 reveal">
+        <span class="section-label">Taking Action</span>
+        <h2 class="section-title">What to Do If You Notice These Signs</h2>
+      </div>
+    </div>
+    <div class="row g-3">
+      <div class="col-md-6 col-lg-3 reveal"><div class="step-card"><div class="step-num">01</div><div><h5>Don't Dismiss It</h5><p>Take what you're observing seriously. Trusting your instincts when something feels wrong is a strength, not an overreaction.</p></div></div></div>
+      <div class="col-md-6 col-lg-3 reveal"><div class="step-card"><div class="step-num">02</div><div><h5>Talk Openly</h5><p>Approach with genuine curiosity and compassion — not judgment. Ask directly how they're feeling. Listening is already helping.</p></div></div></div>
+      <div class="col-md-6 col-lg-3 reveal"><div class="step-card"><div class="step-num">03</div><div><h5>Seek Professional Help</h5><p>Encourage a visit to a doctor, therapist, or mental health professional. Only professionals can diagnose — but you can open the door.</p></div></div></div>
+      <div class="col-md-6 col-lg-3 reveal"><div class="step-card"><div class="step-num">04</div><div><h5>Stay Connected</h5><p>Regular check-ins and emotional presence matter enormously in recovery. Don't disappear after the first conversation.</p></div></div></div>
+    </div>
+
+    <div class="text-center mt-5 reveal">
+      <p style="color:var(--muted);font-size:.9rem;margin-bottom:1.2rem">You noticed these signs — that already makes you someone who cares. That matters more than you know.</p>
+      <a href="/mwendo/" class="btn-sage">🌿 Talk to Mwendo Now</a>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function updateSelfCheck(){
+  const boxes = document.querySelectorAll('.scs-check');
+  const checked = [...boxes].filter(b => b.checked).length;
+  const res = document.getElementById('scsResult');
+
+  if (checked === 0) { res.classList.remove('show'); return; }
+
+  if (checked >= 4) {
+    res.className = 'scs-result concern show';
+    res.innerHTML = `<strong>💙 Please reach out for support.</strong> Several of these signs together suggest you may benefit from talking to someone. You don't have to face this alone.<br><br><a href="tel:0722178177" style="color:#a84848;font-weight:700;text-decoration:none">📞 Call 0722 178 177</a> · <button onclick="toggleChat(true)" style="background:none;border:none;color:#a84848;font-weight:700;cursor:pointer;font-family:inherit;font-size:inherit;padding:0">🌿 Talk to Mwendo</button>`;
+  } else if (checked >= 2) {
+    res.className = 'scs-result concern show';
+    res.innerHTML = `<strong>⚠️ A few signs are present.</strong> This is worth paying attention to. Consider tracking your mood daily and talking to someone you trust — or Mwendo.<br><br><button onclick="toggleChat(true)" style="background:var(--sage);border:none;color:#fff;border-radius:50px;padding:.3rem .9rem;font-size:.82rem;cursor:pointer;font-family:inherit;margin-top:.4rem">🌿 Talk to Mwendo</button>`;
+  } else {
+    res.className = 'scs-result okay show';
+    res.innerHTML = `💚 One sign doesn't necessarily indicate a problem — but it's worth continuing to check in with yourself daily. Our checklist is a great tool for this.<br><br><a href="{% url 'mentalapp:checklist_today' %}" style="color:var(--sage);font-weight:700;text-decoration:none">✅ Go to Daily Checklist →</a>`;
+  }
+}
+</script>
 {% endblock %}

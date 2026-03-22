@@ -10,14 +10,14 @@
   <style>
     :root{--sage:#4a7c6f;--sage-lt:#6fada0;--cream:#f5f0e8;--warm:#e8c98a;--blush:#e8a598;--deep:#1c2b28;--text:#2d3d39;--muted:#6b7c78}
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);overflow-x:hidden}
+    body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text)}
     h1,h2,h3,h4,h5{font-family:'Playfair Display',serif}
     .navbar{background:var(--deep)!important;padding:.9rem 2rem;position:sticky;top:0;z-index:1000;border-bottom:1px solid rgba(255,255,255,.06)}
     .navbar-brand{font-family:'Playfair Display',serif;font-size:1.35rem;color:var(--warm)!important}
-    .nav-link{color:rgba(255,255,255,.72)!important;font-size:.87rem;padding:.42rem .85rem!important;border-radius:8px;transition:all .25s}
-    .nav-link:hover{color:var(--warm)!important;background:rgba(255,255,255,.07)}
-    .btn-nav-login{border:1.5px solid rgba(255,255,255,.3);color:#fff;background:transparent;padding:.4rem 1.2rem;border-radius:50px;font-size:.84rem;transition:all .25s;text-decoration:none;display:inline-block}
-    .btn-nav-reg{background:var(--sage);color:#fff;border:none;padding:.4rem 1.2rem;border-radius:50px;font-size:.84rem;transition:all .25s;text-decoration:none;display:inline-block}
+    .btn-nav-login{border:1.5px solid rgba(255,255,255,.3);color:rgba(255,255,255,.85);background:transparent;padding:.4rem 1.2rem;border-radius:50px;font-size:.84rem;text-decoration:none;display:inline-block;transition:all .25s}
+    .btn-nav-login:hover{border-color:var(--warm);color:var(--warm)}
+    .btn-nav-reg{background:var(--sage);color:#fff;padding:.4rem 1.2rem;border-radius:50px;font-size:.84rem;text-decoration:none;display:inline-block;transition:background .2s}
+    .btn-nav-reg:hover{background:var(--sage-lt);color:#fff}
     .auth-section{min-height:calc(100vh - 66px);background:linear-gradient(135deg,var(--deep) 0%,#2a4a42 60%,var(--sage) 100%);display:flex;align-items:center;padding:60px 0;position:relative;overflow:hidden}
     .auth-section::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 55% 55% at 15% 25%,rgba(111,173,160,.22) 0%,transparent 65%)}
     .auth-card{background:#fff;border-radius:24px;padding:2.8rem 3rem;box-shadow:0 24px 80px rgba(0,0,0,.2);position:relative;z-index:1}
@@ -41,7 +41,6 @@
     .quote-box{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:1.4rem;margin-top:2rem}
     .quote-box p{font-style:italic;color:rgba(255,255,255,.75);font-size:.9rem;line-height:1.7;margin:0}
     .quote-box cite{color:var(--warm);font-size:.8rem}
-    .field-help{color:var(--muted);font-size:.78rem;margin-top:.25rem;display:block}
     .mb-form{margin-bottom:1.2rem}
     .errorlist{list-style:none;padding:0;margin:.3rem 0 0;color:#c0392b;font-size:.82rem}
     footer{background:var(--deep);color:rgba(255,255,255,.5);padding:2rem 0;font-size:.85rem;text-align:center}
@@ -50,24 +49,22 @@
 </head>
 <body>
 <nav class="navbar navbar-expand-lg">
-  <div class="container">
+  <div class="container d-flex justify-content-between align-items-center">
     <a class="navbar-brand" href="{% url 'mentalapp:home' %}">🌿 MindWell</a>
-    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu"><span class="navbar-toggler-icon" style="filter:invert(1)"></span></button>
-
-      <div class="d-flex gap-2 align-items-center ms-2">
-        {% if user.is_authenticated %}
-          <a href="{% url 'mentalapp:login' %}" class="btn-nav-reg">Log In</a>
-        {% else %}
-          <a href="{% url 'mentalapp:register' %}" class="btn-nav-reg">Register</a>
-        {% endif %}
-      </div>
+    <div class="d-flex gap-2 align-items-center">
+      {% if user.is_authenticated %}
+        <a href="{% url 'mentalapp:dashboard' %}" class="btn-nav-reg">Dashboard</a>
+      {% else %}
+        <a href="{% url 'mentalapp:login' %}" class="btn-nav-login">Log In</a>
+      {% endif %}
+    </div>
   </div>
 </nav>
 
 {% if messages %}
 <div class="container mt-2">
   {% for message in messages %}
-    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert" style="border-radius:12px">{{ message }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" style="border-radius:12px">{{ message }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
   {% endfor %}
 </div>
 {% endif %}
@@ -80,109 +77,67 @@
           <span class="auth-logo">🌿 MindWell</span>
           <h2>Create Your Account</h2>
           <span style="color:var(--muted);font-size:.9rem;margin-bottom:2rem;display:block">Join thousands taking their mental health seriously.</span>
-
           <form method="post" action="{% url 'mentalapp:register' %}" novalidate>
             {% csrf_token %}
-
-            <!-- Show form errors -->
             {% if form.errors %}
-              <div class="alert alert-danger" style="background:rgba(232,165,152,.2);border:1px solid rgba(232,165,152,.5);border-radius:10px;padding:.8rem 1rem;margin-bottom:1.2rem;color:#7a2828;font-size:.88rem">
-                Please correct the errors below.
-              </div>
+              <div style="background:rgba(232,165,152,.2);border:1px solid rgba(232,165,152,.5);border-radius:10px;padding:.8rem 1rem;margin-bottom:1.2rem;color:#7a2828;font-size:.88rem">Please correct the errors below.</div>
             {% endif %}
-
             <div class="row g-3 mb-form">
-              <div class="col-6">
-                <label class="form-label">First Name</label>
-                <input type="text" name="first_name" class="form-control" placeholder="Jane" value="{{ form.first_name.value|default:'' }}">
-              </div>
-              <div class="col-6">
-                <label class="form-label">Last Name</label>
-                <input type="text" name="last_name" class="form-control" placeholder="Doe" value="{{ form.last_name.value|default:'' }}">
-              </div>
+              <div class="col-6"><label class="form-label">First Name</label><input type="text" name="first_name" class="form-control" placeholder="Jane" value="{{ form.first_name.value|default:'' }}"></div>
+              <div class="col-6"><label class="form-label">Last Name</label><input type="text" name="last_name" class="form-control" placeholder="Doe" value="{{ form.last_name.value|default:'' }}"></div>
             </div>
-
             <div class="mb-form">
               <label class="form-label">Username <span style="color:#c0392b">*</span></label>
-              <input type="text" name="username" class="form-control{% if form.username.errors %} is-invalid{% endif %}" placeholder="Choose a unique username" value="{{ form.username.value|default:'' }}" required>
+              <input type="text" name="username" class="form-control" placeholder="Choose a unique username" value="{{ form.username.value|default:'' }}" required>
               {% if form.username.errors %}<ul class="errorlist">{% for e in form.username.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
             </div>
-
             <div class="mb-form">
               <label class="form-label">Email Address <span style="color:#c0392b">*</span></label>
-              <input type="email" name="email" class="form-control{% if form.email.errors %} is-invalid{% endif %}" placeholder="jane@example.com" value="{{ form.email.value|default:'' }}" required>
+              <input type="email" name="email" class="form-control" placeholder="jane@example.com" value="{{ form.email.value|default:'' }}" required>
               {% if form.email.errors %}<ul class="errorlist">{% for e in form.email.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
             </div>
-
             <div class="mb-form">
               <label class="form-label">Password <span style="color:#c0392b">*</span></label>
               <div class="pwd-wrap">
-                <input type="password" id="password1" name="password1" class="form-control{% if form.password1.errors %} is-invalid{% endif %}" placeholder="Create a strong password" oninput="checkStrength(this.value)" required>
+                <input type="password" id="password1" name="password1" class="form-control" placeholder="Create a strong password" oninput="checkStrength(this.value)" required>
                 <button type="button" class="pwd-toggle" onclick="togglePwd('password1',this)"><i class="bi bi-eye"></i></button>
               </div>
               <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
-              <span class="field-help" id="strengthLabel"></span>
+              <span style="color:var(--muted);font-size:.78rem;margin-top:.25rem;display:block" id="strengthLabel"></span>
               {% if form.password1.errors %}<ul class="errorlist">{% for e in form.password1.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
             </div>
-
             <div class="mb-form">
               <label class="form-label">Confirm Password <span style="color:#c0392b">*</span></label>
               <div class="pwd-wrap">
-                <input type="password" id="password2" name="password2" class="form-control{% if form.password2.errors %} is-invalid{% endif %}" placeholder="Repeat your password" required>
+                <input type="password" id="password2" name="password2" class="form-control" placeholder="Repeat your password" required>
                 <button type="button" class="pwd-toggle" onclick="togglePwd('password2',this)"><i class="bi bi-eye"></i></button>
               </div>
               {% if form.password2.errors %}<ul class="errorlist">{% for e in form.password2.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
             </div>
-
             <button type="submit" class="btn-submit"><i class="bi bi-person-plus me-2"></i>Create My Account</button>
           </form>
-
           <div class="auth-switch" style="margin-top:1.2rem">Already have an account? <a href="{% url 'mentalapp:login' %}">Log in here</a></div>
         </div>
       </div>
-
       <div class="col-lg-5 d-none d-lg-block">
         <div class="auth-info">
           <h3>Your mental health journey starts here.</h3>
-          <p>MindWell is a free educational platform designed to help you understand, protect, and improve your mental well-being.</p>
-          <div class="auth-benefit"><i class="bi bi-check-circle-fill"></i><span>Access our full library of mental health guides</span></div>
-          <div class="auth-benefit"><i class="bi bi-check-circle-fill"></i><span>Save resources and crisis contacts you'll actually need</span></div>
-          <div class="auth-benefit"><i class="bi bi-check-circle-fill"></i><span>Build a personalized daily self-care checklist</span></div>
-          <div class="auth-benefit"><i class="bi bi-check-circle-fill"></i><span>Free forever — your mental health shouldn't cost a fortune</span></div>
-          <div class="quote-box">
-            <p>"There is no health without mental health."</p>
-            <cite>— World Health Organization</cite>
-          </div>
+          <p style="margin-bottom:1.5rem">MindWell is a free platform to help you understand, protect, and improve your mental well-being.</p>
+          <div class="auth-benefit"><i class="bi bi-check-circle-fill"></i><span>Full library of mental health guides</span></div>
+          <div class="auth-benefit"><i class="bi bi-check-circle-fill"></i><span>Save resources and crisis contacts</span></div>
+          <div class="auth-benefit"><i class="bi bi-check-circle-fill"></i><span>AI companion Mwendo — always available</span></div>
+          <div class="auth-benefit"><i class="bi bi-check-circle-fill"></i><span>Free forever — mental health shouldn't cost</span></div>
+          <div class="quote-box"><p>"There is no health without mental health."</p><cite>— World Health Organization</cite></div>
         </div>
       </div>
     </div>
   </div>
 </section>
-
-<footer>
-  <div class="container">
-    <p>&copy; 2025 MindWell &nbsp;·&nbsp; <a href="{% url 'mentalapp:home' %}">Home</a> &nbsp;·&nbsp; <a href="{% url 'mentalapp:login' %}">Log In</a></p>
-  </div>
-</footer>
+<footer><div class="container"><p>&copy; 2025 MindWell &nbsp;·&nbsp; <a href="{% url 'mentalapp:home' %}">Home</a> &nbsp;·&nbsp; <a href="{% url 'mentalapp:about' %}">About</a></p></div></footer>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-function togglePwd(id, btn) {
-  const input = document.getElementById(id);
-  const icon = btn.querySelector('i');
-  if (input.type === 'password') { input.type = 'text'; icon.className = 'bi bi-eye-slash'; }
-  else { input.type = 'password'; icon.className = 'bi bi-eye'; }
-}
-function checkStrength(val) {
-  const fill = document.getElementById('strengthFill');
-  const label = document.getElementById('strengthLabel');
-  let score = 0;
-  if (val.length >= 8) score++;
-  if (/[A-Z]/.test(val)) score++;
-  if (/[0-9]/.test(val)) score++;
-  if (/[^A-Za-z0-9]/.test(val)) score++;
-  const levels = [{w:'0%',c:'transparent',t:''},{w:'25%',c:'#e74c3c',t:'Weak'},{w:'50%',c:'#e67e22',t:'Fair'},{w:'75%',c:'#f1c40f',t:'Good'},{w:'100%',c:'#4a7c6f',t:'Strong ✓'}];
-  const l = levels[score];
-  fill.style.width = l.w; fill.style.background = l.c; label.textContent = l.t;
-}
+function togglePwd(id,btn){const input=document.getElementById(id);const icon=btn.querySelector('i');if(input.type==='password'){input.type='text';icon.className='bi bi-eye-slash';}else{input.type='password';icon.className='bi bi-eye';}}
+function checkStrength(val){const fill=document.getElementById('strengthFill');const label=document.getElementById('strengthLabel');let score=0;if(val.length>=8)score++;if(/[A-Z]/.test(val))score++;if(/[0-9]/.test(val))score++;if(/[^A-Za-z0-9]/.test(val))score++;const levels=[{w:'0%',c:'transparent',t:''},{w:'25%',c:'#e74c3c',t:'Weak'},{w:'50%',c:'#e67e22',t:'Fair'},{w:'75%',c:'#f1c40f',t:'Good'},{w:'100%',c:'#4a7c6f',t:'Strong ✓'}];const l=levels[score];fill.style.width=l.w;fill.style.background=l.c;label.textContent=l.t;}
 </script>
-</body></html>
+</body>
+</html>

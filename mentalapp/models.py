@@ -9,9 +9,7 @@ from django.dispatch import receiver
 from django.utils import timezone
 
 
-# ─────────────────────────────────────────────
-#  USER PROFILE
-# ─────────────────────────────────────────────
+# ── USER PROFILE ──────────────────────────────────────────────
 class UserProfile(models.Model):
     user          = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     bio           = models.TextField(blank=True, null=True)
@@ -29,21 +27,18 @@ class UserProfile(models.Model):
         return f"{self.user.username}'s Profile"
 
 
-# Auto-create profile when a new User is created via signal
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         UserProfile.objects.get_or_create(user=instance)
 
 
-# ─────────────────────────────────────────────
-#  MOOD TRACKER
-# ─────────────────────────────────────────────
+# ── MOOD TRACKER ──────────────────────────────────────────────
 class Mood(models.Model):
     MOOD_CHOICES = [
-        (1,  'Very Low'),       (2,  'Low'),           (3,  'Below Average'),
-        (4,  'Slightly Low'),   (5,  'Neutral'),        (6,  'Slightly Good'),
-        (7,  'Good'),           (8,  'Very Good'),      (9,  'Excellent'),
+        (1, 'Very Low'),      (2, 'Low'),           (3, 'Below Average'),
+        (4, 'Slightly Low'),  (5, 'Neutral'),        (6, 'Slightly Good'),
+        (7, 'Good'),          (8, 'Very Good'),      (9, 'Excellent'),
         (10, 'Outstanding'),
     ]
 
@@ -62,18 +57,24 @@ class Mood(models.Model):
     def __str__(self):
         return f"{self.user.username} — {self.get_mood_score_display()} on {self.date}"
 
+    # Convenience aliases used in templates
+    @property
+    def score(self):
+        return self.mood_score
+
+    @property
+    def label(self):
+        return self.get_mood_score_display()
+
     @property
     def mood_emoji(self):
-        emojis = {
-            1: '😞', 2: '😟', 3: '😕', 4: '😐', 5: '😶',
-            6: '🙂', 7: '😊', 8: '😁', 9: '😄', 10: '🤩',
-        }
-        return emojis.get(self.mood_score, '❓')
+        return {
+            1:'😞',2:'😟',3:'😕',4:'😐',5:'😶',
+            6:'🙂',7:'😊',8:'😁',9:'😄',10:'🤩',
+        }.get(self.mood_score, '❓')
 
 
-# ─────────────────────────────────────────────
-#  JOURNAL ENTRY
-# ─────────────────────────────────────────────
+# ── JOURNAL ENTRY ─────────────────────────────────────────────
 class JournalEntry(models.Model):
     user       = models.ForeignKey(User, on_delete=models.CASCADE, related_name='journal_entries')
     title      = models.CharField(max_length=200)
@@ -94,9 +95,7 @@ class JournalEntry(models.Model):
         return self.content[:150] + ('…' if len(self.content) > 150 else '')
 
 
-# ─────────────────────────────────────────────
-#  SELF-CARE CHECKLIST
-# ─────────────────────────────────────────────
+# ── SELF-CARE CHECKLIST ───────────────────────────────────────
 class Checklist(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='selfcare_logs')
     date = models.DateField(default=timezone.now)
@@ -120,6 +119,10 @@ class Checklist(models.Model):
     spent_time_outside  = models.BooleanField(default=False)
     expressed_gratitude = models.BooleanField(default=False)
 
+    # Daily reflection note
+    daily_note = models.TextField(blank=True, default='',
+        help_text="Optional reflection: how did this day feel?")
+
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -133,22 +136,30 @@ class Checklist(models.Model):
 
     @property
     def completion_score(self):
-        fields = [
+        """Score out of 11 — one point per habit."""
+        return sum([
             self.slept_well, self.exercised, self.ate_well, self.stayed_hydrated,
             self.meditated, self.journaled, self.limited_screens,
             self.connected_others, self.set_boundaries,
             self.spent_time_outside, self.expressed_gratitude,
-        ]
-        return sum(fields)
+        ])
 
     @property
     def completion_percent(self):
         return round((self.completion_score / 11) * 100)
 
+    @property
+    def emotional_label(self):
+        s = self.completion_score
+        if s >= 10: return "Outstanding! 🌟"
+        if s >= 8:  return "Great day 😊"
+        if s >= 6:  return "Keep going 🙂"
+        if s >= 4:  return "Room to grow 😐"
+        if s >= 1:  return "Tough day 💙"
+        return "Start somewhere 🌱"
 
-# ─────────────────────────────────────────────
-#  SAVED RESOURCE
-# ─────────────────────────────────────────────
+
+# ── SAVED RESOURCE ────────────────────────────────────────────
 class SavedResource(models.Model):
     RESOURCE_TYPES = [
         ('hotline',   'Crisis Hotline'),
@@ -177,15 +188,10 @@ class SavedResource(models.Model):
         return f"{self.user.username} saved: {self.title}"
 
 
-# ─────────────────────────────────────────────
-#  CONTACT MESSAGE
-# ─────────────────────────────────────────────
+# ── CONTACT MESSAGE ───────────────────────────────────────────
 class ContactMessage(models.Model):
     STATUS_CHOICES = [
-        ('new',      'New'),
-        ('read',     'Read'),
-        ('replied',  'Replied'),
-        ('archived', 'Archived'),
+        ('new', 'New'), ('read', 'Read'), ('replied', 'Replied'), ('archived', 'Archived'),
     ]
 
     user       = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='contact_messages')
@@ -205,11 +211,8 @@ class ContactMessage(models.Model):
         return f"[{self.get_status_display()}] {self.subject} from {self.name}"
 
 
-# ─────────────────────────────────────────────
-#  APPOINTMENT
-# ─────────────────────────────────────────────
+# ── APPOINTMENT ───────────────────────────────────────────────
 class Appointment(models.Model):
-
     APPOINTMENT_TYPE_CHOICES = [
         ('individual', 'Individual Therapy'),
         ('group',      'Group Session'),
@@ -217,12 +220,9 @@ class Appointment(models.Model):
         ('follow_up',  'Follow-Up Consultation'),
         ('crisis',     'Crisis Support'),
     ]
-
     STATUS_CHOICES = [
-        ('pending',   'Pending'),
-        ('confirmed', 'Confirmed'),
-        ('cancelled', 'Cancelled'),
-        ('completed', 'Completed'),
+        ('pending', 'Pending'), ('confirmed', 'Confirmed'),
+        ('cancelled', 'Cancelled'), ('completed', 'Completed'),
     ]
 
     user             = models.ForeignKey(User, on_delete=models.CASCADE, related_name='appointments')
@@ -230,14 +230,10 @@ class Appointment(models.Model):
     preferred_date   = models.DateField()
     preferred_time   = models.TimeField()
     therapist_name   = models.CharField(max_length=120, blank=True)
-    location         = models.CharField(
-        max_length=200, blank=True,
-        help_text="Clinic address or 'Online' for virtual sessions"
-    )
-    notes      = models.TextField(
-        blank=True,
-        help_text="Any additional information or concerns you'd like to share"
-    )
+    location         = models.CharField(max_length=200, blank=True,
+        help_text="Clinic address or 'Online' for virtual sessions")
+    notes      = models.TextField(blank=True,
+        help_text="Any additional information or concerns you'd like to share")
     status     = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -248,11 +244,7 @@ class Appointment(models.Model):
         verbose_name_plural = 'Appointments'
 
     def __str__(self):
-        return (
-            f"{self.user.username} — "
-            f"{self.get_appointment_type_display()} on "
-            f"{self.preferred_date} at {self.preferred_time}"
-        )
+        return f"{self.user.username} — {self.get_appointment_type_display()} on {self.preferred_date} at {self.preferred_time}"
 
     def is_upcoming(self):
         return self.preferred_date >= timezone.localdate()

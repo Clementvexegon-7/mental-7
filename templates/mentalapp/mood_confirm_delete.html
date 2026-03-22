@@ -3,16 +3,36 @@
 
 {% block extra_css %}
 <style>
-  .confirm-wrap{max-width:480px;margin:4rem auto;text-align:center}
-  .confirm-icon{font-size:3rem;margin-bottom:1rem}
-  .confirm-card{background:#fff;border-radius:16px;border:1px solid rgba(74,124,111,.12);padding:2.5rem 2rem}
-  .confirm-card h3{font-family:'Playfair Display',serif;color:var(--deep);margin-bottom:.5rem}
-  .meta-pill{display:inline-block;padding:.3rem .8rem;border-radius:20px;font-size:.82rem;background:#fff3e0;color:#e65100;margin:.5rem 0 1.2rem}
+  .confirm-wrap { max-width: 480px; margin: 4rem auto; text-align: center; }
+  .confirm-icon { font-size: 3rem; margin-bottom: 1rem; }
+  .confirm-card {
+    background: #fff; border-radius: 16px;
+    border: 1px solid rgba(74,124,111,.12);
+    padding: 2.5rem 2rem;
+  }
+  .confirm-card h3 { font-family: 'Playfair Display', serif; color: var(--deep); margin-bottom: .5rem; }
 
-  .btn-danger-soft{background:#c62828;color:#fff;border:none;border-radius:10px;padding:.6rem 1.4rem;font-size:.9rem;transition:background .2s}
-  .btn-danger-soft:hover{background:#b71c1c;color:#fff}
-  .btn-outline-back{background:transparent;color:var(--muted);border:1.5px solid #ddd;border-radius:10px;padding:.6rem 1.2rem;font-size:.9rem;text-decoration:none;transition:all .2s}
-  .btn-outline-back:hover{border-color:var(--sage);color:var(--sage)}
+  .meta-pill {
+    display: inline-block; padding: .3rem .8rem;
+    border-radius: 20px; font-size: .82rem;
+    background: #fff3e0; color: #e65100;
+    margin: .5rem 0 1.2rem;
+  }
+
+  .btn-danger-soft {
+    background: #c62828; color: #fff; border: none;
+    border-radius: 10px; padding: .6rem 1.4rem; font-size: .9rem;
+    transition: background .2s;
+  }
+  .btn-danger-soft:hover { background: #b71c1c; color: #fff; }
+
+  .btn-outline-back {
+    background: transparent; color: var(--muted);
+    border: 1.5px solid #ddd; border-radius: 10px;
+    padding: .6rem 1.2rem; font-size: .9rem;
+    text-decoration: none; transition: all .2s;
+  }
+  .btn-outline-back:hover { border-color: var(--sage); color: var(--sage); }
 </style>
 {% endblock %}
 
@@ -23,6 +43,7 @@
       <div class="confirm-icon">🗑️</div>
       <h3>Delete Mood Entry?</h3>
       <p class="text-muted" style="font-size:.9rem">You're about to permanently delete this mood entry.</p>
+
       <div class="meta-pill">
         {{ mood.date|date:"F j, Y" }} —
         {% if mood.score == 1 %}😞 Very Low
@@ -32,9 +53,13 @@
         {% elif mood.score == 5 %}😄 Great
         {% endif %}
       </div>
+
       {% if mood.notes %}
-        <p class="text-muted" style="font-size:.83rem;margin-bottom:1.5rem">"{{ mood.notes|truncatechars:80 }}"</p>
+        <p class="text-muted" style="font-size:.83rem;margin-bottom:1.5rem">
+          "{{ mood.notes|truncatechars:80 }}"
+        </p>
       {% endif %}
+
       <form method="post">
         {% csrf_token %}
         <div class="d-flex justify-content-center gap-3">

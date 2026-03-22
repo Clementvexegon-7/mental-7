@@ -5,52 +5,28 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>{% block title %}MindWell{% endblock %}</title>
-
-  {# ══ FAVICON — heart + brainwave in brand colours — appears on ALL pages ══ #}
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%231e3a35'/%3E%3Cpath d='M50 76C28 60 17 44 17 33c0-10 8-17 19-17 5.5 0 10.5 3 14 8 3.5-5 8.5-8 14-8 11 0 19 7 19 17 0 11-11 27-33 43z' fill='%23e8c98a'/%3E%3Cpath d='M29 33h6l4-8 5 16 4-10 3 6h20' stroke='%231e3a35' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
-
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
-
 <style>
-/* ══════════════════════════════════════════════
-   CSS VARIABLES & RESET
-══════════════════════════════════════════════ */
-:root{
-  --sage:#4a7c6f; --sage-lt:#6fada0; --cream:#f5f0e8;
-  --warm:#e8c98a; --blush:#e8a598; --deep:#1c2b28;
-  --text:#2d3d39; --muted:#6b7c78;
-  --ease:cubic-bezier(.22,1,.36,1)
-}
+:root{--sage:#4a7c6f;--sage-lt:#6fada0;--cream:#f5f0e8;--warm:#e8c98a;--blush:#e8a598;--deep:#1c2b28;--text:#2d3d39;--muted:#6b7c78;--ease:cubic-bezier(.22,1,.36,1)}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text)}
 h1,h2,h3,h4,h5{font-family:'Playfair Display',serif}
-
-/* ══════════════════════════════════════════════
-   GLOBAL UTILITIES
-══════════════════════════════════════════════ */
 .section-label{font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;color:var(--sage);font-weight:700}
 .section-title{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--deep);font-weight:700;margin-top:.4rem;line-height:1.15}
 .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease}
 .reveal.visible{opacity:1;transform:translateY(0)}
-
-/* Shared buttons */
 .btn-sage{background:linear-gradient(135deg,var(--sage),#3d8b7a);color:#fff;border:none;border-radius:50px;padding:.78rem 2rem;font-size:.93rem;font-family:'DM Sans',sans-serif;font-weight:600;text-decoration:none;display:inline-block;cursor:pointer;transition:all .28s var(--ease);box-shadow:0 4px 16px rgba(74,124,111,.3)}
 .btn-sage:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(74,124,111,.4);color:#fff;background:linear-gradient(135deg,#3d8b7a,var(--deep))}
 .btn-outline-w{background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.4);color:#fff;border-radius:50px;padding:.78rem 2rem;font-size:.93rem;font-family:'DM Sans',sans-serif;font-weight:500;text-decoration:none;display:inline-block;cursor:pointer;transition:all .28s var(--ease)}
 .btn-outline-w:hover{background:rgba(255,255,255,.2);border-color:#fff;color:#fff;transform:translateY(-3px)}
-
-/* Page hero for inner pages */
 .page-hero{background:linear-gradient(135deg,var(--deep) 0%,#2a4a42 60%,var(--sage) 100%);padding:80px 0 70px;position:relative;overflow:hidden}
 .page-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 50% 60% at 85% 30%,rgba(111,173,160,.2) 0%,transparent 65%)}
 .page-hero h1{font-size:clamp(2rem,5vw,3.5rem);color:#fff;font-weight:900;line-height:1.1;margin:.6rem 0 1.1rem}
 .page-hero p{color:rgba(255,255,255,.7);font-size:1.05rem;max-width:580px;line-height:1.75}
 .badge-pill{display:inline-block;background:rgba(232,201,138,.18);border:1px solid rgba(232,201,138,.4);color:var(--warm);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;padding:.3rem .9rem;border-radius:50px;margin-bottom:.9rem}
-
-/* ══════════════════════════════════════════════
-   NAVBAR
-══════════════════════════════════════════════ */
 .navbar{background:var(--deep)!important;padding:.9rem 2rem;position:sticky;top:0;z-index:1000;border-bottom:1px solid rgba(255,255,255,.06)}
 .navbar-brand{font-family:'Playfair Display',serif;font-size:1.35rem;color:var(--warm)!important;transition:opacity .2s}
 .navbar-brand:hover{opacity:.82}
@@ -71,10 +47,6 @@ h1,h2,h3,h4,h5{font-family:'Playfair Display',serif}
 .user-dropdown .dropdown-item.text-danger-soft:hover{background:rgba(244,143,177,.1);color:#f48fb1}
 .navbar-toggler{border-color:rgba(255,255,255,.2)}
 .navbar-toggler-icon{filter:invert(1)}
-
-/* ══════════════════════════════════════════════
-   GLOBAL FOOTER
-══════════════════════════════════════════════ */
 .mw-footer{background:var(--deep);padding:70px 0 0}
 .footer-brand{font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:700;color:#fff}
 .footer-brand span{color:var(--warm)}
@@ -92,37 +64,43 @@ h1,h2,h3,h4,h5{font-family:'Playfair Display',serif}
 .footer-crisis-box .title{color:#ffb3ab;font-weight:700;font-size:.88rem;margin-bottom:.75rem}
 .footer-crisis-line{font-size:.82rem;color:rgba(255,255,255,.6);line-height:2.1}
 .footer-crisis-line strong{color:#fff}
+.footer-crisis-line a{color:#ffb3ab;text-decoration:none;font-weight:700}
+.footer-crisis-line a:hover{text-decoration:underline}
 .footer-bottom{background:rgba(0,0,0,.22);margin-top:55px;padding:1.15rem 0;font-size:.8rem;color:rgba(255,255,255,.38)}
 .footer-bottom strong{color:rgba(255,255,255,.6)}
 .team-reveal-btn{background:rgba(232,201,138,.15);border:1px solid rgba(232,201,138,.38);color:var(--warm);border-radius:50px;padding:.28rem .9rem;font-size:.79rem;cursor:pointer;font-family:inherit;transition:all .2s;white-space:nowrap}
 .team-reveal-btn:hover{background:rgba(232,201,138,.28);transform:scale(1.04)}
-
-/* ══════════════════════════════════════════════
-   MWENDO CHATBOT
-══════════════════════════════════════════════ */
 .chat-fab{position:fixed;bottom:26px;right:26px;z-index:9990;width:64px;height:64px;background:linear-gradient(135deg,#3d8b7a,var(--deep));border-radius:50%;box-shadow:0 6px 28px rgba(74,124,111,.55),0 0 0 0 rgba(74,124,111,.3);border:none;cursor:pointer;font-size:1.65rem;display:flex;align-items:center;justify-content:center;color:#fff;transition:transform .2s;animation:fab-pulse 3s ease infinite}
 @keyframes fab-pulse{0%,100%{box-shadow:0 6px 28px rgba(74,124,111,.55),0 0 0 0 rgba(74,124,111,.3)}60%{box-shadow:0 6px 28px rgba(74,124,111,.55),0 0 0 16px rgba(74,124,111,0)}}
 .chat-fab:hover{transform:scale(1.1)}
 .chat-fab-label{position:fixed;bottom:100px;right:26px;z-index:9989;background:var(--deep);color:#fff;font-size:.78rem;padding:.35rem .85rem;border-radius:50px;white-space:nowrap;box-shadow:0 4px 14px rgba(0,0,0,.25);pointer-events:none;opacity:1;transition:opacity .5s}
-.chat-panel{position:fixed;bottom:106px;right:26px;z-index:9988;width:365px;max-width:calc(100vw - 36px);background:#fff;border-radius:24px;box-shadow:0 24px 80px rgba(0,0,0,.18);flex-direction:column;overflow:hidden;max-height:76vh;display:none}
+.chat-panel{position:fixed;bottom:106px;right:26px;z-index:9988;width:380px;max-width:calc(100vw - 36px);background:#fff;border-radius:24px;box-shadow:0 24px 80px rgba(0,0,0,.18);flex-direction:column;overflow:hidden;max-height:80vh;display:none}
 .chat-panel.open{display:flex;animation:chat-up .35s var(--ease)}
 @keyframes chat-up{from{opacity:0;transform:translateY(22px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
 .chat-head{background:linear-gradient(135deg,#1e3a35,#2a4a42);padding:1.15rem 1.3rem;display:flex;align-items:center;gap:.85rem}
-.chat-avatar{width:42px;height:42px;background:linear-gradient(135deg,var(--sage),var(--warm));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.25rem;flex-shrink:0}
+.chat-avatar{width:44px;height:44px;background:linear-gradient(135deg,var(--sage),var(--warm));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
 .chat-head-meta{flex:1}
 .chat-head-name{color:#fff;font-weight:700;font-size:.95rem}
 .chat-head-status{color:rgba(255,255,255,.58);font-size:.73rem;display:flex;align-items:center;gap:.35rem}
 .online-dot{width:6px;height:6px;background:#4ade80;border-radius:50%;animation:pulse-dot 2s ease infinite}
 @keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.35}}
-.chat-x{background:none;border:none;color:rgba(255,255,255,.65);font-size:1.1rem;cursor:pointer;padding:4px;line-height:1;transition:color .2s}
+.chat-head-actions{display:flex;gap:.4rem;margin-left:auto}
+.chat-head-btn{background:rgba(255,255,255,.1);border:none;color:rgba(255,255,255,.75);width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:.85rem;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.chat-head-btn:hover{background:rgba(255,255,255,.22);color:#fff}
+.chat-x{background:none;border:none;color:rgba(255,255,255,.65);font-size:1.1rem;cursor:pointer;padding:4px;line-height:1;transition:color .2s;margin-left:.3rem}
 .chat-x:hover{color:#fff}
-.chat-msgs{flex:1;overflow-y:auto;padding:1.1rem 1rem;display:flex;flex-direction:column;gap:.75rem;min-height:180px}
-.chat-msgs::-webkit-scrollbar{width:4px}
-.chat-msgs::-webkit-scrollbar-thumb{background:rgba(74,124,111,.2);border-radius:50px}
+.chat-mood-bar{background:linear-gradient(135deg,rgba(74,124,111,.06),rgba(111,173,160,.04));border-bottom:1px solid rgba(74,124,111,.08);padding:.7rem 1rem;display:flex;align-items:center;gap:.5rem;overflow-x:auto;scrollbar-width:none}
+.chat-mood-bar::-webkit-scrollbar{display:none}
+.chat-mood-chip{background:#fff;border:1.5px solid rgba(74,124,111,.15);border-radius:50px;padding:.25rem .75rem;font-size:.8rem;cursor:pointer;transition:all .2s;white-space:nowrap;font-family:inherit;color:var(--deep)}
+.chat-mood-chip:hover{background:var(--sage);color:#fff;border-color:var(--sage);transform:translateY(-2px)}
+.chat-msgs{flex:1;overflow-y:auto;padding:1.1rem 1rem;display:flex;flex-direction:column;gap:.75rem;min-height:200px}
+.chat-msgs::-webkit-scrollbar{width:3px}
+.chat-msgs::-webkit-scrollbar-thumb{background:rgba(74,124,111,.15);border-radius:50px}
 .cmsg{max-width:88%;padding:.75rem 1rem;border-radius:18px;font-size:.875rem;line-height:1.58;animation:msg-pop .28s var(--ease)}
 @keyframes msg-pop{from{opacity:0;transform:translateY(7px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
 .cmsg.bot{background:linear-gradient(135deg,#f0f5f3,#e8f0ec);color:var(--deep);border-bottom-left-radius:4px;align-self:flex-start}
 .cmsg.user{background:linear-gradient(135deg,#3d8b7a,#1e3a35);color:#fff;border-bottom-right-radius:4px;align-self:flex-end}
+.cmsg.crisis-msg{background:linear-gradient(135deg,rgba(181,85,74,.12),rgba(181,85,74,.06));border:1px solid rgba(181,85,74,.25);color:var(--deep);align-self:flex-start;border-bottom-left-radius:4px}
 .typing-dots{display:flex;gap:4px;align-items:center;padding:.75rem 1rem;background:#f0f5f3;border-radius:18px;border-bottom-left-radius:4px;align-self:flex-start;width:56px}
 .typing-dots span{width:7px;height:7px;background:var(--sage);border-radius:50%;animation:tdot .9s ease infinite}
 .typing-dots span:nth-child(2){animation-delay:.18s}
@@ -133,6 +111,10 @@ h1,h2,h3,h4,h5{font-family:'Playfair Display',serif}
 .qr-btn:hover{background:var(--sage);color:#fff;border-color:var(--sage);transform:scale(1.03)}
 .chat-breathe-btn{background:linear-gradient(135deg,rgba(74,124,111,.1),rgba(111,173,160,.15));border:1.5px solid rgba(74,124,111,.25);color:var(--sage);border-radius:12px;padding:.5rem 1rem;font-size:.82rem;cursor:pointer;width:100%;margin-top:.2rem;font-family:inherit;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:.5rem}
 .chat-breathe-btn:hover{background:var(--sage);color:#fff}
+.chat-crisis-cta{background:rgba(181,85,74,.08);border:1px solid rgba(181,85,74,.2);border-radius:12px;padding:.7rem .9rem;margin:.2rem 0;display:flex;align-items:center;gap:.65rem}
+.chat-crisis-cta a{color:#b5554a;font-weight:700;font-size:.82rem;text-decoration:none}
+.chat-crisis-cta a:hover{text-decoration:underline}
+.chat-crisis-cta span{font-size:.78rem;color:#b5554a}
 .chat-input-row{display:flex;gap:7px;padding:.75rem .9rem;border-top:1px solid rgba(74,124,111,.09)}
 .chat-text-input{flex:1;border:1.5px solid rgba(74,124,111,.2);border-radius:50px;padding:.52rem 1rem;font-size:.875rem;outline:none;color:var(--deep);font-family:inherit;transition:border-color .2s,box-shadow .2s}
 .chat-text-input:focus{border-color:var(--sage);box-shadow:0 0 0 3px rgba(74,124,111,.1)}
@@ -141,10 +123,11 @@ h1,h2,h3,h4,h5{font-family:'Playfair Display',serif}
 .chat-crisis-bar{background:#fff8f8;border-top:1px solid #ffe0de;padding:.55rem 1rem;font-size:.76rem;color:#b5554a;text-align:center}
 .chat-crisis-bar a{color:#b5554a;font-weight:700;text-decoration:none}
 .chat-crisis-bar a:hover{text-decoration:underline}
-
-/* ══════════════════════════════════════════════
-   BREATHING OVERLAY
-══════════════════════════════════════════════ */
+.chat-progress{background:rgba(74,124,111,.06);padding:.6rem 1rem;border-top:1px solid rgba(74,124,111,.08);display:flex;align-items:center;gap:.6rem}
+.chat-prog-label{font-size:.72rem;color:var(--muted)}
+.chat-prog-bar{flex:1;height:4px;background:rgba(74,124,111,.12);border-radius:50px;overflow:hidden}
+.chat-prog-fill{height:100%;background:linear-gradient(90deg,var(--sage),var(--warm));border-radius:50px;transition:width .8s var(--ease);width:0}
+.chat-prog-pct{font-size:.72rem;color:var(--sage);font-weight:700}
 .breathe-overlay{position:fixed;inset:0;z-index:99999;background:rgba(18,38,34,.97);display:none;flex-direction:column;align-items:center;justify-content:center;color:#fff;text-align:center;padding:2rem}
 .breathe-overlay.show{display:flex;animation:fade-in .4s ease}
 @keyframes fade-in{from{opacity:0}to{opacity:1}}
@@ -163,10 +146,6 @@ h1,h2,h3,h4,h5{font-family:'Playfair Display',serif}
 .breathe-dot.done{background:var(--sage)}
 .breathe-end-btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:50px;padding:.65rem 2.2rem;cursor:pointer;font-size:.88rem;font-family:inherit;margin-top:1.8rem;transition:all .2s}
 .breathe-end-btn:hover{background:rgba(255,255,255,.2);transform:scale(1.03)}
-
-/* ══════════════════════════════════════════════
-   TEAM MODAL
-══════════════════════════════════════════════ */
 .team-overlay{position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;backdrop-filter:blur(6px);padding:1rem}
 .team-overlay.show{display:flex;animation:fade-in .3s ease}
 .team-modal{background:#fff;border-radius:26px;padding:2.5rem 2rem 2rem;max-width:520px;width:100%;text-align:center;animation:slide-up .38s var(--ease);max-height:90vh;overflow-y:auto}
@@ -184,20 +163,14 @@ h1,h2,h3,h4,h5{font-family:'Playfair Display',serif}
 .team-modal-footer{font-size:.82rem;color:var(--muted);margin-bottom:1.3rem;line-height:1.65}
 .modal-close{background:var(--sage);color:#fff;border:none;border-radius:50px;padding:.7rem 2.4rem;cursor:pointer;font-family:inherit;font-size:.92rem;transition:all .2s}
 .modal-close:hover{background:var(--deep);transform:translateY(-2px)}
-
-/* ══════════════════════════════════════════════
-   BACK TO TOP — bottom LEFT to avoid chatbot FAB
-══════════════════════════════════════════════ */
 #backTop{position:fixed;bottom:28px;left:28px;z-index:9987;background:var(--sage);color:#fff;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;cursor:pointer;opacity:0;pointer-events:none;transition:all .3s;border:none;box-shadow:0 4px 16px rgba(74,124,111,.35)}
 #backTop.show{opacity:1;pointer-events:auto}
 #backTop:hover{background:var(--deep);transform:translateY(-3px)}
 </style>
-
 {% block extra_css %}{% endblock %}
 </head>
 <body>
 
-<!-- ══════════ NAVBAR ══════════ -->
 <nav class="navbar navbar-expand-lg">
   <div class="container">
     <a class="navbar-brand" href="{% url 'mentalapp:home' %}">🌿 MindWell</a>
@@ -213,6 +186,7 @@ h1,h2,h3,h4,h5{font-family:'Playfair Display',serif}
         <li class="nav-item"><a class="nav-link {% block nav_selfcare %}{% endblock %}" href="{% url 'mentalapp:selfcare' %}">Self-Care</a></li>
         <li class="nav-item"><a class="nav-link {% block nav_resources %}{% endblock %}" href="{% url 'mentalapp:resources' %}">Resources</a></li>
         <li class="nav-item"><a class="nav-link {% block nav_appointment %}{% endblock %}" href="{% url 'mentalapp:appointment_list' %}">Make an Appointment</a></li>
+        <li class="nav-item"><a class="nav-link {% block nav_mwendo %}{% endblock %}" href="{% url 'mentalapp:mwendo_page' %}" style="color:var(--warm)!important">🌿 Mwendo AI</a></li>
       </ul>
       <div class="d-flex align-items-center gap-2 mt-2 mt-lg-0">
         {% if user.is_authenticated %}
@@ -251,7 +225,6 @@ h1,h2,h3,h4,h5{font-family:'Playfair Display',serif}
 
 {% block content %}{% endblock %}
 
-<!-- ══════════ GLOBAL FOOTER ══════════ -->
 <footer class="mw-footer">
   <div class="container">
     <div class="row gy-5">
@@ -261,8 +234,8 @@ h1,h2,h3,h4,h5{font-family:'Playfair Display',serif}
         <p class="footer-desc">A safe, caring space where knowledge meets compassion. You deserve mental wellness — and we're here to help you find it.</p>
         <div class="footer-social-row">
           <a href="#" class="fsoc"><i class="bi bi-twitter-x"></i></a>
-          <a href="#" class="fsoc"><i class="bi bi-instagram"></i></a>
-          <a href="#" class="fsoc"><i class="bi bi-whatsapp"></i></a>
+          <a href="https://www.instagram.com/mentalhealthcare_ke2026" class="fsoc"><i class="bi bi-instagram"></i></a>
+          <a href="https://chat.whatsapp.com/CraUGUNCZENIdojRePLiNK" class="fsoc"><i class="bi bi-whatsapp"></i></a>
           <a href="#" class="fsoc"><i class="bi bi-linkedin"></i></a>
           <a href="#" class="fsoc"><i class="bi bi-facebook"></i></a>
         </div>
@@ -270,6 +243,7 @@ h1,h2,h3,h4,h5{font-family:'Playfair Display',serif}
       <div class="col-6 col-lg-2">
         <div class="footer-col-title">Explore</div>
         <ul class="footer-list">
+          <li><a href="{% url 'mentalapp:home' %}">🏠 Home</a></li>
           <li><a href="{% url 'mentalapp:about' %}">About Mental Health</a></li>
           <li><a href="{% url 'mentalapp:conditions' %}">Conditions</a></li>
           <li><a href="{% url 'mentalapp:signs' %}">Warning Signs</a></li>
@@ -287,10 +261,11 @@ h1,h2,h3,h4,h5{font-family:'Playfair Display',serif}
           <li><a href="{% url 'mentalapp:dashboard' %}">My Progress</a></li>
           <li><a href="{% url 'mentalapp:mood_list' %}">Mood Tracker</a></li>
           <li><a href="{% url 'mentalapp:journal_list' %}">Journal</a></li>
+          <li><a href="{% url 'mentalapp:appointment_list' %}">Appointments</a></li>
           {% else %}
           <li><a href="{% url 'mentalapp:register' %}">My Progress</a></li>
           <li><a href="{% url 'mentalapp:register' %}">Achievements</a></li>
-          <li><a href="#">Community</a></li>
+          <li><a href="{% url 'mentalapp:appointment_list' %}">Make Appointment</a></li>
           {% endif %}
         </ul>
       </div>
@@ -299,10 +274,10 @@ h1,h2,h3,h4,h5{font-family:'Playfair Display',serif}
         <div class="footer-crisis-box">
           <div class="title"><i class="bi bi-telephone-fill me-1"></i>Kenya Emergency Lines — 24/7</div>
           <div class="footer-crisis-line">
-            Befrienders Kenya: <strong>0722 178 177</strong><br>
-            Mathari Hospital: <strong>+254 20 2724069</strong><br>
-            Amani Counselling: <strong>+254 722 178 177</strong><br>
-            Emergency Services: <strong>999 / 112</strong>
+            Befrienders Kenya: <a href="tel:0722178177"><strong>0722 178 177</strong></a><br>
+            Mathari Hospital: <a href="tel:+254202724069"><strong>+254 20 2724069</strong></a><br>
+            Amani Counselling: <a href="tel:+254722178177"><strong>+254 722 178 177</strong></a><br>
+            Emergency: <a href="tel:999"><strong>999</strong></a> / <a href="tel:112"><strong>112</strong></a>
           </div>
         </div>
       </div>
@@ -319,7 +294,6 @@ h1,h2,h3,h4,h5{font-family:'Playfair Display',serif}
   </div>
 </footer>
 
-<!-- ══════════ TEAM MODAL ══════════ -->
 <div class="team-overlay" id="teamOverlay" onclick="if(event.target===this)this.classList.remove('show')">
   <div class="team-modal">
     <div class="team-modal-icon">💚</div>
@@ -344,92 +318,110 @@ h1,h2,h3,h4,h5{font-family:'Playfair Display',serif}
   </div>
 </div>
 
-<!-- ══════════ BREATHING OVERLAY ══════════ -->
 <div class="breathe-overlay" id="breatheOverlay">
   <div class="breathe-phase" id="breathePhase">Prepare yourself...</div>
   <div class="breathe-counter" id="breatheCounter">3</div>
   <div class="breathe-orb" id="breatheOrb">Breathe</div>
   <div class="breathe-instruction" id="breatheInstruction">Find a comfortable position.<br>We'll breathe together.</div>
   <div class="breathe-progress">
-    <div class="breathe-dot" id="bd0"></div>
-    <div class="breathe-dot" id="bd1"></div>
-    <div class="breathe-dot" id="bd2"></div>
-    <div class="breathe-dot" id="bd3"></div>
+    <div class="breathe-dot" id="bd0"></div><div class="breathe-dot" id="bd1"></div>
+    <div class="breathe-dot" id="bd2"></div><div class="breathe-dot" id="bd3"></div>
   </div>
   <button class="breathe-end-btn" onclick="stopBreathe()">✕ End Exercise</button>
 </div>
 
-<!-- ══════════ MWENDO CHATBOT ══════════ -->
-<button class="chat-fab" id="chatFab" onclick="toggleChat()" title="Talk to Mwendo — your wellness guide">🌿</button>
+<button class="chat-fab" id="chatFab" onclick="toggleChat()" title="Talk to Mwendo">🌿</button>
 <div class="chat-fab-label" id="chatLabel">Talk to Mwendo 💚</div>
+
 <div class="chat-panel" id="chatPanel">
   <div class="chat-head">
     <div class="chat-avatar">🌿</div>
     <div class="chat-head-meta">
       <div class="chat-head-name">Mwendo</div>
-      <div class="chat-head-status"><div class="online-dot"></div>Your mental wellness guide · Always here</div>
+      <div class="chat-head-status"><div class="online-dot"></div><span id="chatStatus">Your mental wellness guide · Always here</span></div>
+    </div>
+    <div class="chat-head-actions">
+      <button class="chat-head-btn" onclick="clearChat()" title="Clear chat"><i class="bi bi-arrow-counterclockwise"></i></button>
+      <button class="chat-head-btn" onclick="startBreathe()" title="Breathing exercise"><i class="bi bi-wind"></i></button>
     </div>
     <button class="chat-x" onclick="toggleChat()"><i class="bi bi-x-lg"></i></button>
   </div>
+  <div class="chat-mood-bar" id="chatMoodBar">
+    <span style="font-size:.72rem;color:var(--muted);white-space:nowrap;flex-shrink:0">Feeling:</span>
+    <button class="chat-mood-chip" onclick="quickMood('happy')">😊</button>
+    <button class="chat-mood-chip" onclick="quickMood('calm')">😌</button>
+    <button class="chat-mood-chip" onclick="quickMood('anxious')">😰</button>
+    <button class="chat-mood-chip" onclick="quickMood('sad')">😔</button>
+    <button class="chat-mood-chip" onclick="quickMood('frustrated')">😤</button>
+    <button class="chat-mood-chip" onclick="quickMood('numb')">😶</button>
+    <button class="chat-mood-chip" onclick="quickMood('exhausted')">😴</button>
+    <button class="chat-mood-chip" onclick="quickMood('crisis')">🆘</button>
+  </div>
   <div class="chat-msgs" id="chatMsgs"></div>
   <div class="chat-quick-row" id="chatQuick"></div>
+  <div class="chat-progress" id="chatProgress" style="display:none">
+    <span class="chat-prog-label">Wellness journey</span>
+    <div class="chat-prog-bar"><div class="chat-prog-fill" id="chatProgFill"></div></div>
+    <span class="chat-prog-pct" id="chatProgPct">0%</span>
+  </div>
   <div class="chat-input-row">
-    <input class="chat-text-input" id="chatInput" type="text" placeholder="Type how you're feeling..." onkeydown="if(event.key==='Enter')sendChat()">
+    <input class="chat-text-input" id="chatInput" type="text" placeholder="How are you feeling right now?" onkeydown="if(event.key==='Enter')sendChat()">
     <button class="chat-send-btn" onclick="sendChat()"><i class="bi bi-send-fill"></i></button>
   </div>
-  <div class="chat-crisis-bar">🆘 Crisis? Call <a href="tel:0722178177">0722 178 177</a> (Befrienders Kenya · 24/7 · Free)</div>
+  <div class="chat-crisis-bar">🆘 Crisis? <a href="tel:0722178177">Call 0722 178 177</a> · Befrienders Kenya · 24/7 · Free</div>
 </div>
 
 <button id="backTop" title="Back to top"><i class="bi bi-arrow-up"></i></button>
 
-<!-- ══════════ GLOBAL SCRIPTS ══════════ -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 const MW_URLS = {
-  home:       "{% url 'mentalapp:home' %}",
-  about:      "{% url 'mentalapp:about' %}",
-  conditions: "{% url 'mentalapp:conditions' %}",
-  signs:      "{% url 'mentalapp:signs' %}",
-  prevention: "{% url 'mentalapp:prevention' %}",
-  selfcare:   "{% url 'mentalapp:selfcare' %}",
-  resources:  "{% url 'mentalapp:resources' %}",
-  register:   "{% url 'mentalapp:register' %}",
-  login:      "{% url 'mentalapp:login' %}",
+  home:            "{% url 'mentalapp:home' %}",
+  about:           "{% url 'mentalapp:about' %}",
+  conditions:      "{% url 'mentalapp:conditions' %}",
+  signs:           "{% url 'mentalapp:signs' %}",
+  prevention:      "{% url 'mentalapp:prevention' %}",
+  selfcare:        "{% url 'mentalapp:selfcare' %}",
+  resources:       "{% url 'mentalapp:resources' %}",
+  register:        "{% url 'mentalapp:register' %}",
+  login:           "{% url 'mentalapp:login' %}",
+  mwendo_chat:     "/mwendo-chat/",
+  mwendo_page:     "{% url 'mentalapp:mwendo_page' %}",
+  {% if user.is_authenticated %}
+  dashboard:       "{% url 'mentalapp:dashboard' %}",
+  mood_list:       "{% url 'mentalapp:mood_list' %}",
+  journal_list:    "{% url 'mentalapp:journal_list' %}",
+  appointment_list:"{% url 'mentalapp:appointment_list' %}",
+  {% endif %}
+};
+const MW_USER = {
+  authenticated: {{ user.is_authenticated|yesno:"true,false" }},
+  name: "{{ user.get_short_name|default:user.username|default:'' }}",
 };
 </script>
 <script>
-/* ── Scroll Reveal ── */
-const _ro = new IntersectionObserver(es => {
-  es.forEach(e => { if(e.isIntersecting){e.target.classList.add('visible');_ro.unobserve(e.target);} });
-},{threshold:.1});
-document.querySelectorAll('.reveal').forEach(el => _ro.observe(el));
+const _ro=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');_ro.unobserve(e.target);}});},{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>_ro.observe(el));
+const _cp=window.location.pathname;
+document.querySelectorAll('.nav-link').forEach(a=>{if(a.getAttribute('href')===_cp)a.classList.add('active-page');});
+const _bt=document.getElementById('backTop');
+window.addEventListener('scroll',()=>_bt.classList.toggle('show',window.scrollY>400));
+_bt.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+setTimeout(()=>{const l=document.getElementById('chatLabel');if(l)l.style.opacity='0';},6000);
 
-/* ── Active nav ── */
-const _cp = window.location.pathname;
-document.querySelectorAll('.nav-link').forEach(a => { if(a.getAttribute('href')===_cp) a.classList.add('active-page'); });
-
-/* ── Back to top ── */
-const _bt = document.getElementById('backTop');
-window.addEventListener('scroll', () => _bt.classList.toggle('show', window.scrollY > 400));
-_bt.addEventListener('click', () => window.scrollTo({top:0,behavior:'smooth'}));
-
-/* ── FAB label hide ── */
-setTimeout(() => { const l=document.getElementById('chatLabel'); if(l) l.style.opacity='0'; }, 6000);
-
-/* ── Breathing ── */
-let _bT=null, _bC=0;
+let _bT=null,_bC=0;
 const _bPh=[
   {name:'Inhale',count:4,cls:'inhale',text:'Breathe in slowly through your nose...',orb:'Inhale'},
-  {name:'Hold',  count:4,cls:'hold',  text:'Hold gently. Feel the stillness...',    orb:'Hold'  },
-  {name:'Exhale',count:6,cls:'exhale',text:'Release slowly through your mouth...', orb:'Exhale'},
-  {name:'Hold',  count:4,cls:'hold',  text:'Rest here. Let your body settle...',    orb:'Hold'  },
+  {name:'Hold',  count:4,cls:'hold',  text:'Hold gently. Feel the stillness...',    orb:'Hold'},
+  {name:'Exhale',count:6,cls:'exhale',text:'Release slowly through your mouth...',  orb:'Exhale'},
+  {name:'Hold',  count:4,cls:'hold',  text:'Rest here. Let your body settle...',    orb:'Hold'},
 ];
 const _TC=4;
-
 function startBreathe(){
-  _bC=0; clearInterval(_bT);
+  _bC=0;clearInterval(_bT);
   document.getElementById('breatheOverlay').classList.add('show');
-  _updDots(0); _runPh(0);
+  _updDots(0);_runPh(0);
+  incrementProgress(15);
 }
 function _runPh(i){
   if(_bC>=_TC){_finBr();return;}
@@ -437,138 +429,198 @@ function _runPh(i){
   document.getElementById('breathePhase').textContent=ph.name.toUpperCase();
   document.getElementById('breatheInstruction').innerHTML=ph.text;
   const orb=document.getElementById('breatheOrb');
-  orb.className='breathe-orb '+ph.cls; orb.textContent=ph.orb;
+  orb.className='breathe-orb '+ph.cls;orb.textContent=ph.orb;
   let s=ph.count;
   document.getElementById('breatheCounter').textContent=s;
   _bT=setInterval(()=>{
-    s--;
-    document.getElementById('breatheCounter').textContent=s>0?s:'';
-    if(s<=0){
-      clearInterval(_bT);
-      const nx=(i+1)%_bPh.length;
-      if(nx===0){_bC++;_updDots(_bC);}
-      setTimeout(()=>_runPh(nx),400);
-    }
+    s--;document.getElementById('breatheCounter').textContent=s>0?s:'';
+    if(s<=0){clearInterval(_bT);const nx=(i+1)%_bPh.length;if(nx===0){_bC++;_updDots(_bC);}setTimeout(()=>_runPh(nx),400);}
   },1000);
 }
-function _updDots(d){
-  for(let i=0;i<_TC;i++){
-    const dot=document.getElementById('bd'+i);
-    if(dot) dot.className='breathe-dot'+(i<d?' done':i===d?' active':'');
-  }
-}
+function _updDots(d){for(let i=0;i<_TC;i++){const dot=document.getElementById('bd'+i);if(dot)dot.className='breathe-dot'+(i<d?' done':i===d?' active':'');}}
 function _finBr(){
   document.getElementById('breathePhase').textContent='Well done! 🌿';
   document.getElementById('breatheCounter').textContent='✓';
   document.getElementById('breatheInstruction').innerHTML='You completed 4 cycles of box breathing.<br>Notice how your body feels right now.';
   document.getElementById('breatheOrb').className='breathe-orb';
   document.getElementById('breatheOrb').textContent='💚';
+  incrementProgress(10);
   setTimeout(stopBreathe,3500);
 }
-function stopBreathe(){
-  clearInterval(_bT);
-  document.getElementById('breatheOverlay').classList.remove('show');
+function stopBreathe(){clearInterval(_bT);document.getElementById('breatheOverlay').classList.remove('show');}
+
+let _wellnessScore=parseInt(localStorage.getItem('mw_wellness')||'5');
+function incrementProgress(amount){
+  _wellnessScore=Math.min(100,_wellnessScore+amount);
+  localStorage.setItem('mw_wellness',_wellnessScore);
+  const fill=document.getElementById('chatProgFill');
+  const pct=document.getElementById('chatProgPct');
+  const prog=document.getElementById('chatProgress');
+  if(fill)fill.style.width=_wellnessScore+'%';
+  if(pct)pct.textContent=_wellnessScore+'%';
+  if(prog&&_wellnessScore>5)prog.style.display='flex';
 }
 
-/* ── Chatbot ── */
-let _co=false,_cs=false;
+let _co=false,_cs=false,_chatHistory=[];
+const _CSRF=document.cookie.match(/csrftoken=([^;]+)/)?.[1]||'';
+
 function toggleChat(force){
   _co=(force!==undefined)?force:!_co;
   const p=document.getElementById('chatPanel');
   if(_co){
     p.classList.add('open');
     document.getElementById('chatLabel').style.opacity='0';
-    if(!_cs){_cs=true;setTimeout(()=>_bm(_gr.msg,_gr.q),500);}
-  } else { p.classList.remove('open'); }
+    if(!_cs){
+      _cs=true;
+      incrementProgress(5);
+      const prog=document.getElementById('chatProgress');
+      if(prog){prog.style.display='flex';document.getElementById('chatProgFill').style.width=_wellnessScore+'%';document.getElementById('chatProgPct').textContent=_wellnessScore+'%';}
+      setTimeout(()=>_botMsg(
+        MW_USER.authenticated&&MW_USER.name
+          ? 'Hi **'+MW_USER.name+'** 💚 I\'m **Mwendo** — your personal mental wellness guide.\n\nYou took a brave step just by opening this. How are you feeling right now?'
+          : 'Hi there 💚 I\'m **Mwendo** — your mental wellness guide.\n\nYou took a brave step just by opening this. How are you feeling right now?',
+        ['😊 Pretty good','😰 Anxious','😔 Feeling sad','😤 Frustrated','😶 Numb','😴 Exhausted','🆘 I need crisis support']
+      ),600);
+    }
+  } else {p.classList.remove('open');}
 }
-const _gr={
-  msg:"Hi there 💚 I'm **Mwendo** — your mental wellness guide.\n\nYou took a brave step just by opening this. How are you feeling right now?",
-  q:['😊 Pretty good','😰 Anxious','😔 Feeling sad','😤 Frustrated','😶 Numb','😴 Exhausted','🆘 I need crisis support']
-};
-const _bt2={
-  '😊 Pretty good':{msg:"That makes my heart happy to hear! 🌟\n\nWhat would you like to explore today?",q:['Self-care tips','Learn about mental health','Prevention strategies','Just browsing 😊']},
-  '😰 Anxious':{msg:"Thank you for telling me. Anxiety can feel like your mind won't stop — like a wave you can't outrun. 💙\n\nLet's slow things down. One breath at a time.",q:['🧘 Try breathing exercise','Learn about anxiety','Tell me more','🆘 I need crisis support']},
-  '😔 Feeling sad':{msg:"I hear you. Sadness is heavy, and you don't have to carry it alone. 💚\n\nYou reached out — that took something real. Are you safe right now?",q:["Yes, I'm safe",'I need crisis support','Help me find resources','Just talk to me']},
-  '😤 Frustrated':{msg:"Frustration usually means something matters deeply to you. 🔥\n\nWhat's been weighing on you?",q:['Work / school pressure','Relationships','Feeling unheard','Everything at once']},
-  '😶 Numb':{msg:"Feeling numb can be the mind's way of shielding itself. 💙\n\nYou reached out today — that matters more than you might realise.",q:['A few days','Weeks or longer',"I'm not sure",'Help me understand this']},
-  '😴 Exhausted':{msg:"Your mind and body are asking for rest. 🌙\n\nIs this more physical, emotional, or both?",q:['Physical exhaustion','Emotional drain','Both, honestly',"I don't know"]},
-  '🆘 I need crisis support':{msg:"You matter. Your life has value.\n\n🆘 **Befrienders Kenya: 0722 178 177** (24/7 · Free)\n📍 Mathari Hospital: +254 20 2724069\n\nI'm here with you.",q:['Call now',"I'm okay now, just scared",'Stay with me']},
-  "Yes, I'm safe":{msg:"I'm glad. 💚 Sadness without danger is still real and worth caring for.\n\nWould a breathing exercise help, or shall we find resources?",q:['🧘 Try breathing','Find resources','Just keep talking']},
-  'I need crisis support':{msg:"Please call right now:\n\n🆘 **0722 178 177** (Befrienders Kenya · 24/7 · Free)\n\nYou are not a burden. You are not alone.",q:['Call now',"I'm safe now",'Stay with me']},
-  'Self-care tips':{msg:"Great choice! 🌿 Self-care isn't a luxury — it's maintenance.\n\nOur guide covers sleep, movement, social connection, mindfulness, and more.",q:['Open self-care guide','🧘 Try breathing exercise','Something else']},
-  'Learn about mental health':{msg:"Knowledge is one of the most powerful tools for healing. 📖",q:['Open the guide','Common conditions','Warning signs']},
-  'Open self-care guide':{msg:"Opening the self-care guide! 🌿",q:[],redirect:'selfcare'},
-  'Open the guide':{msg:"Taking you to the guide! 💚",q:[],redirect:'about'},
-  'Common conditions':{msg:"Heading to our conditions guide now.",q:[],redirect:'conditions'},
-  'Warning signs':{msg:"Opening warning signs for you.",q:[],redirect:'signs'},
-  'Find resources':{msg:"Let me take you to our full support directory. 💚",q:[],redirect:'resources'},
-  'Help me find resources':{msg:"Of course — heading there now. 💚",q:[],redirect:'resources'},
-  '🧘 Try breathing exercise':{msg:"Opening breathing exercise now. 🌿 4 cycles of box breathing.",q:[],breathe:true},
-  '🧘 Try breathing':{msg:"Let's breathe together. 🌿 Starting now...",q:[],breathe:true},
-  'Prevention strategies':{msg:"Prevention is the most powerful act of self-care. 🛡️",q:[],redirect:'prevention'},
-  'default':{msg:"I hear you. 💚 Whatever you're going through — it's real and it matters.\n\nWhat would feel most helpful right now?",q:['Find resources','Self-care guide','🧘 Try breathing','Talk more']}
+
+function clearChat(){
+  document.getElementById('chatMsgs').innerHTML='';
+  document.getElementById('chatQuick').innerHTML='';
+  _chatHistory=[];_cs=false;_co=false;
+  document.getElementById('chatPanel').classList.remove('open');
+}
+
+const _moodMap={
+  happy:"I'm feeling happy and positive today",
+  calm:"I'm feeling calm right now",
+  anxious:"I'm feeling anxious",
+  sad:"I'm feeling sad",
+  frustrated:"I'm feeling frustrated",
+  numb:"I'm feeling numb and disconnected",
+  exhausted:"I'm feeling exhausted",
+  crisis:"I need crisis support right now"
 };
 
-function _bm(text,qs=[]){
+function quickMood(mood){
+  if(!_co||!_cs)toggleChat(true);
+  setTimeout(()=>_userSend(_moodMap[mood]||mood),_cs?0:800);
+}
+
+function _userSend(text){
+  const msgs=document.getElementById('chatMsgs');
+  const m=document.createElement('div');
+  m.className='cmsg user';m.textContent=text;
+  msgs.appendChild(m);msgs.scrollTop=msgs.scrollHeight;
+  document.getElementById('chatQuick').innerHTML='';
+  _chatHistory.push({role:'user',text});
+  incrementProgress(3);
+  _fetchMwendo(text);
+}
+
+async function _fetchMwendo(message){
+  const msgs=document.getElementById('chatMsgs');
+  const dots=document.createElement('div');
+  dots.className='typing-dots';dots.id='typingDots';
+  dots.innerHTML='<span></span><span></span><span></span>';
+  msgs.appendChild(dots);msgs.scrollTop=msgs.scrollHeight;
+  try{
+    const res=await fetch(MW_URLS.mwendo_chat,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','X-CSRFToken':_CSRF},
+      body:JSON.stringify({message,history:_chatHistory.slice(-6)})
+    });
+    dots.remove();
+    if(!res.ok)throw new Error('Server error');
+    const data=await res.json();
+    if(data.crisis)_botCrisisMsg(data.reply,data.quick||[]);
+    else _botMsg(data.reply,data.quick||[]);
+    if(data.action==='breathe')setTimeout(startBreathe,600);
+    if(data.redirect&&MW_URLS[data.redirect])setTimeout(()=>window.location.href=MW_URLS[data.redirect],1200);
+    _chatHistory.push({role:'bot',text:data.reply});
+    incrementProgress(4);
+  }catch(err){
+    dots.remove();
+    _fallback(message);
+  }
+}
+
+function _botMsg(text,quickReplies=[]){
   const msgs=document.getElementById('chatMsgs');
   const qrow=document.getElementById('chatQuick');
-  const dots=document.createElement('div');
-  dots.className='typing-dots';
-  dots.innerHTML='<span></span><span></span><span></span>';
-  msgs.appendChild(dots); msgs.scrollTop=msgs.scrollHeight;
-  const d=700+Math.min(text.length*5,1100);
-  setTimeout(()=>{
-    dots.remove();
-    const m=document.createElement('div');
-    m.className='cmsg bot';
-    m.innerHTML=text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
-    msgs.appendChild(m); msgs.scrollTop=msgs.scrollHeight;
-    qrow.innerHTML='';
-    qs.forEach(r=>{
-      const b=document.createElement('button'); b.className='qr-btn'; b.textContent=r;
-      b.onclick=()=>_hq(r); qrow.appendChild(b);
-    });
-    if(/breath|Breathe/i.test(text)){
-      const bb=document.createElement('button'); bb.className='chat-breathe-btn';
-      bb.innerHTML='🧘 Start 4-Minute Breathing Exercise'; bb.onclick=startBreathe;
-      msgs.appendChild(bb); msgs.scrollTop=msgs.scrollHeight;
-    }
-  },d);
+  const m=document.createElement('div');
+  m.className='cmsg bot';
+  m.innerHTML=text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
+  msgs.appendChild(m);msgs.scrollTop=msgs.scrollHeight;
+  qrow.innerHTML='';
+  quickReplies.forEach(r=>{
+    const b=document.createElement('button');b.className='qr-btn';b.textContent=r;
+    b.onclick=()=>{b.style.transform='scale(.95)';setTimeout(()=>_userSend(r),80);};
+    qrow.appendChild(b);
+  });
+  if(/breath|Breathe|relax/i.test(text)){
+    const bb=document.createElement('button');bb.className='chat-breathe-btn';
+    bb.innerHTML='🧘 Start 4-Minute Breathing Exercise';bb.onclick=startBreathe;
+    msgs.appendChild(bb);msgs.scrollTop=msgs.scrollHeight;
+  }
 }
 
-function _hq(t){
+function _botCrisisMsg(text,quickReplies=[]){
   const msgs=document.getElementById('chatMsgs');
-  const m=document.createElement('div'); m.className='cmsg user'; m.textContent=t;
-  msgs.appendChild(m); msgs.scrollTop=msgs.scrollHeight;
-  document.getElementById('chatQuick').innerHTML='';
-  const r=_bt2[t]||_bt2['default'];
-  if(r.redirect) setTimeout(()=>window.location.href=MW_URLS[r.redirect],900);
-  if(r.breathe)  setTimeout(startBreathe,600);
-  setTimeout(()=>_bm(r.msg,r.q||[]),250);
+  const qrow=document.getElementById('chatQuick');
+  const m=document.createElement('div');
+  m.className='cmsg crisis-msg';
+  m.innerHTML=text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
+  msgs.appendChild(m);
+  const cta=document.createElement('div');
+  cta.className='chat-crisis-cta';
+  cta.innerHTML='<i class="bi bi-telephone-fill" style="color:#b5554a;flex-shrink:0"></i><span>Call now, free &amp; 24/7: <a href="tel:0722178177">0722 178 177</a></span>';
+  msgs.appendChild(cta);
+  msgs.scrollTop=msgs.scrollHeight;
+  qrow.innerHTML='';
+  quickReplies.forEach(r=>{
+    const b=document.createElement('button');b.className='qr-btn';b.textContent=r;
+    b.onclick=()=>_userSend(r);qrow.appendChild(b);
+  });
+}
+
+function _fallback(message){
+  const low=message.toLowerCase();
+  let reply="I hear you. 💚 Whatever you're carrying — it's real and it matters.\n\nWhat would feel most helpful right now?";
+  let quick=['Find resources','Self-care guide','🧘 Try breathing','Talk more'];
+  let crisis=false;
+  if(/crisis|suicid|kill|harm|hurt myself|end it|die|want to die/i.test(low)){
+    reply="You matter deeply. Please reach out right now:\n\n🆘 **Befrienders Kenya: 0722 178 177** (24/7 · Free)\n📍 Mathari Hospital: **+254 20 2724069**\n\nI'm staying right here with you.";
+    quick=['Call 0722 178 177',"I'm scared but okay",'Stay with me','🧘 Help me breathe'];
+    crisis=true;
+  }else if(/anxi|panic|worry|stress|overwhelm|scared/i.test(low)){
+    reply="Anxiety is real and it can feel relentless. 💙 Let's slow things down together.";
+    quick=['🧘 Let\'s breathe','Learn about anxiety','Tell me more','🆘 I need crisis support'];
+  }else if(/sad|depress|cry|hopeless|empty|alone|numb/i.test(low)){
+    reply="Thank you for trusting me with this. 💚 Sadness doesn't mean weakness — it means something hurts.\n\nAre you safe right now?";
+    quick=["Yes, I'm safe",'I need crisis support','Find support','🧘 Help me breathe'];
+  }else if(/tired|exhaust|burnout|drain|sleep/i.test(low)){
+    reply="Your mind and body are asking for rest. 🌙 Rest is not giving up — it's maintenance.";
+    quick=['Self-care guide','🧘 Try breathing','Tell me more','Find resources'];
+  }else if(/breath|breathe/i.test(low)){
+    reply="Let's breathe together. 🌿 Starting now...";quick=[];
+    setTimeout(startBreathe,600);
+  }else if(/good|great|happy|fine|better/i.test(low)){
+    reply="That makes my heart happy! 🌟\n\nWhat would you like to explore today?";
+    quick=['Self-care guide','Prevention strategies','Explore guides','Just saying hi 😊'];
+  }
+  if(crisis)_botCrisisMsg(reply,quick);
+  else _botMsg(reply,quick);
+  _chatHistory.push({role:'bot',text:reply});
 }
 
 function sendChat(){
   const inp=document.getElementById('chatInput');
-  const txt=inp.value.trim(); if(!txt) return; inp.value='';
-  const msgs=document.getElementById('chatMsgs');
-  const m=document.createElement('div'); m.className='cmsg user'; m.textContent=txt;
-  msgs.appendChild(m); msgs.scrollTop=msgs.scrollHeight;
-  document.getElementById('chatQuick').innerHTML='';
-  const low=txt.toLowerCase();
-  let r=_bt2['default'];
-  if(/crisis|hurt|harm|suicid|kill|die|end (it|my life)/i.test(low)) r=_bt2['🆘 I need crisis support'];
-  else if(/anxi|panic|worry|stress|scared/i.test(low))               r=_bt2['😰 Anxious'];
-  else if(/sad|depress|cry|hopeless|empty|alone/i.test(low))         r=_bt2['😔 Feeling sad'];
-  else if(/numb|disconnect|nothing|feel nothing/i.test(low))         r=_bt2['😶 Numb'];
-  else if(/tired|exhaust|sleep|drain|worn/i.test(low))               r=_bt2['😴 Exhausted'];
-  else if(/angry|frustrat|mad|annoyed|rage/i.test(low))              r=_bt2['😤 Frustrated'];
-  else if(/good|great|happy|fine|okay|well/i.test(low))              r=_bt2['😊 Pretty good'];
-  else if(/breath|breathe/i.test(low))                               r=_bt2['🧘 Try breathing exercise'];
-  else if(/resource|help|support|therapist/i.test(low))              r=_bt2['Find resources'];
-  setTimeout(()=>{_bm(r.msg,r.q||[]);if(r.breathe)setTimeout(startBreathe,600);},300);
+  const txt=inp.value.trim();if(!txt)return;inp.value='';
+  _userSend(txt);
 }
 </script>
-
 {% block extra_js %}{% endblock %}
 </body>
 </html>

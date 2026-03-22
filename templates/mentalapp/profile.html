@@ -1,51 +1,40 @@
 {% extends 'mentalapp/base.html' %}
 {% block title %}Profile · MindWell{% endblock %}
-
 {% block extra_css %}
 <style>
-  .profile-hero{background:linear-gradient(135deg,var(--deep),#2a4a42);padding:3.5rem 0 2rem;color:#fff;text-align:center}
-  .avatar-ring{
-    width:96px;height:96px;border-radius:50%;
-    background:var(--sage);border:3px solid var(--warm);
-    display:flex;align-items:center;justify-content:center;
-    font-size:2.4rem;margin:0 auto 1rem;overflow:hidden
-  }
-  .avatar-ring img{width:100%;height:100%;object-fit:cover}
-  .profile-hero h2{color:var(--warm);font-size:1.6rem;margin-bottom:.2rem}
-  .profile-hero p{color:rgba(255,255,255,.6);font-size:.88rem}
+.profile-hero{background:linear-gradient(135deg,var(--deep),#2a4a42);padding:3.5rem 0 5.5rem;color:#fff;position:relative;overflow:hidden}
+.profile-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 55% 65% at 80% 40%,rgba(74,124,111,.22) 0%,transparent 65%)}
+.avatar-ring{width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,var(--sage),var(--deep));border:3px solid var(--warm);display:flex;align-items:center;justify-content:center;font-size:2.6rem;margin:0 auto 1rem;overflow:hidden;box-shadow:0 8px 28px rgba(0,0,0,.25)}
+.avatar-ring img{width:100%;height:100%;object-fit:cover}
+.profile-hero h2{color:var(--warm);font-size:1.7rem;margin-bottom:.2rem}
+.profile-hero p{color:rgba(255,255,255,.55);font-size:.88rem}
 
-  .profile-card{
-    background:#fff;border-radius:16px;
-    border:1px solid rgba(74,124,111,.12);
-    padding:2rem;max-width:640px;margin:0 auto
-  }
+.profile-card{background:#fff;border-radius:20px;border:1px solid rgba(74,124,111,.12);padding:2rem;box-shadow:0 4px 22px rgba(28,43,40,.07);margin-top:-3rem}
+.info-row{display:flex;align-items:flex-start;gap:1rem;padding:.85rem 0;border-bottom:1px solid rgba(74,124,111,.08)}
+.info-row:last-child{border-bottom:none}
+.info-label{min-width:130px;font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:700;padding-top:.1rem;flex-shrink:0}
+.info-value{font-size:.93rem;color:var(--deep);flex:1;line-height:1.55}
 
-  .info-row{
-    display:flex;align-items:flex-start;gap:1rem;
-    padding:.85rem 0;border-bottom:1px solid #f0ede7
-  }
-  .info-row:last-child{border-bottom:none}
-  .info-label{min-width:130px;font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:600;padding-top:.1rem}
-  .info-value{font-size:.93rem;color:var(--deep);flex:1}
+/* Wellness score ring */
+.wellness-ring{position:relative;width:90px;height:90px;flex-shrink:0}
+.wellness-ring svg{transform:rotate(-90deg)}
+.wellness-ring .wring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.wring-num{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;color:var(--sage);line-height:1}
+.wring-lbl{font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
 
-  .btn-sage{background:var(--sage);color:#fff;border:none;border-radius:10px;padding:.55rem 1.3rem;font-size:.88rem}
-  .btn-sage:hover{background:var(--sage-lt);color:#fff}
-
-  .stat-mini{text-align:center}
-  .stat-mini .val{font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--sage)}
-  .stat-mini .lbl{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+/* Stat mini */
+.stat-mini-card{background:linear-gradient(135deg,var(--cream),#fff);border:1px solid rgba(74,124,111,.12);border-radius:16px;padding:1.2rem;text-align:center;transition:all .3s}
+.stat-mini-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(74,124,111,.12)}
+.smc-val{font-family:'Playfair Display',serif;font-size:1.9rem;color:var(--sage);line-height:1}
+.smc-lbl{font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-top:.3rem}
 </style>
 {% endblock %}
 
 {% block content %}
 <section class="profile-hero">
-  <div class="container">
+  <div class="container text-center position-relative">
     <div class="avatar-ring">
-      {% if profile.avatar %}
-        <img src="{{ profile.avatar.url }}" alt="Avatar">
-      {% else %}
-        👤
-      {% endif %}
+      {% if profile.avatar %}<img src="{{ profile.avatar.url }}" alt="Avatar">{% else %}👤{% endif %}
     </div>
     <h2>{{ request.user.get_full_name|default:request.user.username }}</h2>
     <p>@{{ request.user.username }} · Member since {{ request.user.date_joined|date:"F Y" }}</p>
@@ -53,73 +42,54 @@
 </section>
 
 <div class="container py-4">
-
   {% if messages %}
-    {% for msg in messages %}
-      <div class="alert alert-{{ msg.tags }} alert-dismissible fade show" style="max-width:640px;margin:0 auto 1rem">
-        {{ msg }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-      </div>
-    {% endfor %}
+    {% for msg in messages %}<div class="alert alert-{{ msg.tags }} alert-dismissible fade show" style="max-width:640px;margin:0 auto 1rem">{{ msg }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>{% endfor %}
   {% endif %}
 
-  <div class="profile-card">
+  <div class="row g-4" style="max-width:760px;margin:0 auto">
 
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <h5 style="font-family:'Playfair Display',serif;color:var(--deep);margin:0">My Profile</h5>
-      <a href="{% url 'mentalapp:profile_edit' %}" class="btn-sage btn">Edit Profile</a>
+    <!-- Profile info -->
+    <div class="col-12">
+      <div class="profile-card">
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+          <h5 style="font-family:'Playfair Display',serif;color:var(--deep);margin:0">My Profile</h5>
+          <a href="{% url 'mentalapp:profile_edit' %}" class="btn-sage" style="border-radius:12px;padding:.5rem 1.3rem;font-size:.88rem">✏️ Edit Profile</a>
+        </div>
+        <div class="info-row"><span class="info-label">Username</span><span class="info-value">{{ request.user.username }}</span></div>
+        <div class="info-row"><span class="info-label">Email</span><span class="info-value">{{ request.user.email|default:"—" }}</span></div>
+        <div class="info-row"><span class="info-label">Full Name</span><span class="info-value">{{ request.user.get_full_name|default:"—" }}</span></div>
+        {% if profile.bio %}<div class="info-row"><span class="info-label">Bio</span><span class="info-value">{{ profile.bio }}</span></div>{% endif %}
+        {% if profile.location %}<div class="info-row"><span class="info-label">Location</span><span class="info-value">{{ profile.location }}</span></div>{% endif %}
+        <div class="info-row"><span class="info-label">Joined</span><span class="info-value">{{ request.user.date_joined|date:"F j, Y" }}</span></div>
+      </div>
     </div>
 
-    <div class="info-row">
-      <span class="info-label">Username</span>
-      <span class="info-value">{{ request.user.username }}</span>
+    <!-- Activity stats -->
+    <div class="col-12">
+      <div class="profile-card">
+        <h6 style="font-size:.78rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:1.2rem">Wellness Activity</h6>
+        <div class="row g-3 text-center">
+          <div class="col-6 col-md-3"><div class="stat-mini-card"><div class="smc-val">{{ request.user.mood_entries.count }}</div><div class="smc-lbl">😊 Moods</div></div></div>
+          <div class="col-6 col-md-3"><div class="stat-mini-card"><div class="smc-val">{{ request.user.journal_entries.count }}</div><div class="smc-lbl">📓 Journals</div></div></div>
+          <div class="col-6 col-md-3"><div class="stat-mini-card"><div class="smc-val">{{ request.user.selfcare_logs.count }}</div><div class="smc-lbl">✅ Checklists</div></div></div>
+          <div class="col-6 col-md-3"><div class="stat-mini-card"><div class="smc-val">{{ request.user.appointments.count }}</div><div class="smc-lbl">📅 Sessions</div></div></div>
+        </div>
+      </div>
     </div>
-    <div class="info-row">
-      <span class="info-label">Email</span>
-      <span class="info-value">{{ request.user.email|default:"—" }}</span>
+
+    <!-- Quick links -->
+    <div class="col-12">
+      <div class="profile-card">
+        <h6 style="font-size:.78rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:1rem">Quick Access</h6>
+        <div class="d-flex flex-wrap gap-2">
+          <a href="{% url 'mentalapp:dashboard' %}" class="btn-sage" style="border-radius:12px;padding:.5rem 1.2rem;font-size:.85rem">📊 Dashboard</a>
+          <a href="{% url 'mentalapp:mood_list' %}" style="background:rgba(74,124,111,.08);border:1.5px solid rgba(74,124,111,.2);color:var(--sage);border-radius:12px;padding:.5rem 1.2rem;font-size:.85rem;text-decoration:none;transition:all .2s">😊 Mood History</a>
+          <a href="{% url 'mentalapp:checklist_history' %}" style="background:rgba(74,124,111,.08);border:1.5px solid rgba(74,124,111,.2);color:var(--sage);border-radius:12px;padding:.5rem 1.2rem;font-size:.85rem;text-decoration:none;transition:all .2s">📋 Checklist History</a>
+          <a href="{% url 'mentalapp:saved_resources' %}" style="background:rgba(74,124,111,.08);border:1.5px solid rgba(74,124,111,.2);color:var(--sage);border-radius:12px;padding:.5rem 1.2rem;font-size:.85rem;text-decoration:none;transition:all .2s">🔖 Saved Resources</a>
+        </div>
+      </div>
     </div>
-    <div class="info-row">
-      <span class="info-label">Full Name</span>
-      <span class="info-value">{{ request.user.get_full_name|default:"—" }}</span>
-    </div>
-    {% if profile.bio %}
-    <div class="info-row">
-      <span class="info-label">Bio</span>
-      <span class="info-value" style="line-height:1.6">{{ profile.bio }}</span>
-    </div>
-    {% endif %}
-    {% if profile.location %}
-    <div class="info-row">
-      <span class="info-label">Location</span>
-      <span class="info-value">{{ profile.location }}</span>
-    </div>
-    {% endif %}
 
   </div>
-
-  <!-- Quick stats -->
-  <div class="profile-card mt-3">
-    <h6 style="font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:1.25rem">Activity</h6>
-    <div class="row g-3 text-center">
-      <div class="col-4">
-        <div class="stat-mini">
-          <div class="val">{{ request.user.mood_set.count }}</div>
-          <div class="lbl">Moods</div>
-        </div>
-      </div>
-      <div class="col-4">
-        <div class="stat-mini">
-          <div class="val">{{ request.user.journalentry_set.count }}</div>
-          <div class="lbl">Journal Entries</div>
-        </div>
-      </div>
-      <div class="col-4">
-        <div class="stat-mini">
-          <div class="val">{{ request.user.savedresource_set.count }}</div>
-          <div class="lbl">Resources</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
 </div>
 {% endblock %}

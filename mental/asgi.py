@@ -1,14 +1,13 @@
+# ================================================================
+#  mental/asgi.py
+# ================================================================
 """
-ASGI config for mental project.
-
-It exposes the ASGI callable as a module-level variable named ``application``.
-
-For more information on this file, see
-https://docs.djangoproject.com/en/6.0/howto/deployment/asgi/
+ASGI config for the MindWell project.
+Exposes the ASGI callable as a module-level variable named ``application``.
+Required for async-capable servers (Daphne, Uvicorn) and future WebSocket support.
 """
 
 import os
-
 from django.core.asgi import get_asgi_application
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mental.settings')

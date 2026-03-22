@@ -1,64 +1,143 @@
 {% extends 'mentalapp/base.html' %}
 {% block title %}{{ action }} Journal Entry · MindWell{% endblock %}
-
 {% block extra_css %}
 <style>
-  .form-hero{background:linear-gradient(135deg,var(--deep),#2a4a42);padding:2.5rem 0;color:#fff}
-  .form-hero h1{color:var(--warm);font-size:1.9rem}
+.form-hero{background:linear-gradient(135deg,var(--deep),#2a4a42);padding:2.5rem 0;color:#fff;position:relative;overflow:hidden}
+.form-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 50% 60% at 85% 40%,rgba(74,124,111,.2) 0%,transparent 65%)}
+.form-hero h1{color:var(--warm);font-size:1.9rem;position:relative}
+.form-hero p{color:rgba(255,255,255,.6);font-size:.9rem;position:relative}
+.form-card{background:#fff;border-radius:20px;border:1px solid rgba(74,124,111,.12);padding:2rem;max-width:720px;margin:0 auto;box-shadow:0 8px 32px rgba(28,43,40,.07)}
+.form-label{font-size:.82rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.35rem;display:block}
+.form-control{border-radius:12px;border:1.5px solid rgba(74,124,111,.18);padding:.65rem .9rem;font-size:.93rem;transition:border-color .2s,box-shadow .2s;background:#fafcfb;width:100%}
+.form-control:focus{border-color:var(--sage);box-shadow:0 0 0 3px rgba(74,124,111,.1);outline:none;background:#fff}
+textarea.form-control{min-height:240px;resize:vertical;line-height:1.75}
+.btn-sage{background:var(--sage);color:#fff;border:none;border-radius:12px;padding:.7rem 1.8rem;font-size:.93rem;font-weight:600;cursor:pointer;transition:all .25s;font-family:inherit}
+.btn-sage:hover{background:var(--sage-lt);color:#fff;transform:translateY(-2px)}
+.btn-outline-back{background:transparent;color:var(--muted);border:1.5px solid #ddd;border-radius:12px;padding:.7rem 1.3rem;font-size:.9rem;text-decoration:none;transition:all .2s}
+.btn-outline-back:hover{border-color:var(--sage);color:var(--sage)}
+.errorlist{list-style:none;padding:0;margin:.3rem 0 0;font-size:.82rem;color:#c62828}
 
-  .form-card{
-    background:#fff;border-radius:16px;
-    border:1px solid rgba(74,124,111,.12);
-    padding:2rem;max-width:720px;margin:0 auto
-  }
+/* Mood tagging */
+.mood-tag-row{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.2rem}
+.mood-tag-opt{border:1.5px solid rgba(74,124,111,.2);border-radius:50px;padding:.32rem .9rem;font-size:.85rem;cursor:pointer;background:#fff;transition:all .22s;font-family:inherit;color:var(--deep)}
+.mood-tag-opt:hover,.mood-tag-opt.selected{background:var(--sage);border-color:var(--sage);color:#fff}
+.mood-tag-opt input{display:none}
 
-  .form-label{font-size:.85rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.35rem}
-  .form-control{
-    border-radius:10px;border:1.5px solid #e0dbd0;
-    padding:.65rem .9rem;font-size:.93rem;
-    transition:border-color .2s,box-shadow .2s
-  }
-  .form-control:focus{border-color:var(--sage);box-shadow:0 0 0 3px rgba(74,124,111,.12);outline:none}
+/* AI writing prompt */
+.writing-prompt{background:rgba(74,124,111,.06);border:1px solid rgba(74,124,111,.15);border-radius:12px;padding:.8rem 1rem;margin-bottom:1.2rem;font-size:.84rem;color:var(--deep);display:flex;align-items:flex-start;gap:.6rem}
+.wp-icon{font-size:1.1rem;flex-shrink:0}
+.wp-prompts{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.5rem}
+.wp-prompt-btn{background:#fff;border:1px solid rgba(74,124,111,.2);border-radius:50px;padding:.22rem .7rem;font-size:.77rem;cursor:pointer;color:var(--sage);font-family:inherit;transition:all .2s}
+.wp-prompt-btn:hover{background:var(--sage);color:#fff}
 
-  textarea.form-control{min-height:260px;resize:vertical;line-height:1.7}
-
-  .btn-sage{background:var(--sage);color:#fff;border:none;border-radius:10px;padding:.6rem 1.5rem;font-size:.9rem;transition:background .2s}
-  .btn-sage:hover{background:var(--sage-lt);color:#fff}
-  .btn-outline-back{background:transparent;color:var(--muted);border:1.5px solid #ddd;border-radius:10px;padding:.6rem 1.2rem;font-size:.9rem;text-decoration:none;transition:all .2s}
-  .btn-outline-back:hover{border-color:var(--sage);color:var(--sage)}
-
-  .errorlist{list-style:none;padding:0;margin:.3rem 0 0;font-size:.82rem;color:#c62828}
-  .char-hint{font-size:.78rem;color:var(--muted);margin-top:.25rem}
+/* Char count */
+.char-count{font-size:.75rem;color:var(--muted);text-align:right;margin-top:.3rem}
+.char-count.warn{color:#b5892a}
 </style>
 {% endblock %}
-
 {% block content %}
 <section class="form-hero">
   <div class="container">
     <h1>{{ action }} Journal Entry</h1>
-    <p style="color:rgba(255,255,255,.6);font-size:.9rem">Take a moment to reflect</p>
+    <p>This is your safe space — write freely and without judgement.</p>
   </div>
 </section>
-
 <div class="container py-4">
   <div class="form-card">
+
+    <!-- AI Writing Prompts -->
+    <div class="writing-prompt">
+      <span class="wp-icon">💡</span>
+      <div>
+        <strong style="font-size:.82rem;color:var(--sage)">Need a starting point? Try one of these:</strong>
+        <div class="wp-prompts">
+          <button type="button" class="wp-prompt-btn" onclick="setPrompt('Today I felt...')">Today I felt...</button>
+          <button type="button" class="wp-prompt-btn" onclick="setPrompt('Something that helped me today was...')">What helped me</button>
+          <button type="button" class="wp-prompt-btn" onclick="setPrompt('I\'m grateful for...')">Gratitude</button>
+          <button type="button" class="wp-prompt-btn" onclick="setPrompt('One thing I want to let go of is...')">Let it go</button>
+          <button type="button" class="wp-prompt-btn" onclick="setPrompt('Right now I need...')">What I need</button>
+        </div>
+      </div>
+    </div>
+
     <form method="post">
       {% csrf_token %}
+
+      <!-- Mood tagging (Feature 4) -->
+      <div class="mb-4">
+        <label class="form-label">How are you feeling right now?</label>
+        <div class="mood-tag-row" id="moodTagRow">
+          <label class="mood-tag-opt"><input type="radio" name="mood_tag" value="5"> 😊 Great</label>
+          <label class="mood-tag-opt"><input type="radio" name="mood_tag" value="4"> 🙂 Good</label>
+          <label class="mood-tag-opt"><input type="radio" name="mood_tag" value="3"> 😐 Okay</label>
+          <label class="mood-tag-opt"><input type="radio" name="mood_tag" value="2"> 😟 Low</label>
+          <label class="mood-tag-opt"><input type="radio" name="mood_tag" value="1"> 😢 Tough</label>
+        </div>
+      </div>
 
       {% for field in form %}
       <div class="mb-4">
         <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
         {{ field }}
-        {% if field.help_text %}<p class="char-hint">{{ field.help_text }}</p>{% endif %}
+        {% if field.name == 'content' %}
+          <div class="char-count" id="charCount">0 characters</div>
+        {% endif %}
+        {% if field.help_text %}<p style="font-size:.78rem;color:var(--muted);margin-top:.25rem">{{ field.help_text }}</p>{% endif %}
         {% if field.errors %}<ul class="errorlist">{% for e in field.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
       </div>
       {% endfor %}
 
-      <div class="d-flex gap-2 mt-2">
-        <button type="submit" class="btn-sage btn">Save Entry</button>
+      <div class="d-flex gap-2 mt-2 flex-wrap">
+        <button type="submit" class="btn-sage">💾 Save Entry</button>
         <a href="{% url 'mentalapp:journal_list' %}" class="btn-outline-back">Cancel</a>
       </div>
     </form>
+
+    <p style="margin-top:1.5rem;font-size:.78rem;color:var(--muted);text-align:center;line-height:1.6">
+      🔒 Your journal is private by default — only you can read it.
+    </p>
   </div>
 </div>
+{% endblock %}
+{% block extra_js %}
+<script>
+// Add appt-input class to all form fields
+document.querySelectorAll('input,select,textarea').forEach(el=>{
+  if(!el.type?.match(/radio|checkbox|submit/))el.classList.add('form-control');
+});
+
+// Mood tag selection
+document.querySelectorAll('.mood-tag-opt').forEach(opt=>{
+  opt.addEventListener('click',function(){
+    document.querySelectorAll('.mood-tag-opt').forEach(o=>o.classList.remove('selected'));
+    this.classList.add('selected');
+    this.querySelector('input').checked=true;
+  });
+});
+
+// Writing prompt
+function setPrompt(text){
+  const ta=document.querySelector('textarea');
+  if(ta){
+    if(!ta.value.trim()) ta.value=text;
+    else ta.value+='\n\n'+text;
+    ta.focus();ta.scrollTop=ta.scrollHeight;
+    updateChar();
+  }
+}
+
+// Char count
+function updateChar(){
+  const ta=document.querySelector('textarea');
+  const cc=document.getElementById('charCount');
+  if(ta&&cc){
+    const l=ta.value.length;
+    cc.textContent=l+' character'+(l===1?'':'s');
+    cc.className='char-count'+(l>1200?' warn':'');
+  }
+}
+const ta=document.querySelector('textarea');
+if(ta)ta.addEventListener('input',updateChar);
+updateChar();
+</script>
 {% endblock %}

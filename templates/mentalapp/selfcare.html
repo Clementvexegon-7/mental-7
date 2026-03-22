@@ -3,27 +3,57 @@
 {% block title %}Self-Care Guide — MindWell{% endblock %}
 {% block nav_selfcare %}active-page{% endblock %}
 {% block extra_css %}
-    <style>
-  #selfcare{background:var(--deep);padding:90px 0}
-  #selfcare .nav-pills .nav-link{border-radius:50px;color:rgba(255,255,255,.6);font-size:.88rem;padding:.5rem 1.5rem;border:1px solid transparent;transition:all .25s}
-  #selfcare .nav-pills .nav-link.active,#selfcare .nav-pills .nav-link:hover{background:var(--sage);color:#fff}
-  .tab-item{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:1.4rem;display:flex;gap:1rem;align-items:flex-start;margin-bottom:.9rem;transition:background .25s}
-  .tab-item:hover{background:rgba(111,173,160,.15)}
-  .tab-item i{font-size:1.5rem;color:var(--warm);flex-shrink:0;margin-top:2px}
-  .tab-item h6{color:#fff;margin-bottom:.25rem;font-size:.97rem}
-  .tab-item p{color:rgba(255,255,255,.56);font-size:.86rem;margin:0;line-height:1.6}
-  #habits{background:var(--cream);padding:90px 0}
-  .habit-card{background:#fff;border-radius:20px;padding:2rem;height:100%;border:1px solid rgba(74,124,111,.1);transition:all .3s}
-  .habit-card:hover{box-shadow:0 12px 36px rgba(74,124,111,.14);transform:translateY(-4px)}
-  .habit-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin-bottom:1rem}
-  #checklist{background:#f0ebe0;padding:90px 0}
-  .check-item{background:#fff;border-radius:12px;padding:1rem 1.4rem;border:1px solid rgba(74,124,111,.12);display:flex;align-items:center;gap:1rem;margin-bottom:.65rem;transition:all .25s}
-  .check-item:hover{border-color:var(--sage);background:rgba(74,124,111,.04)}
-  .check-item i{color:var(--sage);font-size:1rem;flex-shrink:0}
-  .check-item span{font-size:.92rem}
-    </style>
+<style>
+#selfcare{background:var(--deep);padding:90px 0}
+#selfcare .nav-pills .nav-link{border-radius:50px;color:rgba(255,255,255,.6);font-size:.88rem;padding:.5rem 1.5rem;border:1px solid transparent;transition:all .25s}
+#selfcare .nav-pills .nav-link.active,#selfcare .nav-pills .nav-link:hover{background:var(--sage);color:#fff;border-color:var(--sage)}
+.tab-item{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:1.4rem;display:flex;gap:1rem;align-items:flex-start;margin-bottom:.9rem;transition:all .25s;cursor:default}
+.tab-item:hover{background:rgba(111,173,160,.18);border-color:rgba(111,173,160,.3);transform:translateX(3px)}
+.tab-item i{font-size:1.5rem;color:var(--warm);flex-shrink:0;margin-top:2px;transition:transform .25s}
+.tab-item:hover i{transform:scale(1.15) rotate(-5deg)}
+.tab-item h6{color:#fff;margin-bottom:.25rem;font-size:.97rem}
+.tab-item p{color:rgba(255,255,255,.56);font-size:.86rem;margin:0;line-height:1.6}
+.tab-item .try-btn{background:rgba(232,201,138,.15);border:1px solid rgba(232,201,138,.3);color:var(--warm);border-radius:50px;padding:.2rem .7rem;font-size:.74rem;cursor:pointer;font-family:inherit;transition:all .2s;margin-top:.6rem;display:inline-block}
+.tab-item .try-btn:hover{background:rgba(232,201,138,.3);color:#fff}
 
+#habits{background:var(--cream);padding:90px 0}
+.habit-card{background:#fff;border-radius:20px;padding:2rem;height:100%;border:1px solid rgba(74,124,111,.1);transition:all .3s;position:relative;overflow:hidden}
+.habit-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--sage),var(--warm));transform:scaleX(0);transform-origin:left;transition:transform .35s}
+.habit-card:hover{box-shadow:0 12px 36px rgba(74,124,111,.14);transform:translateY(-4px)}
+.habit-card:hover::after{transform:scaleX(1)}
+.habit-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin-bottom:1rem;transition:transform .3s}
+.habit-card:hover .habit-icon{transform:scale(1.12) rotate(-5deg)}
+
+#checklist{background:#f0ebe0;padding:90px 0}
+.check-item{background:#fff;border-radius:12px;padding:1rem 1.4rem;border:1px solid rgba(74,124,111,.12);display:flex;align-items:center;gap:1rem;margin-bottom:.65rem;transition:all .25s;cursor:pointer}
+.check-item:hover{border-color:var(--sage);background:rgba(74,124,111,.04);transform:translateX(4px)}
+.check-item:has(input:checked){border-color:var(--sage);background:rgba(74,124,111,.06)}
+.check-item input{width:17px;height:17px;accent-color:var(--sage);cursor:pointer;flex-shrink:0}
+.check-item i{color:var(--sage);font-size:1rem;flex-shrink:0}
+.check-item span{font-size:.92rem;color:var(--text)}
+.check-item:has(input:checked) span{color:var(--sage);font-weight:500}
+
+.checklist-score{background:#fff;border-radius:16px;border:1px solid rgba(74,124,111,.12);padding:1.2rem 1.5rem;margin-top:1.5rem;display:flex;align-items:center;gap:1rem;box-shadow:0 4px 16px rgba(28,43,40,.06)}
+.cs-bar-wrap{flex:1;background:rgba(74,124,111,.1);border-radius:50px;height:8px;overflow:hidden}
+.cs-bar-fill{background:linear-gradient(90deg,var(--sage),var(--warm));height:100%;border-radius:50px;transition:width .5s var(--ease);width:0}
+.cs-label{font-size:.82rem;color:var(--muted);white-space:nowrap}
+.cs-score{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--sage);font-weight:700;white-space:nowrap}
+
+/* Mwendo CTA */
+.mwendo-cta-strip{background:linear-gradient(135deg,var(--deep),#1a3530);border-radius:20px;padding:2rem;text-align:center;margin-top:2rem}
+.mwendo-cta-strip h5{color:var(--warm);font-family:'Playfair Display',serif;margin-bottom:.5rem}
+.mwendo-cta-strip p{color:rgba(255,255,255,.6);font-size:.88rem;margin-bottom:1.2rem;line-height:1.65}
+
+/* Flow banner */
+.page-flow-banner{background:var(--deep);padding:1rem 0}
+.flow-steps{display:flex;align-items:center;justify-content:center;gap:.5rem;flex-wrap:wrap}
+.fs-item{display:flex;align-items:center;gap:.4rem;font-size:.8rem;color:rgba(255,255,255,.5);padding:.35rem .8rem;border-radius:50px;text-decoration:none;transition:all .2s}
+.fs-item:hover{color:var(--warm)}
+.fs-item.current{background:rgba(232,201,138,.15);border:1px solid rgba(232,201,138,.3);color:var(--warm)}
+.fs-arrow{color:rgba(255,255,255,.25)}
+</style>
 {% endblock %}
+
 {% block content %}
 <div class="page-hero">
   <div class="container position-relative">
@@ -32,6 +62,19 @@
     <p>Self-care is not selfish — it is the essential maintenance your mind needs to function at its best.</p>
   </div>
 </div>
+
+<div class="page-flow-banner">
+  <div class="container">
+    <div class="flow-steps">
+      <a href="{% url 'mentalapp:prevention' %}" class="fs-item">🛡️ Prevention</a><span class="fs-arrow">›</span>
+      <span class="fs-item current">💆 Self-Care</span><span class="fs-arrow">›</span>
+      <a href="{% url 'mentalapp:checklist_today' %}" class="fs-item">✅ Daily Checklist</a><span class="fs-arrow">›</span>
+      <a href="{% url 'mentalapp:checklist_history' %}" class="fs-item">📈 Track Progress</a><span class="fs-arrow">›</span>
+      <a href="/mwendo/" class="fs-item">🌿 Talk to Mwendo</a>
+    </div>
+  </div>
+</div>
+
 <section id="selfcare">
   <div class="container">
     <ul class="nav nav-pills justify-content-center mb-5 flex-wrap gap-2 reveal" id="selfcareTabs">
@@ -43,31 +86,56 @@
     <div class="tab-content reveal">
       <div class="tab-pane fade show active" id="tab-body">
         <div class="row g-3">
-          <div class="col-md-6"><div class="tab-item"><i class="bi bi-moon-stars"></i><div><h6>Consistent Sleep Schedule</h6><p>Go to bed and wake at the same time daily, even on weekends, to regulate your circadian rhythm.</p></div></div><div class="tab-item"><i class="bi bi-bicycle"></i><div><h6>Daily Physical Movement</h6><p>Walk, cycle, swim, dance — any movement counts. Aim for at least 150 minutes of moderate activity per week.</p></div></div></div>
-          <div class="col-md-6"><div class="tab-item"><i class="bi bi-cup-straw"></i><div><h6>Hydration &amp; Balanced Nutrition</h6><p>Drink adequate water and eat regular, balanced meals. Skipping meals can heighten anxiety and irritability.</p></div></div><div class="tab-item"><i class="bi bi-wind"></i><div><h6>Breathwork &amp; Relaxation</h6><p>Practice diaphragmatic breathing to activate the parasympathetic nervous system and reduce stress.</p></div></div></div>
+          <div class="col-md-6">
+            <div class="tab-item"><i class="bi bi-moon-stars"></i><div><h6>Consistent Sleep Schedule</h6><p>Go to bed and wake at the same time daily, even on weekends, to regulate your circadian rhythm.</p><button class="try-btn" onclick="toggleChat(true)">🌿 Ask Mwendo for tips</button></div></div>
+            <div class="tab-item"><i class="bi bi-bicycle"></i><div><h6>Daily Physical Movement</h6><p>Walk, cycle, swim, dance — any movement counts. Aim for at least 150 minutes of moderate activity per week.</p><a href="{% url 'mentalapp:checklist_today' %}" class="try-btn">✅ Track this habit</a></div></div>
+          </div>
+          <div class="col-md-6">
+            <div class="tab-item"><i class="bi bi-cup-straw"></i><div><h6>Hydration &amp; Balanced Nutrition</h6><p>Drink adequate water and eat regular, balanced meals. Skipping meals can heighten anxiety and irritability.</p><a href="{% url 'mentalapp:checklist_today' %}" class="try-btn">✅ Track this habit</a></div></div>
+            <div class="tab-item"><i class="bi bi-wind"></i><div><h6>Breathwork &amp; Relaxation</h6><p>Practice diaphragmatic breathing to activate the parasympathetic nervous system and reduce stress.</p><button class="try-btn" onclick="startBreathe()">🧘 Try breathing now</button></div></div>
+          </div>
         </div>
       </div>
       <div class="tab-pane fade" id="tab-mind">
         <div class="row g-3">
-          <div class="col-md-6"><div class="tab-item"><i class="bi bi-journal-text"></i><div><h6>Journaling</h6><p>Write your thoughts and feelings. Externalizing thoughts reduces their emotional charge and builds self-insight.</p></div></div><div class="tab-item"><i class="bi bi-book"></i><div><h6>Continuous Learning</h6><p>Read, solve puzzles, or learn a new skill. Keeping your brain engaged builds cognitive resilience.</p></div></div></div>
-          <div class="col-md-6"><div class="tab-item"><i class="bi bi-braces"></i><div><h6>Cognitive Reframing</h6><p>Challenge negative thought patterns by questioning their validity and replacing catastrophic thinking with balanced perspectives.</p></div></div><div class="tab-item"><i class="bi bi-phone-flip"></i><div><h6>Scheduled Digital Detox</h6><p>Designate intentional phone-free hours each day. Constant screen stimulation keeps cortisol chronically elevated.</p></div></div></div>
+          <div class="col-md-6">
+            <div class="tab-item"><i class="bi bi-journal-text"></i><div><h6>Journaling</h6><p>Write your thoughts and feelings. Externalizing thoughts reduces their emotional charge and builds self-insight.</p><a href="{% url 'mentalapp:journal_create' %}" class="try-btn">📓 Write a journal entry</a></div></div>
+            <div class="tab-item"><i class="bi bi-book"></i><div><h6>Continuous Learning</h6><p>Read, solve puzzles, or learn a new skill. Keeping your brain engaged builds cognitive resilience.</p></div></div>
+          </div>
+          <div class="col-md-6">
+            <div class="tab-item"><i class="bi bi-braces"></i><div><h6>Cognitive Reframing</h6><p>Challenge negative thought patterns. Replace catastrophic thinking with balanced, realistic perspectives.</p><button class="try-btn" onclick="toggleChat(true)">🌿 Talk it through with Mwendo</button></div></div>
+            <div class="tab-item"><i class="bi bi-phone-flip"></i><div><h6>Scheduled Digital Detox</h6><p>Designate intentional phone-free hours each day. Constant screen stimulation keeps cortisol chronically elevated.</p><a href="{% url 'mentalapp:checklist_today' %}" class="try-btn">✅ Track this habit</a></div></div>
+          </div>
         </div>
       </div>
       <div class="tab-pane fade" id="tab-social">
         <div class="row g-3">
-          <div class="col-md-6"><div class="tab-item"><i class="bi bi-chat-heart"></i><div><h6>Open, Honest Conversations</h6><p>Talk honestly about how you're feeling with trusted people. Vulnerability builds deeper connections.</p></div></div><div class="tab-item"><i class="bi bi-people-fill"></i><div><h6>Community Involvement</h6><p>Join groups or causes that align with your values. Belonging to a community provides shared purpose and support.</p></div></div></div>
-          <div class="col-md-6"><div class="tab-item"><i class="bi bi-hand-thumbs-up"></i><div><h6>Volunteer &amp; Give Back</h6><p>Helping others activates the brain's reward pathways and shifts focus outward — reducing rumination.</p></div></div><div class="tab-item"><i class="bi bi-shield-check"></i><div><h6>Set Healthy Boundaries</h6><p>Learn to say no without guilt. Protecting your time and energy is a fundamental act of self-respect.</p></div></div></div>
+          <div class="col-md-6">
+            <div class="tab-item"><i class="bi bi-chat-heart"></i><div><h6>Open, Honest Conversations</h6><p>Talk honestly about how you're feeling with trusted people. Vulnerability builds deeper connections.</p><button class="try-btn" onclick="toggleChat(true)">🌿 Practice with Mwendo</button></div></div>
+            <div class="tab-item"><i class="bi bi-people-fill"></i><div><h6>Community Involvement</h6><p>Join groups or causes that align with your values. Belonging to a community provides shared purpose and support.</p><a href="https://chat.whatsapp.com/CraUGUNCZENIdojRePLiNK" target="_blank" class="try-btn">💚 Join our WhatsApp community</a></div></div>
+          </div>
+          <div class="col-md-6">
+            <div class="tab-item"><i class="bi bi-hand-thumbs-up"></i><div><h6>Volunteer &amp; Give Back</h6><p>Helping others activates the brain's reward pathways and shifts focus outward — reducing rumination.</p></div></div>
+            <div class="tab-item"><i class="bi bi-shield-check"></i><div><h6>Set Healthy Boundaries</h6><p>Learn to say no without guilt. Protecting your time and energy is a fundamental act of self-respect.</p></div></div>
+          </div>
         </div>
       </div>
       <div class="tab-pane fade" id="tab-spirit">
         <div class="row g-3">
-          <div class="col-md-6"><div class="tab-item"><i class="bi bi-star"></i><div><h6>Daily Gratitude Practice</h6><p>Write three specific things you're grateful for each morning. Over time this measurably retrains the brain.</p></div></div><div class="tab-item"><i class="bi bi-tree"></i><div><h6>Time in Nature</h6><p>Even 20 minutes in natural settings significantly lowers cortisol and improves mood and attention.</p></div></div></div>
-          <div class="col-md-6"><div class="tab-item"><i class="bi bi-palette"></i><div><h6>Creative Expression</h6><p>Art, music, writing, cooking — creativity is a therapeutic outlet that helps process complex emotions.</p></div></div><div class="tab-item"><i class="bi bi-compass"></i><div><h6>Live with Intention</h6><p>Clarify your core values and align your daily choices with them. Purpose is one of the strongest protectors of mental health.</p></div></div></div>
+          <div class="col-md-6">
+            <div class="tab-item"><i class="bi bi-star"></i><div><h6>Daily Gratitude Practice</h6><p>Write three specific things you're grateful for each morning. Over time this measurably retrains the brain.</p><a href="{% url 'mentalapp:journal_create' %}" class="try-btn">📓 Start a gratitude journal</a></div></div>
+            <div class="tab-item"><i class="bi bi-tree"></i><div><h6>Time in Nature</h6><p>Even 20 minutes in natural settings significantly lowers cortisol and improves mood and attention.</p><a href="{% url 'mentalapp:checklist_today' %}" class="try-btn">✅ Track this habit</a></div></div>
+          </div>
+          <div class="col-md-6">
+            <div class="tab-item"><i class="bi bi-palette"></i><div><h6>Creative Expression</h6><p>Art, music, writing, cooking — creativity is a therapeutic outlet that helps process complex emotions.</p></div></div>
+            <div class="tab-item"><i class="bi bi-compass"></i><div><h6>Live with Intention</h6><p>Clarify your core values and align your daily choices with them. Purpose is one of the strongest protectors of mental health.</p></div></div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </section>
+
 <section id="habits">
   <div class="container">
     <div class="row justify-content-center mb-5 text-center"><div class="col-lg-7 reveal"><span class="section-label">Habit Science</span><h2 class="section-title">How to Build Lasting Self-Care Habits</h2></div></div>
@@ -79,22 +147,68 @@
       <div class="col-md-6 col-lg-4 reveal"><div class="habit-card"><div class="habit-icon" style="background:rgba(111,173,160,.18);color:var(--sage-lt)"><i class="bi bi-shield-x"></i></div><h5>Plan for Obstacles</h5><p>Ask yourself "when X happens, I will do Y." Pre-deciding responses to obstacles predicts habit success.</p></div></div>
       <div class="col-md-6 col-lg-4 reveal"><div class="habit-card"><div class="habit-icon" style="background:rgba(232,165,152,.25);color:#a84848"><i class="bi bi-emoji-smile"></i></div><h5>Make It Enjoyable</h5><p>You're far more likely to sustain habits you enjoy. Pair exercise with a podcast you love.</p></div></div>
     </div>
+    <div class="text-center mt-5 reveal">
+      <a href="{% url 'mentalapp:checklist_today' %}" class="btn-sage">✅ Start Tracking Your Habits Today →</a>
+    </div>
   </div>
 </section>
+
 <section id="checklist">
   <div class="container">
     <div class="row justify-content-center mb-5 text-center"><div class="col-lg-7 reveal"><span class="section-label">Daily Checklist</span><h2 class="section-title">A Simple Mental Health Checklist</h2></div></div>
     <div class="row"><div class="col-lg-8 mx-auto reveal">
-      <div class="check-item"><i class="bi bi-check-circle"></i><span>Did I get at least 7 hours of sleep last night?</span></div>
-      <div class="check-item"><i class="bi bi-check-circle"></i><span>Have I eaten regular, balanced meals today?</span></div>
-      <div class="check-item"><i class="bi bi-check-circle"></i><span>Have I moved my body for at least 20–30 minutes?</span></div>
-      <div class="check-item"><i class="bi bi-check-circle"></i><span>Have I spent meaningful time with another person?</span></div>
-      <div class="check-item"><i class="bi bi-check-circle"></i><span>Have I done something creative or enjoyable just for me?</span></div>
-      <div class="check-item"><i class="bi bi-check-circle"></i><span>Have I taken at least 5–10 minutes away from screens?</span></div>
-      <div class="check-item"><i class="bi bi-check-circle"></i><span>Have I noticed and named how I'm feeling emotionally today?</span></div>
-      <div class="check-item"><i class="bi bi-check-circle"></i><span>Is there something I'm carrying alone that I should share?</span></div>
-      <div class="check-item"><i class="bi bi-check-circle"></i><span>Am I being kind to myself — the way I'd be kind to a friend?</span></div>
+      <label class="check-item"><input type="checkbox" onchange="updateScore()"><i class="bi bi-moon-stars" style="display:none"></i><span>Did I get at least 7 hours of sleep last night?</span></label>
+      <label class="check-item"><input type="checkbox" onchange="updateScore()"><i class="bi bi-egg-fried" style="display:none"></i><span>Have I eaten regular, balanced meals today?</span></label>
+      <label class="check-item"><input type="checkbox" onchange="updateScore()"><span>Have I moved my body for at least 20–30 minutes?</span></label>
+      <label class="check-item"><input type="checkbox" onchange="updateScore()"><span>Have I spent meaningful time with another person?</span></label>
+      <label class="check-item"><input type="checkbox" onchange="updateScore()"><span>Have I done something creative or enjoyable just for me?</span></label>
+      <label class="check-item"><input type="checkbox" onchange="updateScore()"><span>Have I taken at least 5–10 minutes away from screens?</span></label>
+      <label class="check-item"><input type="checkbox" onchange="updateScore()"><span>Have I noticed and named how I'm feeling emotionally today?</span></label>
+      <label class="check-item"><input type="checkbox" onchange="updateScore()"><span>Is there something I'm carrying alone that I should share?</span></label>
+      <label class="check-item"><input type="checkbox" onchange="updateScore()"><span>Am I being kind to myself — the way I'd be kind to a friend?</span></label>
+
+      <div class="checklist-score" id="clScore" style="display:none">
+        <div class="cs-score" id="clNum">0/9</div>
+        <div class="cs-bar-wrap"><div class="cs-bar-fill" id="clFill"></div></div>
+        <div class="cs-label" id="clMsg">Keep going</div>
+      </div>
+
+      <div class="mwendo-cta-strip reveal">
+        <h5>Want to make this official?</h5>
+        <p>Your daily checklist in MindWell tracks these habits, builds streaks, and Mwendo gives you personalised feedback based on your patterns.</p>
+        <div class="d-flex gap-3 justify-content-center flex-wrap">
+          <a href="{% url 'mentalapp:checklist_today' %}" class="btn-sage">✅ Open My Checklist</a>
+          <button onclick="toggleChat(true)" style="background:rgba(74,184,111,.15);border:1.5px solid rgba(74,184,111,.3);color:#4ade80;border-radius:50px;padding:.78rem 2rem;font-size:.93rem;cursor:pointer;font-family:inherit;transition:all .25s">🌿 Talk to Mwendo</button>
+        </div>
+      </div>
+
     </div></div>
   </div>
 </section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function updateScore(){
+  const boxes=document.querySelectorAll('#checklist input[type=checkbox]');
+  const done=[...boxes].filter(b=>b.checked).length;
+  const total=boxes.length;
+  const pct=Math.round(done/total*100);
+  const fill=document.getElementById('clFill');
+  const num=document.getElementById('clNum');
+  const msg=document.getElementById('clMsg');
+  const score=document.getElementById('clScore');
+
+  if(done>0) score.style.display='flex'; else {score.style.display='none';return;}
+
+  fill.style.width=pct+'%';
+  num.textContent=done+'/'+total;
+
+  if(done>=8) msg.textContent='🌟 Exceptional self-care day!';
+  else if(done>=6) msg.textContent='😊 Strong day — well done!';
+  else if(done>=4) msg.textContent='🙂 Good progress — keep going';
+  else if(done>=2) msg.textContent='💙 Small steps still matter';
+  else msg.textContent='🌱 Just getting started';
+}
+</script>
 {% endblock %}

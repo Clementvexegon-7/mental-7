@@ -1,57 +1,42 @@
-s{% extends 'mentalapp/base.html' %}
+{% extends 'mentalapp/base.html' %}
 {% block title %}Save Resource · MindWell{% endblock %}
-
 {% block extra_css %}
 <style>
-  .form-hero{background:linear-gradient(135deg,var(--deep),#2a4a42);padding:2.5rem 0;color:#fff}
-  .form-hero h1{color:var(--warm);font-size:1.9rem}
-
-  .form-card{
-    background:#fff;border-radius:16px;
-    border:1px solid rgba(74,124,111,.12);
-    padding:2rem;max-width:580px;margin:0 auto
-  }
-
-  .form-label{font-size:.85rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.35rem}
-  .form-control,.form-select{
-    border-radius:10px;border:1.5px solid #e0dbd0;
-    padding:.65rem .9rem;font-size:.92rem;
-    transition:border-color .2s,box-shadow .2s
-  }
-  .form-control:focus,.form-select:focus{border-color:var(--sage);box-shadow:0 0 0 3px rgba(74,124,111,.12);outline:none}
-
-  .btn-sage{background:var(--sage);color:#fff;border:none;border-radius:10px;padding:.6rem 1.5rem;font-size:.9rem}
-  .btn-sage:hover{background:var(--sage-lt);color:#fff}
-  .btn-outline-back{background:transparent;color:var(--muted);border:1.5px solid #ddd;border-radius:10px;padding:.6rem 1.2rem;font-size:.9rem;text-decoration:none}
-  .btn-outline-back:hover{border-color:var(--sage);color:var(--sage)}
-
-  .errorlist{list-style:none;padding:0;margin:.3rem 0 0;font-size:.82rem;color:#c62828}
+.form-hero{background:linear-gradient(135deg,var(--deep),#2a4a42);padding:2.5rem 0;color:#fff;position:relative;overflow:hidden}
+.form-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 50% 60% at 85% 40%,rgba(74,124,111,.2) 0%,transparent 65%)}
+.form-hero h1{color:var(--warm);font-size:1.9rem;position:relative}
+.form-hero p{color:rgba(255,255,255,.6);font-size:.9rem;position:relative}
+.form-card{background:#fff;border-radius:20px;border:1px solid rgba(74,124,111,.12);padding:2rem;max-width:580px;margin:0 auto;box-shadow:0 8px 32px rgba(28,43,40,.07)}
+.form-label{font-size:.82rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.35rem;display:block}
+.form-control,.form-select{border-radius:12px;border:1.5px solid rgba(74,124,111,.18);padding:.65rem .9rem;font-size:.92rem;transition:border-color .2s,box-shadow .2s;background:#fafcfb;width:100%;font-family:inherit}
+.form-control:focus,.form-select:focus{border-color:var(--sage);box-shadow:0 0 0 3px rgba(74,124,111,.1);outline:none;background:#fff}
+.btn-sage{background:var(--sage);color:#fff;border:none;border-radius:12px;padding:.65rem 1.8rem;font-size:.92rem;font-weight:600;cursor:pointer;transition:all .25s;font-family:inherit}
+.btn-sage:hover{background:var(--sage-lt);transform:translateY(-2px);color:#fff}
+.btn-outline-back{background:transparent;color:var(--muted);border:1.5px solid #ddd;border-radius:12px;padding:.65rem 1.3rem;font-size:.9rem;text-decoration:none;transition:all .2s}
+.btn-outline-back:hover{border-color:var(--sage);color:var(--sage)}
+.errorlist{list-style:none;padding:0;margin:.3rem 0 0;font-size:.82rem;color:#c62828}
 </style>
 {% endblock %}
-
 {% block content %}
 <section class="form-hero">
   <div class="container">
     <h1>🔖 Save a Resource</h1>
-    <p style="color:rgba(255,255,255,.6);font-size:.9rem">Bookmark a helpful link or tool</p>
+    <p>Bookmark a helpful link, hotline, or tool you want to keep.</p>
   </div>
 </section>
-
 <div class="container py-4">
   <div class="form-card">
     <form method="post">
       {% csrf_token %}
-
       {% for field in form %}
-      <div class="mb-3">
+      <div class="mb-4">
         <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
         {{ field }}
         {% if field.errors %}<ul class="errorlist">{% for e in field.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
       </div>
       {% endfor %}
-
-      <div class="d-flex gap-2 mt-4">
-        <button type="submit" class="btn-sage btn">Save Resource</button>
+      <div class="d-flex gap-2 mt-2">
+        <button type="submit" class="btn-sage">💾 Save Resource</button>
         <a href="{% url 'mentalapp:saved_resources' %}" class="btn-outline-back">Cancel</a>
       </div>
     </form>

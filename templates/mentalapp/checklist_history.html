@@ -1,56 +1,159 @@
 {% extends 'mentalapp/base.html' %}
 {% block title %}Checklist History · MindWell{% endblock %}
-
 {% block extra_css %}
 <style>
-  .page-hero{background:linear-gradient(135deg,var(--deep),#2a4a42);padding:2.5rem 0;color:#fff}
-  .page-hero h1{color:var(--warm);font-size:1.9rem}
-  .page-hero p{color:rgba(255,255,255,.6);font-size:.9rem}
+/* ══ HERO ══════════════════════════════════════════════ */
+.ch-hero{background:linear-gradient(135deg,var(--deep) 0%,#2a4a40 70%,var(--sage) 100%);padding:3.5rem 0 5rem;position:relative;overflow:hidden}
+.ch-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 70% at 80% 40%,rgba(111,173,160,.22) 0%,transparent 65%)}
+.ch-hero h1{font-size:clamp(1.7rem,4vw,2.5rem);color:#fff;margin-bottom:.4rem}
+.ch-hero p{color:rgba(255,255,255,.6);font-size:.93rem}
 
-  .history-card{background:#fff;border-radius:16px;border:1px solid rgba(74,124,111,.12);overflow:hidden}
-  .history-row{
-    display:grid;
-    grid-template-columns:140px repeat(5,1fr) 80px;
-    align-items:center;gap:.5rem;
-    padding:.85rem 1.25rem;
-    border-bottom:1px solid #f0ede7;font-size:.85rem
-  }
-  .history-row:last-child{border-bottom:none}
-  .history-row:hover{background:#faf8f4}
-  .history-header{
-    background:#f5f0e8;font-size:.75rem;text-transform:uppercase;
-    letter-spacing:.05em;color:var(--muted);font-weight:600
-  }
+/* ══ STREAK CARDS ═══════════════════════════════════════ */
+.streak-row{display:flex;gap:1rem;flex-wrap:wrap;margin-top:1.8rem}
+.streak-card{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:1.1rem 1.5rem;backdrop-filter:blur(8px);flex:1;min-width:140px;transition:all .3s}
+.streak-card:hover{background:rgba(255,255,255,.14);transform:translateY(-3px)}
+.streak-card .sc-icon{font-size:1.8rem;margin-bottom:.3rem}
+.streak-card .sc-num{font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:700;color:var(--warm);line-height:1}
+.streak-card .sc-lbl{font-size:.75rem;color:rgba(255,255,255,.55);margin-top:.2rem;text-transform:uppercase;letter-spacing:.08em}
+.streak-card .sc-sub{font-size:.72rem;color:rgba(255,255,255,.4);margin-top:.2rem}
 
-  .tick{color:#2e7d32;font-size:1rem}
-  .cross{color:#ccc;font-size:.9rem}
+/* ══ AI INSIGHT CARD ════════════════════════════════════ */
+.ai-insight-wrap{margin-top:-2.5rem;margin-bottom:1.8rem}
+.ai-insight-card{background:#fff;border-radius:20px;padding:1.6rem 2rem;box-shadow:0 8px 40px rgba(28,43,40,.1);border:1.5px solid rgba(74,124,111,.12);position:relative;overflow:hidden}
+.ai-insight-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--sage),var(--warm))}
+.ai-header{display:flex;align-items:center;gap:.7rem;margin-bottom:1.1rem}
+.ai-avatar{width:36px;height:36px;background:linear-gradient(135deg,var(--sage),var(--warm));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;animation:heart-beat 2.5s ease infinite}
+@keyframes heart-beat{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+.ai-name{font-weight:700;font-size:.88rem;color:var(--sage)}
+.ai-subtitle{font-size:.74rem;color:var(--muted)}
+.ai-insights-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.75rem}
+.ai-insight-chip{background:linear-gradient(135deg,rgba(74,124,111,.06),rgba(74,124,111,.03));border:1px solid rgba(74,124,111,.14);border-radius:12px;padding:.7rem .9rem;font-size:.82rem;color:var(--deep);line-height:1.5;display:flex;gap:.5rem;align-items:flex-start}
+.ai-insight-chip .aic-icon{font-size:1.1rem;flex-shrink:0;margin-top:.05rem}
+.ai-insight-chip.warn{background:rgba(232,201,138,.12);border-color:rgba(232,201,138,.3);color:#7a5c20}
+.ai-insight-chip.good{background:rgba(74,124,111,.08);border-color:rgba(74,124,111,.2);color:var(--sage)}
+.ai-insight-chip.neutral{background:rgba(100,149,237,.07);border-color:rgba(100,149,237,.18);color:#4169a8}
+.ai-loading{display:flex;align-items:center;gap:.6rem;color:var(--muted);font-size:.85rem;padding:.4rem 0}
+.ai-dots span{display:inline-block;width:6px;height:6px;background:var(--sage);border-radius:50%;margin:0 2px;animation:tdot .9s ease infinite}
+.ai-dots span:nth-child(2){animation-delay:.18s}
+.ai-dots span:nth-child(3){animation-delay:.36s}
+@keyframes tdot{0%,100%{opacity:.4;transform:translateY(0)}50%{opacity:1;transform:translateY(-4px)}}
 
-  .score-badge{
-    display:inline-block;padding:.2rem .65rem;border-radius:20px;font-size:.78rem;font-weight:600
-  }
-  .s5{background:#e8f5e9;color:#2e7d32}
-  .s4{background:#f1f8e9;color:#558b2f}
-  .s3{background:#fff9c4;color:#f57f17}
-  .s2{background:#fff3e0;color:#e65100}
-  .s1{background:#fce4ec;color:#c62828}
-  .s0{background:#fafafa;color:#aaa}
+/* ══ CHART ══════════════════════════════════════════════ */
+.chart-card{background:#fff;border-radius:20px;padding:1.6rem 1.8rem;box-shadow:0 4px 24px rgba(28,43,40,.07);border:1px solid rgba(74,124,111,.1);margin-bottom:1.5rem}
+.chart-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;flex-wrap:wrap;gap:.5rem}
+.chart-title{font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--deep)}
+.chart-toggle{display:flex;gap:.4rem}
+.ct-btn{background:rgba(74,124,111,.07);border:1px solid rgba(74,124,111,.18);color:var(--muted);border-radius:50px;padding:.28rem .85rem;font-size:.75rem;cursor:pointer;font-family:inherit;transition:all .2s}
+.ct-btn.active{background:var(--sage);color:#fff;border-color:var(--sage)}
 
-  .btn-sage{background:var(--sage);color:#fff;border:none;border-radius:10px;padding:.5rem 1.2rem;font-size:.88rem}
-  .btn-sage:hover{background:var(--sage-lt);color:#fff}
+/* ══ MISSED DAYS WARNING ════════════════════════════════ */
+.missed-warning{background:linear-gradient(135deg,rgba(232,201,138,.18),rgba(232,201,138,.08));border:1.5px solid rgba(232,201,138,.4);border-radius:16px;padding:1rem 1.3rem;margin-bottom:1.3rem;display:flex;align-items:flex-start;gap:.8rem}
+.mw-icon{font-size:1.4rem;flex-shrink:0;margin-top:.05rem}
+.mw-title{font-weight:700;font-size:.88rem;color:#7a5c20;margin-bottom:.2rem}
+.mw-text{font-size:.82rem;color:#9a7a30;line-height:1.55}
 
-  .empty-state{text-align:center;padding:4rem 1rem}
-  .empty-state .es-icon{font-size:3rem;opacity:.35;margin-bottom:1rem}
+/* ══ TABLE ══════════════════════════════════════════════ */
+.history-card{background:#fff;border-radius:20px;border:1px solid rgba(74,124,111,.1);overflow:hidden;box-shadow:0 4px 20px rgba(28,43,40,.06)}
+.history-header-row{display:grid;grid-template-columns:110px 1fr 1fr 1fr 1fr 1fr 80px 90px 50px;align-items:center;gap:.4rem;padding:.7rem 1.2rem;background:rgba(74,124,111,.06);border-bottom:1px solid rgba(74,124,111,.1);font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:700}
+.history-row{display:grid;grid-template-columns:110px 1fr 1fr 1fr 1fr 1fr 80px 90px 50px;align-items:center;gap:.4rem;padding:.8rem 1.2rem;border-bottom:1px solid #f0ede7;font-size:.83rem;transition:background .2s}
+.history-row:last-child{border-bottom:none}
+.history-row:hover{background:#faf8f4}
+@media(max-width:768px){
+  .history-header-row,.history-row{grid-template-columns:90px 1fr 1fr 1fr 1fr 60px 80px 40px}
+  .hide-mobile{display:none}
+}
+@media(max-width:480px){
+  .history-header-row,.history-row{grid-template-columns:80px 1fr 1fr 60px 80px}
+  .hide-sm{display:none}
+}
+.tick{color:#2e7d32;font-size:1rem;text-align:center;display:block}
+.cross{color:#ddd;font-size:.85rem;text-align:center;display:block}
+
+/* Score badge */
+.score-badge{display:inline-flex;align-items:center;gap:.3rem;padding:.22rem .7rem;border-radius:50px;font-size:.78rem;font-weight:700;white-space:nowrap}
+.sb-5{background:linear-gradient(135deg,rgba(46,125,50,.15),rgba(46,125,50,.08));color:#1b5e20}
+.sb-4{background:rgba(104,159,56,.12);color:#33691e}
+.sb-3{background:rgba(255,193,7,.12);color:#f57f17}
+.sb-2{background:rgba(255,152,0,.12);color:#e65100}
+.sb-1{background:rgba(244,67,54,.1);color:#b71c1c}
+.sb-0{background:#f5f5f5;color:#9e9e9e}
+
+/* Emotional feedback */
+.emo-feedback{font-size:.75rem;color:var(--muted);margin-top:.15rem;font-style:italic;display:block}
+
+/* Note tooltip */
+.note-btn{background:none;border:none;cursor:pointer;font-size:1rem;padding:.15rem .3rem;border-radius:6px;transition:background .2s}
+.note-btn:hover{background:rgba(74,124,111,.1)}
+.note-btn[data-note="true"]{color:var(--sage)}
+.note-btn[data-note="false"]{color:#ccc}
+
+/* Quick actions */
+.quick-actions{display:flex;gap:.3rem;align-items:center}
+.qa-btn{background:rgba(74,124,111,.07);border:1px solid rgba(74,124,111,.18);color:var(--sage);border-radius:8px;padding:.22rem .6rem;font-size:.74rem;cursor:pointer;font-family:inherit;transition:all .2s;text-decoration:none;display:inline-flex;align-items:center;gap:.2rem;white-space:nowrap}
+.qa-btn:hover{background:var(--sage);color:#fff;border-color:var(--sage)}
+
+/* Note modal */
+.note-overlay{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);padding:1rem}
+.note-overlay.show{display:flex;animation:fade-in .3s ease}
+@keyframes fade-in{from{opacity:0}to{opacity:1}}
+.note-modal{background:#fff;border-radius:20px;padding:2rem;max-width:460px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.15)}
+.note-modal h5{font-family:'Playfair Display',serif;color:var(--deep);margin-bottom:.3rem}
+.note-modal p{font-size:.85rem;color:var(--muted);margin-bottom:1.2rem}
+.note-textarea{width:100%;border:1.5px solid rgba(74,124,111,.2);border-radius:12px;padding:.7rem 1rem;font-size:.9rem;font-family:inherit;resize:vertical;min-height:100px;outline:none;transition:border-color .2s}
+.note-textarea:focus{border-color:var(--sage);box-shadow:0 0 0 3px rgba(74,124,111,.1)}
+.note-modal-date{font-size:.78rem;color:var(--sage);font-weight:600;margin-bottom:.5rem}
+
+/* empty */
+.empty-state{text-align:center;padding:4rem 1rem}
+.empty-state .es-icon{font-size:3.5rem;opacity:.3;margin-bottom:1rem;display:block}
+
+/* Animate in */
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.animate-in{animation:fadeUp .5s ease both}
 </style>
 {% endblock %}
 
 {% block content %}
-<section class="page-hero">
-  <div class="container d-flex align-items-center justify-content-between flex-wrap gap-3">
-    <div>
-      <h1>📅 Checklist History</h1>
-      <p>Your self-care streaks over time</p>
+
+<!-- ══ HERO with Streak System ══════════════════════════ -->
+<section class="ch-hero">
+  <div class="container position-relative">
+    <div class="d-flex align-items-start justify-content-between flex-wrap gap-3">
+      <div>
+        <span class="badge-pill">Self-Care Tracking</span>
+        <h1>📅 Your Checklist History</h1>
+        <p>Track your habits, celebrate your streaks, and grow every day.</p>
+      </div>
+      <a href="{% url 'mentalapp:checklist_today' %}" class="btn-sage mt-2">Today's Checklist →</a>
     </div>
-    <a href="{% url 'mentalapp:checklist_today' %}" class="btn-sage btn">Today's Checklist</a>
+
+    {# FEATURE 1: Streak System #}
+    <div class="streak-row" id="streakRow">
+      <div class="streak-card animate-in" style="animation-delay:.05s">
+        <div class="sc-icon">🔥</div>
+        <div class="sc-num" id="currentStreak">–</div>
+        <div class="sc-lbl">Current Streak</div>
+        <div class="sc-sub" id="streakMsg">days in a row</div>
+      </div>
+      <div class="streak-card animate-in" style="animation-delay:.1s">
+        <div class="sc-icon">🏆</div>
+        <div class="sc-num" id="bestStreak">–</div>
+        <div class="sc-lbl">Best Streak</div>
+        <div class="sc-sub">personal record</div>
+      </div>
+      <div class="streak-card animate-in" style="animation-delay:.15s">
+        <div class="sc-icon">📊</div>
+        <div class="sc-num" id="avgScore">–</div>
+        <div class="sc-lbl">Avg Daily Score</div>
+        <div class="sc-sub">out of 11</div>
+      </div>
+      <div class="streak-card animate-in" style="animation-delay:.2s">
+        <div class="sc-icon">📅</div>
+        <div class="sc-num" id="totalDays">{{ items|length }}</div>
+        <div class="sc-lbl">Days Logged</div>
+        <div class="sc-sub">total check-ins</div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -64,45 +167,426 @@
     {% endfor %}
   {% endif %}
 
-  <div class="history-card">
-    {% if items %}
-      <div class="history-row history-header">
-        <span>Date</span>
-        <span>💧 Water</span>
-        <span>🏃 Exercise</span>
-        <span>🌙 Sleep</span>
-        <span>🥗 Nutrition</span>
-        <span>🧘 Meditate</span>
-        <span>Score</span>
+  {% if items %}
+
+  {# FEATURE 2: AI Insight Block #}
+  <div class="ai-insight-wrap animate-in">
+    <div class="ai-insight-card">
+      <div class="ai-header">
+        <div class="ai-avatar">🌿</div>
+        <div>
+          <div class="ai-name">Mwendo's Insights</div>
+          <div class="ai-subtitle">Personalised patterns from your checklist data</div>
+        </div>
+        <button onclick="refreshInsights()" style="margin-left:auto;background:rgba(74,124,111,.08);border:1px solid rgba(74,124,111,.2);color:var(--sage);border-radius:50px;padding:.3rem .9rem;font-size:.78rem;cursor:pointer;font-family:inherit">↻ Refresh</button>
       </div>
-      {% for item in items %}
-      {% with score=item.drank_water|add:item.exercised|add:item.slept_well|add:item.ate_well|add:item.meditated %}
-      <div class="history-row">
-        <span style="color:var(--muted)">{{ item.date|date:"M j, Y" }}</span>
-        <span>{% if item.drank_water %}<i class="bi bi-check-circle-fill tick"></i>{% else %}<i class="bi bi-circle cross"></i>{% endif %}</span>
-        <span>{% if item.exercised %}<i class="bi bi-check-circle-fill tick"></i>{% else %}<i class="bi bi-circle cross"></i>{% endif %}</span>
-        <span>{% if item.slept_well %}<i class="bi bi-check-circle-fill tick"></i>{% else %}<i class="bi bi-circle cross"></i>{% endif %}</span>
-        <span>{% if item.ate_well %}<i class="bi bi-check-circle-fill tick"></i>{% else %}<i class="bi bi-circle cross"></i>{% endif %}</span>
-        <span>{% if item.meditated %}<i class="bi bi-check-circle-fill tick"></i>{% else %}<i class="bi bi-circle cross"></i>{% endif %}</span>
-        <span>
-          <span class="score-badge
-            {% if item.drank_water and item.exercised and item.slept_well and item.ate_well and item.meditated %}s5
-            {% else %}s3{% endif %}">
-            <!--  Simple pass through — backend can pass score if model has computed field -->
-            {{ item.drank_water|add:item.exercised|add:item.slept_well|add:item.ate_well|add:item.meditated }}/5
-          </span>
+      <div id="aiInsightsContainer">
+        <div class="ai-loading"><div class="ai-dots"><span></span><span></span><span></span></div> Analysing your habits...</div>
+      </div>
+    </div>
+  </div>
+
+  {# FEATURE 3: Progress Chart #}
+  <div class="chart-card animate-in">
+    <div class="chart-header">
+      <div class="chart-title">📈 Wellness Score Over Time</div>
+      <div class="chart-toggle">
+        <button class="ct-btn active" id="btnLine" onclick="switchChart('line')">Line</button>
+        <button class="ct-btn" id="btnBar" onclick="switchChart('bar')">Bars</button>
+      </div>
+    </div>
+    <canvas id="wellnessChart" height="90"></canvas>
+  </div>
+
+  {# FEATURE 6: Missed Days Warning — computed in JS #}
+  <div id="missedWarning" style="display:none">
+    <div class="missed-warning animate-in">
+      <div class="mw-icon">⚠️</div>
+      <div>
+        <div class="mw-title">You missed some days recently</div>
+        <div class="mw-text" id="missedText">Consistency is key to mental wellness. Every day you check in, you invest in yourself.</div>
+      </div>
+    </div>
+  </div>
+
+  {# HISTORY TABLE #}
+  <div class="history-card animate-in">
+    <div class="history-header-row">
+      <span>Date</span>
+      <span title="Slept well">🌙 Sleep</span>
+      <span title="Exercised">🏃 Move</span>
+      <span title="Ate well" class="hide-mobile">🥗 Eat</span>
+      <span title="Meditated" class="hide-mobile">🧘 Mind</span>
+      <span title="Connected with others" class="hide-sm">🤝 Social</span>
+      <span>Score</span>
+      <span>Mood</span>
+      <span>📝</span>
+    </div>
+
+    {% for item in items %}
+    <div class="history-row" data-score="{{ item.completion_score }}" data-date="{{ item.date|date:'Y-m-d' }}">
+
+      <div>
+        <span style="font-weight:600;color:var(--deep);font-size:.85rem">{{ item.date|date:"M j" }}</span>
+        <span style="display:block;font-size:.72rem;color:var(--muted)">{{ item.date|date:"D" }}</span>
+      </div>
+
+      <span>{% if item.slept_well %}<i class="bi bi-check-circle-fill tick"></i>{% else %}<i class="bi bi-circle cross"></i>{% endif %}</span>
+      <span>{% if item.exercised %}<i class="bi bi-check-circle-fill tick"></i>{% else %}<i class="bi bi-circle cross"></i>{% endif %}</span>
+      <span class="hide-mobile">{% if item.ate_well %}<i class="bi bi-check-circle-fill tick"></i>{% else %}<i class="bi bi-circle cross"></i>{% endif %}</span>
+      <span class="hide-mobile">{% if item.meditated %}<i class="bi bi-check-circle-fill tick"></i>{% else %}<i class="bi bi-circle cross"></i>{% endif %}</span>
+      <span class="hide-sm">{% if item.connected_others %}<i class="bi bi-check-circle-fill tick"></i>{% else %}<i class="bi bi-circle cross"></i>{% endif %}</span>
+
+      {# FEATURE 4: Improved Score System #}
+      <div>
+        {% with s=item.completion_score %}
+        <span class="score-badge
+          {% if s >= 10 %}sb-5
+          {% elif s >= 8 %}sb-4
+          {% elif s >= 6 %}sb-3
+          {% elif s >= 4 %}sb-2
+          {% elif s >= 1 %}sb-1
+          {% else %}sb-0{% endif %}">
+          {{ s }}/11
         </span>
+        {% endwith %}
       </div>
-      {% endwith %}
-      {% endfor %}
-    {% else %}
-      <div class="empty-state">
-        <div class="es-icon">📋</div>
-        <h5 style="font-family:'Playfair Display',serif;color:var(--deep)">No history yet</h5>
-        <p class="text-muted" style="font-size:.88rem">Start filling out your daily checklist to build a streak.</p>
-        <a href="{% url 'mentalapp:checklist_today' %}" class="btn-sage btn mt-2">Go to Today's Checklist</a>
+
+      {# FEATURE 5: Emotional Feedback #}
+      <div>
+        {% with s=item.completion_score %}
+        {% if s >= 10 %}
+          <span style="font-size:1.1rem">🌟</span>
+          <span class="emo-feedback">Outstanding!</span>
+        {% elif s >= 8 %}
+          <span style="font-size:1.1rem">😊</span>
+          <span class="emo-feedback">Great day!</span>
+        {% elif s >= 6 %}
+          <span style="font-size:1.1rem">🙂</span>
+          <span class="emo-feedback">Keep going</span>
+        {% elif s >= 4 %}
+          <span style="font-size:1.1rem">😐</span>
+          <span class="emo-feedback">Room to grow</span>
+        {% elif s >= 1 %}
+          <span style="font-size:1.1rem">💙</span>
+          <span class="emo-feedback">Tomorrow is fresh</span>
+        {% else %}
+          <span style="font-size:1.1rem">🌱</span>
+          <span class="emo-feedback">Start somewhere</span>
+        {% endif %}
+        {% endwith %}
       </div>
-    {% endif %}
+
+      {# FEATURE 7 & 8: Note + Quick Actions #}
+      <div class="quick-actions">
+        <button class="note-btn"
+          data-note="{% if item.daily_note %}true{% else %}false{% endif %}"
+          onclick="openNote('{{ item.date|date:'Y-m-d' }}','{{ item.daily_note|escapejs }}')"
+          title="{% if item.daily_note %}{{ item.daily_note|truncatechars:40 }}{% else %}Add a reflection{% endif %}">
+          📝
+        </button>
+      </div>
+
+    </div>
+    {% endfor %}
+  </div>
+
+  {% else %}
+  <div class="history-card">
+    <div class="empty-state">
+      <span class="es-icon">📋</span>
+      <h5 style="font-family:'Playfair Display',serif;color:var(--deep)">No history yet</h5>
+      <p class="text-muted" style="font-size:.88rem">Fill out your daily checklist to start building your streak.</p>
+      <a href="{% url 'mentalapp:checklist_today' %}" class="btn-sage mt-2" style="display:inline-block">Go to Today's Checklist →</a>
+    </div>
+  </div>
+  {% endif %}
+
+</div>{# /container #}
+
+{# NOTE MODAL #}
+<div class="note-overlay" id="noteOverlay" onclick="if(event.target===this)closeNote()">
+  <div class="note-modal">
+    <h5>📝 Daily Reflection</h5>
+    <div class="note-modal-date" id="noteDate"></div>
+    <p>How did this day feel? What helped or held you back?</p>
+    <textarea class="note-textarea" id="noteText" placeholder="e.g. Skipped exercise because of work stress. Felt better after journaling..."></textarea>
+    <div class="d-flex gap-2 mt-3">
+      <button onclick="saveNote()" class="btn-sage" style="flex:1;border-radius:12px;padding:.65rem">Save Reflection 💚</button>
+      <button onclick="closeNote()" style="background:#f5f5f5;border:none;border-radius:12px;padding:.65rem 1.2rem;cursor:pointer;font-family:inherit;color:var(--muted)">Cancel</button>
+    </div>
   </div>
 </div>
+
+{% endblock %}
+
+{% block extra_js %}
+{# Pass checklist data to JS #}
+<script>
+const CL_DATA = [
+  {% for item in items %}
+  {
+    date:  "{{ item.date|date:'Y-m-d' }}",
+    score: {{ item.completion_score }},
+    sleep: {{ item.slept_well|yesno:'true,false' }},
+    exercise: {{ item.exercised|yesno:'true,false' }},
+    ate: {{ item.ate_well|yesno:'true,false' }},
+    meditated: {{ item.meditated|yesno:'true,false' }},
+    hydrated: {{ item.stayed_hydrated|yesno:'true,false' }},
+    social: {{ item.connected_others|yesno:'true,false' }},
+    gratitude: {{ item.expressed_gratitude|yesno:'true,false' }},
+    note: "{{ item.daily_note|default:''|escapejs }}"
+  }{% if not forloop.last %},{% endif %}
+  {% endfor %}
+];
+const CL_CSRF = document.cookie.match(/csrftoken=([^;]+)/)?.[1]||'';
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+/* ════════════════════════════════════════
+   FEATURE 1: STREAK SYSTEM
+════════════════════════════════════════ */
+function computeStreaks(){
+  if(!CL_DATA.length) return;
+
+  // Sort ascending
+  const sorted = [...CL_DATA].sort((a,b)=>a.date.localeCompare(b.date));
+
+  let current=0, best=0, run=0;
+  let prev=null;
+
+  sorted.forEach(d=>{
+    if(!prev){run=1;}
+    else{
+      const diff=(new Date(d.date)-new Date(prev))/(1000*60*60*24);
+      run = diff===1 ? run+1 : 1;
+    }
+    best=Math.max(best,run);
+    prev=d.date;
+  });
+
+  // Check if last entry was today or yesterday
+  const last=new Date(sorted[sorted.length-1].date);
+  const today=new Date(); today.setHours(0,0,0,0);
+  const diffDays=(today-last)/(1000*60*60*24);
+  current = diffDays<=1 ? run : 0;
+
+  // Avg score
+  const avg = (CL_DATA.reduce((s,d)=>s+d.score,0)/CL_DATA.length).toFixed(1);
+
+  document.getElementById('currentStreak').textContent = current;
+  document.getElementById('bestStreak').textContent = best;
+  document.getElementById('avgScore').textContent = avg;
+
+  const msg = current===0 ? 'Start a new streak today!'
+            : current===1 ? 'day so far — keep going!'
+            : 'days in a row 🔥';
+  document.getElementById('streakMsg').textContent = msg;
+
+  // Missed days check
+  if(diffDays > 2 && CL_DATA.length > 0){
+    const d=Math.floor(diffDays);
+    document.getElementById('missedText').textContent =
+      `You haven't checked in for ${d} days. Your mental health deserves daily attention — even 60 seconds counts.`;
+    document.getElementById('missedWarning').style.display='block';
+  }
+}
+computeStreaks();
+
+/* ════════════════════════════════════════
+   FEATURE 3: CHART.JS
+════════════════════════════════════════ */
+let _chart=null, _chartType='line';
+
+function buildChart(type='line'){
+  const sorted=[...CL_DATA].sort((a,b)=>a.date.localeCompare(b.date)).slice(-14);
+  const labels=sorted.map(d=>{const dt=new Date(d.date);return dt.toLocaleDateString('en-KE',{month:'short',day:'numeric'});});
+  const scores=sorted.map(d=>d.score);
+  const maxScore=11;
+
+  const ctx=document.getElementById('wellnessChart').getContext('2d');
+  if(_chart)_chart.destroy();
+
+  const colors=scores.map(s=>
+    s>=10?'rgba(46,125,50,.8)':s>=8?'rgba(104,159,56,.8)':
+    s>=6?'rgba(255,193,7,.8)':s>=4?'rgba(255,152,0,.8)':'rgba(244,67,54,.7)'
+  );
+
+  _chart=new Chart(ctx,{
+    type,
+    data:{
+      labels,
+      datasets:[{
+        label:'Wellness Score',
+        data:scores,
+        borderColor:'#4a7c6f',
+        backgroundColor: type==='line'
+          ? 'rgba(74,124,111,.08)'
+          : colors,
+        fill: type==='line',
+        tension:.4,
+        pointBackgroundColor:colors,
+        pointRadius:6,
+        pointHoverRadius:9,
+        borderWidth:2.5,
+      }]
+    },
+    options:{
+      responsive:true,
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          callbacks:{
+            label:ctx=>{
+              const s=ctx.raw;
+              const em=s>=10?'🌟':s>=8?'😊':s>=6?'🙂':s>=4?'😐':'💙';
+              return ` Score: ${s}/11  ${em}`;
+            }
+          }
+        }
+      },
+      scales:{
+        y:{min:0,max:maxScore,grid:{color:'rgba(74,124,111,.07)'},ticks:{color:'#6b7c78',font:{size:11}}},
+        x:{grid:{display:false},ticks:{color:'#6b7c78',font:{size:11}}}
+      }
+    }
+  });
+}
+
+function switchChart(type){
+  _chartType=type;
+  buildChart(type);
+  document.querySelectorAll('.ct-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('btn'+type.charAt(0).toUpperCase()+type.slice(1)).classList.add('active');
+}
+
+if(CL_DATA.length) buildChart('line');
+
+/* ════════════════════════════════════════
+   FEATURE 2: AI INSIGHTS
+════════════════════════════════════════ */
+function generateInsights(){
+  if(!CL_DATA.length) return;
+  const container=document.getElementById('aiInsightsContainer');
+  container.innerHTML='<div class="ai-loading"><div class="ai-dots"><span></span><span></span><span></span></div> Analysing your habits...</div>';
+
+  setTimeout(()=>{
+    const insights=[];
+    const total=CL_DATA.length;
+    const sleepRate=CL_DATA.filter(d=>d.sleep).length/total;
+    const exRate=CL_DATA.filter(d=>d.exercise).length/total;
+    const hydRate=CL_DATA.filter(d=>d.hydrated).length/total;
+    const medRate=CL_DATA.filter(d=>d.meditated).length/total;
+    const socialRate=CL_DATA.filter(d=>d.social).length/total;
+    const sorted=[...CL_DATA].sort((a,b)=>a.date.localeCompare(b.date));
+    const recent=sorted.slice(-7);
+    const avgRecent=recent.reduce((s,d)=>s+d.score,0)/recent.length;
+    const avgAll=CL_DATA.reduce((s,d)=>s+d.score,0)/CL_DATA.length;
+    const trend=avgRecent-avgAll;
+
+    // Trend insight
+    if(trend>1) insights.push({icon:'📈',text:`Your scores have improved by ${trend.toFixed(1)} points on average over the last week. Keep this momentum!`,type:'good'});
+    else if(trend<-1) insights.push({icon:'📉',text:`Your recent scores are slightly lower than your average. What's been different this week?`,type:'warn'});
+
+    // Sleep
+    if(sleepRate<.5) insights.push({icon:'🌙',text:`You've slept well only ${Math.round(sleepRate*100)}% of logged days. Poor sleep is one of the biggest mental health triggers.`,type:'warn'});
+    else if(sleepRate>.8) insights.push({icon:'🌙',text:`Excellent sleep consistency — ${Math.round(sleepRate*100)}% of days! Sleep is your mental health superpower.`,type:'good'});
+
+    // Exercise
+    if(exRate<.4) insights.push({icon:'🏃',text:`Exercise appears on only ${Math.round(exRate*100)}% of your days. Even a 15-minute walk can lift mood significantly.`,type:'warn'});
+    else if(exRate>.7) insights.push({icon:'🏃',text:`You're moving on ${Math.round(exRate*100)}% of days — that's building real mental resilience.`,type:'good'});
+
+    // Hydration
+    if(hydRate<.5) insights.push({icon:'💧',text:`Hydration is below 50%. Dehydration directly affects mood, focus, and anxiety levels.`,type:'warn'});
+
+    // Meditation
+    if(medRate<.3) insights.push({icon:'🧘',text:`Mindfulness only appears on ${Math.round(medRate*100)}% of days. Even 5 minutes of breathing can reduce anxiety by up to 40%.`,type:'neutral'});
+    else if(medRate>.6) insights.push({icon:'🧘',text:`Your meditation consistency of ${Math.round(medRate*100)}% is remarkable. This likely shows in your overall scores.`,type:'good'});
+
+    // Social
+    if(socialRate<.35) insights.push({icon:'🤝',text:`Social connection is low (${Math.round(socialRate*100)}% of days). Isolation amplifies mental health struggles — small connections matter.`,type:'warn'});
+
+    // Correlation: exercise + sleep = better score?
+    const bothDays=CL_DATA.filter(d=>d.sleep&&d.exercise);
+    const neitherDays=CL_DATA.filter(d=>!d.sleep&&!d.exercise);
+    if(bothDays.length>2&&neitherDays.length>2){
+      const avgBoth=bothDays.reduce((s,d)=>s+d.score,0)/bothDays.length;
+      const avgNeither=neitherDays.reduce((s,d)=>s+d.score,0)/neitherDays.length;
+      if(avgBoth-avgNeither>2) insights.push({icon:'🔗',text:`When you sleep well AND exercise, your score averages ${avgBoth.toFixed(1)}/11 vs ${avgNeither.toFixed(1)}/11 on days you don't. This is your winning combo.`,type:'good'});
+    }
+
+    if(!insights.length) insights.push({icon:'💚',text:`Keep logging daily to unlock personalised patterns. Mwendo needs at least 7 days of data to spot trends.`,type:'neutral'});
+
+    const grid=document.createElement('div');
+    grid.className='ai-insights-grid';
+    insights.slice(0,6).forEach(ins=>{
+      const chip=document.createElement('div');
+      chip.className=`ai-insight-chip ${ins.type}`;
+      chip.innerHTML=`<span class="aic-icon">${ins.icon}</span><span>${ins.text}</span>`;
+      grid.appendChild(chip);
+    });
+    container.innerHTML='';
+    container.appendChild(grid);
+  },900);
+}
+generateInsights();
+
+function refreshInsights(){
+  generateInsights();
+}
+
+/* ════════════════════════════════════════
+   FEATURE 8: NOTE MODAL
+════════════════════════════════════════ */
+let _activeNoteDate='';
+
+function openNote(date, existing){
+  _activeNoteDate=date;
+  const dt=new Date(date);
+  document.getElementById('noteDate').textContent=dt.toLocaleDateString('en-KE',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('noteText').value=existing||'';
+  document.getElementById('noteOverlay').classList.add('show');
+  setTimeout(()=>document.getElementById('noteText').focus(),200);
+}
+
+function closeNote(){
+  document.getElementById('noteOverlay').classList.remove('show');
+}
+
+function saveNote(){
+  const text=document.getElementById('noteText').value.trim();
+  // Save to localStorage keyed by date (replace with AJAX POST to update model in production)
+  const key='mw_note_'+_activeNoteDate;
+  localStorage.setItem(key,text);
+
+  // Update the note button state
+  const row=document.querySelector(`.history-row[data-date="${_activeNoteDate}"]`);
+  if(row){
+    const btn=row.querySelector('.note-btn');
+    if(btn){
+      btn.dataset.note=text?'true':'false';
+      btn.title=text||'Add a reflection';
+    }
+  }
+
+  // Optimistic feedback
+  const overlay=document.getElementById('noteOverlay');
+  const modal=overlay.querySelector('.note-modal');
+  modal.innerHTML=`<div style="text-align:center;padding:1.5rem 0"><div style="font-size:2.5rem;margin-bottom:.7rem">💚</div><h5 style="font-family:'Playfair Display',serif;color:var(--deep)">Reflection saved!</h5><p style="color:var(--muted);font-size:.88rem;margin-top:.4rem">Your thoughts are safe here.</p></div>`;
+  setTimeout(()=>{closeNote();location.reload();},1400);
+}
+
+// Restore notes from localStorage on load
+document.querySelectorAll('.note-btn').forEach(btn=>{
+  const row=btn.closest('.history-row');
+  if(!row)return;
+  const date=row.dataset.date;
+  const saved=localStorage.getItem('mw_note_'+date);
+  if(saved){
+    btn.dataset.note='true';
+    btn.title=saved.substring(0,60)+(saved.length>60?'…':'');
+  }
+});
+</script>
 {% endblock %}

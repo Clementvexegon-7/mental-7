@@ -3,44 +3,82 @@
 
 {% block extra_css %}
 <style>
-  .form-hero{background:linear-gradient(135deg,var(--deep),#2a4a42);padding:2.5rem 0;color:#fff}
-  .form-hero h1{color:var(--warm);font-size:1.9rem}
+  /* ── Hero ── */
+  .form-hero { background: linear-gradient(135deg, var(--deep), #2a4a42); padding: 2.5rem 0; color: #fff; }
+  .form-hero h1 { color: var(--warm); font-size: 1.9rem; }
 
-  .form-card{
-    background:#fff;border-radius:16px;
-    border:1px solid rgba(74,124,111,.12);
-    padding:2rem;max-width:560px;margin:0 auto
+  /* ── Card ── */
+  .form-card {
+    background: #fff; border-radius: 16px;
+    border: 1px solid rgba(74,124,111,.12);
+    padding: 2rem; max-width: 560px; margin: 0 auto;
   }
 
-  .form-label{font-size:.85rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.35rem}
-  .form-control,.form-select{
-    border-radius:10px;border:1.5px solid #e0dbd0;
-    padding:.65rem .9rem;font-size:.92rem;
-    transition:border-color .2s,box-shadow .2s
+  /* ── Labels & inputs ── */
+  .form-label {
+    font-size: .85rem; font-weight: 600;
+    color: var(--muted); text-transform: uppercase;
+    letter-spacing: .05em; margin-bottom: .35rem;
   }
-  .form-control:focus,.form-select:focus{
-    border-color:var(--sage);box-shadow:0 0 0 3px rgba(74,124,111,.12);outline:none
+  .form-control, .form-select {
+    border-radius: 10px; border: 1.5px solid #e0dbd0;
+    padding: .65rem .9rem; font-size: .92rem;
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .form-control:focus, .form-select:focus {
+    border-color: var(--sage);
+    box-shadow: 0 0 0 3px rgba(74,124,111,.12);
+    outline: none;
   }
 
-  .mood-selector{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.25rem}
-  .mood-opt input{display:none}
-  .mood-opt label{
-    padding:.45rem 1rem;border-radius:20px;cursor:pointer;font-size:.85rem;
-    border:1.5px solid #ddd;transition:all .2s;user-select:none
+  /* ── Mood radio pills ── */
+  .mood-selector { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: .25rem; }
+  .mood-opt input { display: none; }
+  .mood-opt label {
+    padding: .45rem 1rem; border-radius: 20px; cursor: pointer;
+    font-size: .85rem; border: 1.5px solid #ddd;
+    transition: all .2s; user-select: none;
   }
-  .mood-opt input:checked + label{border-color:var(--sage);background:var(--sage);color:#fff}
-  .mood-opt:nth-child(1) label:hover{border-color:#c62828;color:#c62828}
-  .mood-opt:nth-child(2) label:hover{border-color:#e65100;color:#e65100}
-  .mood-opt:nth-child(3) label:hover{border-color:#f57f17;color:#f57f17}
-  .mood-opt:nth-child(4) label:hover{border-color:#2e7d32;color:#2e7d32}
-  .mood-opt:nth-child(5) label:hover{border-color:#1565c0;color:#1565c0}
+  .mood-opt input:checked + label { border-color: var(--sage); background: var(--sage); color: #fff; }
+  .mood-opt:nth-child(1) label:hover { border-color:#c62828; color:#c62828; }
+  .mood-opt:nth-child(2) label:hover { border-color:#e65100; color:#e65100; }
+  .mood-opt:nth-child(3) label:hover { border-color:#f57f17; color:#f57f17; }
+  .mood-opt:nth-child(4) label:hover { border-color:#2e7d32; color:#2e7d32; }
+  .mood-opt:nth-child(5) label:hover { border-color:#1565c0; color:#1565c0; }
 
-  .btn-sage{background:var(--sage);color:#fff;border:none;border-radius:10px;padding:.6rem 1.5rem;font-size:.9rem;transition:background .2s}
-  .btn-sage:hover{background:var(--sage-lt);color:#fff}
-  .btn-outline-back{background:transparent;color:var(--muted);border:1.5px solid #ddd;border-radius:10px;padding:.6rem 1.2rem;font-size:.9rem;text-decoration:none;transition:all .2s}
-  .btn-outline-back:hover{border-color:var(--sage);color:var(--sage)}
+  /* ── Live emoji preview ── */
+  #moodPreview {
+    font-size: 2rem;
+    margin-top: .6rem;
+    min-height: 2.5rem;
+    transition: transform .2s;
+    display: inline-block;
+  }
+  #moodPreview.pop {
+    animation: pop .25s ease;
+  }
+  @keyframes pop {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.4); }
+    100% { transform: scale(1); }
+  }
 
-  .errorlist{list-style:none;padding:0;margin:.3rem 0 0;font-size:.82rem;color:#c62828}
+  /* ── Buttons ── */
+  .btn-sage {
+    background: var(--sage); color: #fff; border: none;
+    border-radius: 10px; padding: .6rem 1.5rem; font-size: .9rem;
+    transition: background .2s;
+  }
+  .btn-sage:hover { background: var(--sage-lt); color: #fff; }
+  .btn-outline-back {
+    background: transparent; color: var(--muted);
+    border: 1.5px solid #ddd; border-radius: 10px;
+    padding: .6rem 1.2rem; font-size: .9rem;
+    text-decoration: none; transition: all .2s;
+  }
+  .btn-outline-back:hover { border-color: var(--sage); color: var(--sage); }
+
+  .errorlist { list-style: none; padding: 0; margin: .3rem 0 0; font-size: .82rem; color: #c62828; }
 </style>
 {% endblock %}
 
@@ -60,20 +98,32 @@
       {% for field in form %}
       <div class="mb-3">
         <label class="form-label">{{ field.label }}</label>
+
         {% if field.name == 'score' %}
-          <div class="mood-selector">
+          <div class="mood-selector" id="moodSelector">
             {% for val, label in field.field.choices %}
             <div class="mood-opt">
-              <input type="radio" name="{{ field.html_name }}" id="score_{{ val }}" value="{{ val }}"
-                {% if field.value == val|stringformat:"s" %}checked{% endif %}>
+              <input type="radio"
+                     name="{{ field.html_name }}"
+                     id="score_{{ val }}"
+                     value="{{ val }}"
+                     {% if field.value == val|stringformat:"s" %}checked{% endif %}>
               <label for="score_{{ val }}">{{ label }}</label>
             </div>
             {% endfor %}
           </div>
+          <!-- Live emoji preview -->
+          <div id="moodPreview"></div>
+
         {% else %}
           {{ field }}
         {% endif %}
-        {% if field.errors %}<ul class="errorlist">{% for e in field.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+
+        {% if field.errors %}
+          <ul class="errorlist">
+            {% for e in field.errors %}<li>{{ e }}</li>{% endfor %}
+          </ul>
+        {% endif %}
       </div>
       {% endfor %}
 
@@ -84,4 +134,26 @@
     </form>
   </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  /* Mood score → emoji map */
+  const moodEmojis = { 1: "😞", 2: "😕", 3: "😐", 4: "😊", 5: "😄" };
+  const preview    = document.getElementById('moodPreview');
+
+  function updatePreview(value) {
+    preview.textContent = moodEmojis[value] || '';
+    /* Trigger pop animation */
+    preview.classList.remove('pop');
+    void preview.offsetWidth;          /* reflow trick to restart animation */
+    preview.classList.add('pop');
+  }
+
+  document.querySelectorAll('input[name="score"]').forEach(el => {
+    el.addEventListener('change', () => updatePreview(el.value));
+    /* Show emoji for pre-selected value on page load (edit view) */
+    if (el.checked) updatePreview(el.value);
+  });
+</script>
 {% endblock %}

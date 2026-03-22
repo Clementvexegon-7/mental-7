@@ -3,30 +3,56 @@
 {% block title %}Resources &amp; Help — MindWell{% endblock %}
 {% block nav_resources %}active-page{% endblock %}
 {% block extra_css %}
-    <style>
-  #resources{padding:90px 0;background:#f0ebe0}
-  .resource-card{background:#fff;border-radius:16px;padding:1.8rem;border-left:4px solid var(--sage);height:100%;transition:all .3s}
-  .resource-card:hover{box-shadow:0 10px 32px rgba(74,124,111,.15);transform:translateX(4px)}
-  .resource-card .res-tag{display:inline-block;font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;background:rgba(74,124,111,.1);color:var(--sage);border-radius:50px;padding:.15rem .6rem;margin-bottom:.6rem}
-  .resource-card h6{color:var(--deep);font-weight:600;margin-bottom:.5rem;font-size:1rem}
-  .resource-card p{font-size:.88rem;color:var(--muted);margin:0;line-height:1.65}
-  #crisis{background:var(--deep);padding:80px 0}
-  .hotline-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:2rem;text-align:center;transition:all .3s}
-  .hotline-card:hover{background:rgba(111,173,160,.18);border-color:var(--sage-lt)}
-  .hotline-card .number{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:900;color:var(--warm);margin:.5rem 0;word-break:break-all}
-  .hotline-card .country{font-size:.78rem;color:rgba(255,255,255,.5);letter-spacing:.06em;text-transform:uppercase}
-  .hotline-card p{color:rgba(255,255,255,.6);font-size:.83rem;margin:.4rem 0 0;line-height:1.5}
-  #apps{background:var(--cream);padding:80px 0}
-  .app-item{background:#fff;border-radius:16px;padding:1.5rem;border:1px solid rgba(74,124,111,.1);display:flex;gap:1rem;align-items:flex-start;transition:all .3s}
-  .app-item:hover{box-shadow:0 8px 28px rgba(74,124,111,.12);transform:translateY(-3px)}
-  .app-icon{width:50px;height:50px;border-radius:14px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.4rem}
-  .app-item h6{color:var(--deep);margin-bottom:.2rem;font-size:.97rem}
-  .app-item p{color:var(--muted);font-size:.85rem;margin:0;line-height:1.55}
-  #final{background:#f0ebe0;padding:80px 0}
-  .final-card{background:linear-gradient(135deg,var(--deep),#1a3d35);border-radius:24px;padding:4rem 3rem;text-align:center;color:#fff}
-    </style>
+<style>
+#resources{padding:90px 0;background:#f0ebe0}
+.resource-card{background:#fff;border-radius:16px;padding:1.8rem;border-left:4px solid var(--sage);height:100%;transition:all .3s}
+.resource-card:hover{box-shadow:0 10px 32px rgba(74,124,111,.15);transform:translateX(4px)}
+.res-tag{display:inline-block;font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;background:rgba(74,124,111,.1);color:var(--sage);border-radius:50px;padding:.15rem .6rem;margin-bottom:.6rem}
+.resource-card h6{color:var(--deep);font-weight:600;margin-bottom:.5rem;font-size:1rem}
+.resource-card p{font-size:.88rem;color:var(--muted);margin:0;line-height:1.65}
+#crisis{background:var(--deep);padding:80px 0}
+.hotline-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:1.8rem;text-align:center;transition:all .3s;text-decoration:none;display:block}
+.hotline-card:hover{background:rgba(111,173,160,.18);border-color:var(--sage-lt);transform:translateY(-4px)}
+.hotline-card .number{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:900;color:var(--warm);margin:.5rem 0;word-break:break-all;display:block}
+.hotline-card .country{font-size:.78rem;color:rgba(255,255,255,.5);letter-spacing:.06em;text-transform:uppercase}
+.hotline-card p{color:rgba(255,255,255,.6);font-size:.83rem;margin:.4rem 0 0;line-height:1.5}
+#apps{background:var(--cream);padding:80px 0}
+.app-item{background:#fff;border-radius:16px;padding:1.5rem;border:1px solid rgba(74,124,111,.1);display:flex;gap:1rem;align-items:flex-start;transition:all .3s}
+.app-item:hover{box-shadow:0 8px 28px rgba(74,124,111,.12);transform:translateY(-3px)}
+.app-icon{width:50px;height:50px;border-radius:14px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.4rem}
+.app-item h6{color:var(--deep);margin-bottom:.2rem;font-size:.97rem}
+.app-item p{color:var(--muted);font-size:.85rem;margin:0;line-height:1.55}
 
+/* Crisis detector */
+.crisis-detector{background:#fff;border-radius:20px;padding:1.8rem 2rem;border:1.5px solid rgba(181,85,74,.25);box-shadow:0 4px 22px rgba(181,85,74,.08);margin-bottom:2rem;position:relative;overflow:hidden}
+.crisis-detector::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#b5554a,#e8a598)}
+.cd-label{font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;color:#b5554a;font-weight:700;margin-bottom:.6rem}
+.cd-input-wrap{display:flex;gap:.6rem;align-items:flex-start;flex-wrap:wrap}
+.cd-input{flex:1;min-width:200px;border:1.5px solid rgba(74,124,111,.2);border-radius:12px;padding:.65rem 1rem;font-size:.9rem;outline:none;font-family:inherit;transition:border-color .2s}
+.cd-input:focus{border-color:var(--sage);box-shadow:0 0 0 3px rgba(74,124,111,.1)}
+.cd-btn{background:var(--sage);color:#fff;border:none;border-radius:12px;padding:.65rem 1.3rem;font-size:.88rem;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;transition:all .2s}
+.cd-btn:hover{background:var(--deep);transform:translateY(-2px)}
+.cd-response{margin-top:1rem;display:none;border-radius:14px;padding:1rem 1.2rem;animation:fp .35s ease}
+.cd-response.show{display:block}
+.cd-response.crisis-resp{background:rgba(181,85,74,.08);border:1.5px solid rgba(181,85,74,.3)}
+.cd-response.support-resp{background:rgba(74,124,111,.07);border:1.5px solid rgba(74,124,111,.2)}
+@keyframes fp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.crisis-action-link{display:inline-flex;align-items:center;gap:.4rem;background:rgba(181,85,74,.15);border:1px solid rgba(181,85,74,.3);color:#b5554a;border-radius:50px;padding:.32rem .85rem;font-size:.8rem;font-weight:700;text-decoration:none;transition:all .2s;margin:.3rem .3rem 0 0}
+.crisis-action-link:hover{background:rgba(181,85,74,.3);color:#b5554a}
+
+#final{background:#f0ebe0;padding:80px 0}
+.final-card{background:linear-gradient(135deg,var(--deep),#1a3d35);border-radius:24px;padding:4rem 3rem;text-align:center;color:#fff}
+
+/* Flow banner */
+.page-flow-banner{background:var(--deep);padding:1rem 0}
+.flow-steps{display:flex;align-items:center;justify-content:center;gap:.5rem;flex-wrap:wrap}
+.fs-item{display:flex;align-items:center;gap:.4rem;font-size:.8rem;color:rgba(255,255,255,.5);padding:.35rem .8rem;border-radius:50px;text-decoration:none;transition:all .2s}
+.fs-item:hover{color:var(--warm)}
+.fs-item.current{background:rgba(232,201,138,.15);border:1px solid rgba(232,201,138,.3);color:var(--warm)}
+.fs-arrow{color:rgba(255,255,255,.25)}
+</style>
 {% endblock %}
+
 {% block content %}
 <div class="page-hero">
   <div class="container position-relative">
@@ -35,6 +61,33 @@
     <p>Help is always available — and taking the first step to reach out is an act of real courage.</p>
   </div>
 </div>
+
+<div class="page-flow-banner">
+  <div class="container">
+    <div class="flow-steps">
+      <a href="{% url 'mentalapp:conditions' %}" class="fs-item">🔍 Conditions</a><span class="fs-arrow">›</span>
+      <a href="{% url 'mentalapp:signs' %}" class="fs-item">⚠️ Warning Signs</a><span class="fs-arrow">›</span>
+      <a href="{% url 'mentalapp:checklist_today' %}" class="fs-item">✅ Track Habits</a><span class="fs-arrow">›</span>
+      <span class="fs-item current">💚 Get Help</span>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURE 4A: Crisis Detector -->
+<div style="background:#fff8f8;border-bottom:1px solid rgba(181,85,74,.15);padding:2.5rem 0">
+  <div class="container">
+    <div class="crisis-detector">
+      <div class="cd-label">🆘 Crisis Check — Type How You're Feeling</div>
+      <p style="font-size:.88rem;color:var(--muted);margin-bottom:1rem">If you're in distress, describe how you feel and Mwendo will respond with immediate support and resources.</p>
+      <div class="cd-input-wrap">
+        <input class="cd-input" id="cdInput" type="text" placeholder='e.g. "I feel like giving up" or "I can\'t cope anymore..."' onkeydown="if(event.key==='Enter')runCrisisCheck()">
+        <button class="cd-btn" onclick="runCrisisCheck()">🌿 Check In</button>
+      </div>
+      <div class="cd-response" id="cdResponse"></div>
+    </div>
+  </div>
+</div>
+
 <section id="resources">
   <div class="container">
     <div class="row justify-content-center mb-5 text-center"><div class="col-lg-7 reveal"><span class="section-label">Types of Support</span><h2 class="section-title">Six Pathways to Support</h2></div></div>
@@ -48,21 +101,23 @@
     </div>
   </div>
 </section>
+
 <section id="crisis">
   <div class="container">
-    <div class="row justify-content-center mb-5 text-center"><div class="col-lg-7 reveal"><span class="section-label" style="color:var(--sage-lt)">Immediate Help</span><h2 class="section-title text-white">Crisis Hotlines by Country</h2></div></div>
+    <div class="row justify-content-center mb-5 text-center"><div class="col-lg-7 reveal"><span class="section-label" style="color:var(--sage-lt)">Immediate Help</span><h2 class="section-title text-white">Crisis Hotlines</h2></div></div>
     <div class="row g-3">
-      <div class="col-md-6 col-lg-3 reveal"><div class="hotline-card"><div class="country">United States</div><div class="number">988</div><p>Suicide &amp; Crisis Lifeline — call or text 24/7</p></div></div>
-      <div class="col-md-6 col-lg-3 reveal"><div class="hotline-card"><div class="country">United Kingdom</div><div class="number">116 123</div><p>Samaritans — free, confidential, 24/7</p></div></div>
-      <div class="col-md-6 col-lg-3 reveal"><div class="hotline-card"><div class="country">Canada</div><div class="number">1-833-456-4566</div><p>Crisis Services Canada — 24/7 bilingual</p></div></div>
-      <div class="col-md-6 col-lg-3 reveal"><div class="hotline-card"><div class="country">Australia</div><div class="number">13 11 14</div><p>Lifeline Australia — 24/7 crisis support</p></div></div>
-      <div class="col-md-6 col-lg-3 reveal"><div class="hotline-card"><div class="country">Kenya</div><div class="number">0800 723 253</div><p>Befrienders Kenya — free emotional support</p></div></div>
-      <div class="col-md-6 col-lg-3 reveal"><div class="hotline-card"><div class="country">India</div><div class="number">9152987821</div><p>iCall — TISS counseling helpline</p></div></div>
-      <div class="col-md-6 col-lg-3 reveal"><div class="hotline-card"><div class="country">South Africa</div><div class="number">0800 456 789</div><p>SADAG Suicide Crisis Helpline — 24/7</p></div></div>
-      <div class="col-md-6 col-lg-3 reveal"><div class="hotline-card"><div class="country">International</div><div class="number" style="font-size:1.1rem">findahelpline.com</div><p>Global directory of crisis helplines</p></div></div>
+      <div class="col-md-6 col-lg-3 reveal"><a href="tel:0722178177" class="hotline-card"><div class="country">Kenya · Befrienders</div><span class="number">0722 178 177</span><p>Free, confidential · 24/7</p></a></div>
+      <div class="col-md-6 col-lg-3 reveal"><a href="tel:+254202724069" class="hotline-card"><div class="country">Kenya · Mathari Hospital</div><span class="number">+254 20 2724069</span><p>Psychiatric emergency</p></a></div>
+      <div class="col-md-6 col-lg-3 reveal"><a href="tel:988" class="hotline-card"><div class="country">United States</div><span class="number">988</span><p>Suicide &amp; Crisis Lifeline · 24/7</p></a></div>
+      <div class="col-md-6 col-lg-3 reveal"><a href="tel:116123" class="hotline-card"><div class="country">United Kingdom</div><span class="number">116 123</span><p>Samaritans · Free · 24/7</p></a></div>
+      <div class="col-md-6 col-lg-3 reveal"><a href="tel:18334564566" class="hotline-card"><div class="country">Canada</div><span class="number">1-833-456-4566</span><p>Crisis Services Canada</p></a></div>
+      <div class="col-md-6 col-lg-3 reveal"><a href="tel:131114" class="hotline-card"><div class="country">Australia</div><span class="number">13 11 14</span><p>Lifeline Australia · 24/7</p></a></div>
+      <div class="col-md-6 col-lg-3 reveal"><a href="tel:9152987821" class="hotline-card"><div class="country">India</div><span class="number">9152987821</span><p>iCall — TISS helpline</p></a></div>
+      <div class="col-md-6 col-lg-3 reveal"><a href="https://findahelpline.com" target="_blank" class="hotline-card"><div class="country">International</div><span class="number" style="font-size:1rem">findahelpline.com</span><p>Global crisis directory</p></a></div>
     </div>
   </div>
 </section>
+
 <section id="apps">
   <div class="container">
     <div class="row justify-content-center mb-5 text-center"><div class="col-lg-7 reveal"><span class="section-label">Digital Tools</span><h2 class="section-title">Recommended Mental Health Apps</h2></div></div>
@@ -74,6 +129,7 @@
     </div>
   </div>
 </section>
+
 <section id="final">
   <div class="container">
     <div class="final-card reveal">
@@ -82,9 +138,70 @@
       <p style="color:rgba(255,255,255,.7);max-width:560px;margin:1rem auto 1.8rem;line-height:1.75">Whether you're in crisis or simply want to be better prepared — reaching out is always the right move.</p>
       <div class="d-flex justify-content-center gap-3 flex-wrap">
         <a href="{% url 'mentalapp:register' %}" class="btn-sage">Join MindWell</a>
-        <a href="{% url 'mentalapp:signs' %}" class="btn-outline-w">Know the Warning Signs</a>
+        <a href="{% url 'mentalapp:checklist_today' %}" class="btn-outline-w">✅ Track Your Wellness Today</a>
       </div>
     </div>
   </div>
 </section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const CRISIS_KEYWORDS = /crisis|suicid|kill|harm|hurt myself|end it|die|want to die|giving up|can't cope|no reason to live|worthless|disappear|overdose/i;
+const DISTRESS_KEYWORDS = /depress|sad|hopeless|empty|alone|anxious|panic|scared|overwhelmed|can't go on|exhausted|numb/i;
+
+function runCrisisCheck(){
+  const input = document.getElementById('cdInput');
+  const resp  = document.getElementById('cdResponse');
+  const text  = input.value.trim();
+  if(!text) return;
+
+  resp.className = 'cd-response';
+  resp.innerHTML = '';
+
+  if(CRISIS_KEYWORDS.test(text)){
+    resp.className = 'cd-response crisis-resp show';
+    resp.innerHTML = `
+      <div style="display:flex;align-items:flex-start;gap:.7rem">
+        <span style="font-size:1.4rem;flex-shrink:0">🆘</span>
+        <div>
+          <div style="font-weight:700;color:#b5554a;font-size:.95rem;margin-bottom:.4rem">You don't have to face this alone.</div>
+          <p style="font-size:.88rem;color:var(--deep);line-height:1.65;margin-bottom:.8rem">What you're feeling is real and it matters. Please reach out right now — someone is ready to listen.</p>
+          <div style="display:flex;flex-wrap:wrap;gap:.4rem">
+            <a href="tel:0722178177" class="crisis-action-link"><i class="bi bi-telephone-fill"></i> Call 0722 178 177</a>
+            <a href="tel:+254202724069" class="crisis-action-link"><i class="bi bi-hospital"></i> Mathari Hospital</a>
+            <button onclick="toggleChat(true)" class="crisis-action-link" style="border:none;cursor:pointer;font-family:inherit;background:rgba(181,85,74,.15);color:#b5554a"><i class="bi bi-chat-heart"></i> Talk to Mwendo</button>
+            <button onclick="startBreathe()" class="crisis-action-link" style="border:none;cursor:pointer;font-family:inherit;background:rgba(181,85,74,.15);color:#b5554a"><i class="bi bi-wind"></i> Breathing Exercise</button>
+          </div>
+        </div>
+      </div>`;
+  } else if(DISTRESS_KEYWORDS.test(text)){
+    resp.className = 'cd-response support-resp show';
+    resp.innerHTML = `
+      <div style="display:flex;align-items:flex-start;gap:.7rem">
+        <span style="font-size:1.4rem;flex-shrink:0">💙</span>
+        <div>
+          <div style="font-weight:700;color:var(--sage);font-size:.95rem;margin-bottom:.4rem">Thank you for sharing that.</div>
+          <p style="font-size:.88rem;color:var(--deep);line-height:1.65;margin-bottom:.8rem">What you're feeling is valid. You took a brave step by saying it. Let's find some support for you right now.</p>
+          <div style="display:flex;flex-wrap:wrap;gap:.4rem">
+            <button onclick="toggleChat(true)" style="background:var(--sage);border:none;color:#fff;border-radius:50px;padding:.35rem .9rem;font-size:.8rem;cursor:pointer;font-family:inherit">🌿 Talk to Mwendo</button>
+            <button onclick="startBreathe()" style="background:rgba(74,124,111,.1);border:1px solid rgba(74,124,111,.2);color:var(--sage);border-radius:50px;padding:.35rem .9rem;font-size:.8rem;cursor:pointer;font-family:inherit">🧘 Try Breathing</button>
+            <a href="{% url 'mentalapp:checklist_today' %}" style="background:rgba(74,124,111,.1);border:1px solid rgba(74,124,111,.2);color:var(--sage);border-radius:50px;padding:.35rem .9rem;font-size:.8rem;text-decoration:none">✅ Self-Care Checklist</a>
+          </div>
+        </div>
+      </div>`;
+  } else {
+    resp.className = 'cd-response support-resp show';
+    resp.innerHTML = `
+      <div style="display:flex;align-items:flex-start;gap:.7rem">
+        <span style="font-size:1.4rem;flex-shrink:0">💚</span>
+        <div>
+          <p style="font-size:.88rem;color:var(--deep);line-height:1.65;margin-bottom:.6rem">Mwendo hears you. Whatever you're going through, support is available.</p>
+          <button onclick="toggleChat(true)" style="background:var(--sage);border:none;color:#fff;border-radius:50px;padding:.35rem .9rem;font-size:.8rem;cursor:pointer;font-family:inherit">🌿 Continue with Mwendo</button>
+        </div>
+      </div>`;
+  }
+  input.value = '';
+}
+</script>
 {% endblock %}

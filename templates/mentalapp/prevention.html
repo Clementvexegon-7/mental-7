@@ -3,26 +3,51 @@
 {% block title %}Prevention Strategies — MindWell{% endblock %}
 {% block nav_prevention %}active-page{% endblock %}
 {% block extra_css %}
-    <style>
-  #prevention{padding:90px 0;background:var(--cream)}
-  .prev-card{background:#fff;border-radius:20px;padding:2.2rem 2rem;height:100%;position:relative;overflow:hidden;border:1px solid rgba(74,124,111,.1);transition:all .3s}
-  .prev-card::after{content:'';position:absolute;top:0;left:0;width:100%;height:4px;background:linear-gradient(90deg,var(--sage),var(--sage-lt));opacity:0;transition:opacity .3s}
-  .prev-card:hover{box-shadow:0 16px 48px rgba(74,124,111,.15);transform:translateY(-5px)}
-  .prev-card:hover::after{opacity:1}
-  .prev-num{font-family:'Playfair Display',serif;font-size:3rem;font-weight:900;color:rgba(74,124,111,.12);line-height:1;margin-bottom:.5rem}
-  .prev-card h5{color:var(--deep);font-size:1.05rem;margin-bottom:.55rem}
-  .prev-card p{color:var(--muted);font-size:.9rem;line-height:1.65;margin:0}
-  #lifestyle{background:var(--deep);padding:90px 0}
-  .life-item{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:1.4rem;display:flex;gap:1rem;align-items:flex-start;margin-bottom:.8rem;transition:background .25s}
-  .life-item:hover{background:rgba(111,173,160,.15)}
-  .life-item i{font-size:1.4rem;color:var(--warm);flex-shrink:0;margin-top:2px}
-  .life-item h6{color:#fff;margin-bottom:.2rem;font-size:.96rem}
-  .life-item p{color:rgba(255,255,255,.55);font-size:.86rem;margin:0}
-  #early{background:#f0ebe0;padding:80px 0}
-  .early-banner{background:linear-gradient(135deg,var(--sage),#2a5e52);border-radius:24px;padding:3.5rem;color:#fff}
-    </style>
+<style>
+#prevention{padding:90px 0;background:var(--cream)}
+.prev-card{background:#fff;border-radius:20px;padding:2.2rem 2rem;height:100%;position:relative;overflow:hidden;border:1px solid rgba(74,124,111,.1);transition:all .3s;cursor:default}
+.prev-card::after{content:'';position:absolute;top:0;left:0;width:100%;height:4px;background:linear-gradient(90deg,var(--sage),var(--warm));opacity:0;transition:opacity .3s}
+.prev-card:hover{box-shadow:0 16px 48px rgba(74,124,111,.15);transform:translateY(-5px)}
+.prev-card:hover::after{opacity:1}
+.prev-card:has(.prev-check:checked){border-color:var(--sage);background:linear-gradient(135deg,rgba(74,124,111,.04),#fff)}
+.prev-card:has(.prev-check:checked)::after{opacity:1}
+.prev-num{font-family:'Playfair Display',serif;font-size:3rem;font-weight:900;color:rgba(74,124,111,.12);line-height:1;margin-bottom:.5rem;transition:color .3s}
+.prev-card:hover .prev-num{color:rgba(74,124,111,.25)}
+.prev-card h5{color:var(--deep);font-size:1.05rem;margin-bottom:.55rem}
+.prev-card p{color:var(--muted);font-size:.9rem;line-height:1.65;margin:0 0 1rem}
+.prev-check-wrap{display:flex;align-items:center;gap:.5rem;margin-top:.5rem}
+.prev-check{width:17px;height:17px;accent-color:var(--sage);cursor:pointer;flex-shrink:0}
+.prev-check-label{font-size:.8rem;color:var(--muted);cursor:pointer;user-select:none}
+.prev-card:has(.prev-check:checked) .prev-check-label{color:var(--sage);font-weight:600}
 
+/* Progress bar */
+.prev-progress-wrap{background:#fff;border-radius:20px;padding:1.4rem 1.8rem;border:1px solid rgba(74,124,111,.12);margin-bottom:2rem;box-shadow:0 4px 18px rgba(28,43,40,.06)}
+.prev-prog-bar{background:rgba(74,124,111,.1);border-radius:50px;height:10px;overflow:hidden;margin:.6rem 0 .4rem}
+.prev-prog-fill{background:linear-gradient(90deg,var(--sage),var(--warm));height:100%;border-radius:50px;transition:width .5s cubic-bezier(.22,1,.36,1);width:0}
+.prev-prog-label{font-size:.82rem;color:var(--muted)}
+.prev-prog-label strong{color:var(--sage)}
+
+#lifestyle{background:var(--deep);padding:90px 0}
+.life-item{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:1.4rem;display:flex;gap:1rem;align-items:flex-start;margin-bottom:.8rem;transition:all .25s}
+.life-item:hover{background:rgba(111,173,160,.15);border-color:rgba(111,173,160,.3);transform:translateX(4px)}
+.life-item i{font-size:1.4rem;color:var(--warm);flex-shrink:0;margin-top:2px}
+.life-item h6{color:#fff;margin-bottom:.2rem;font-size:.96rem}
+.life-item p{color:rgba(255,255,255,.55);font-size:.86rem;margin:0}
+
+#early{background:#f0ebe0;padding:80px 0}
+.early-banner{background:linear-gradient(135deg,var(--sage),#2a5e52);border-radius:24px;padding:3.5rem;color:#fff;position:relative;overflow:hidden}
+.early-banner::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 50% 60% at 90% 50%,rgba(232,201,138,.15) 0%,transparent 65%)}
+
+/* Flow connector */
+.page-flow-banner{background:var(--deep);padding:1rem 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.flow-steps{display:flex;align-items:center;justify-content:center;gap:.5rem;flex-wrap:wrap}
+.fs-item{display:flex;align-items:center;gap:.4rem;font-size:.8rem;color:rgba(255,255,255,.5);padding:.35rem .8rem;border-radius:50px;transition:all .2s;text-decoration:none}
+.fs-item:hover{color:var(--warm)}
+.fs-item.current{background:rgba(232,201,138,.15);border:1px solid rgba(232,201,138,.3);color:var(--warm)}
+.fs-arrow{color:rgba(255,255,255,.25);font-size:.8rem}
+</style>
 {% endblock %}
+
 {% block content %}
 <div class="page-hero">
   <div class="container position-relative">
@@ -31,23 +56,58 @@
     <p>Consistent lifestyle habits and proactive strategies can significantly protect and strengthen your mental well-being.</p>
   </div>
 </div>
+
+<!-- Flow connector -->
+<div class="page-flow-banner">
+  <div class="container">
+    <div class="flow-steps">
+      <a href="{% url 'mentalapp:conditions' %}" class="fs-item">🔍 Conditions</a><span class="fs-arrow">›</span>
+      <span class="fs-item current">🛡️ Prevention</span><span class="fs-arrow">›</span>
+      <a href="{% url 'mentalapp:checklist_today' %}" class="fs-item">✅ Daily Habits</a><span class="fs-arrow">›</span>
+      <a href="{% url 'mentalapp:checklist_history' %}" class="fs-item">📈 Track Progress</a><span class="fs-arrow">›</span>
+      <a href="{% url 'mentalapp:resources' %}" class="fs-item">💚 Get Help</a>
+    </div>
+  </div>
+</div>
+
 <section id="prevention">
   <div class="container">
-    <div class="row justify-content-center mb-5 text-center"><div class="col-lg-7 reveal"><span class="section-label">10 Evidence-Based Strategies</span><h2 class="section-title">Ways to Protect Your Mental Health</h2></div></div>
+    <div class="row justify-content-center mb-4 text-center">
+      <div class="col-lg-7 reveal">
+        <span class="section-label">10 Evidence-Based Strategies</span>
+        <h2 class="section-title">Ways to Protect Your Mental Health</h2>
+        <p class="text-muted mt-2" style="font-size:.9rem">Tick the strategies you're already practising — build your prevention score.</p>
+      </div>
+    </div>
+
+    <!-- Progress tracker -->
+    <div class="prev-progress-wrap reveal" id="prevProgressWrap">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem">
+        <div>
+          <div style="font-weight:700;font-size:.9rem;color:var(--deep)">Your Prevention Score</div>
+          <div class="prev-prog-label">Tick the strategies you practise: <strong id="prevScoreLabel">0 / 10</strong></div>
+        </div>
+        <div id="prevScoreBadge" style="font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--sage)">0%</div>
+      </div>
+      <div class="prev-prog-bar"><div class="prev-prog-fill" id="prevProgFill"></div></div>
+      <div id="prevScoreMsg" style="font-size:.82rem;color:var(--muted);font-style:italic"></div>
+    </div>
+
     <div class="row g-4">
-      <div class="col-md-6 col-lg-4 reveal"><div class="prev-card"><div class="prev-num">01</div><h5>Build Strong Social Connections</h5><p>Invest in meaningful relationships. Loneliness is a significant risk factor for mental illness. Regular quality time with people you trust acts as a buffer against stress.</p></div></div>
-      <div class="col-md-6 col-lg-4 reveal"><div class="prev-card"><div class="prev-num">02</div><h5>Prioritize Quality Sleep</h5><p>Sleep and mental health are deeply interlinked. Aim for 7–9 hours nightly. A consistent sleep routine helps your brain repair itself.</p></div></div>
-      <div class="col-md-6 col-lg-4 reveal"><div class="prev-card"><div class="prev-num">03</div><h5>Exercise Regularly</h5><p>Physical activity releases endorphins and reduces cortisol. Even 30 minutes of moderate movement five days a week significantly reduces depression and anxiety.</p></div></div>
-      <div class="col-md-6 col-lg-4 reveal"><div class="prev-card"><div class="prev-num">04</div><h5>Eat a Balanced Diet</h5><p>The gut-brain axis is real. Diets rich in whole grains, vegetables, and healthy fats support neurotransmitter production. Limit alcohol and ultra-processed foods.</p></div></div>
-      <div class="col-md-6 col-lg-4 reveal"><div class="prev-card"><div class="prev-num">05</div><h5>Practice Mindfulness &amp; Meditation</h5><p>Regular mindfulness practice rewires the brain's stress response. Even 10 minutes daily can measurably lower anxiety and improve emotional regulation.</p></div></div>
-      <div class="col-md-6 col-lg-4 reveal"><div class="prev-card"><div class="prev-num">06</div><h5>Limit Screen Time</h5><p>Excessive social media use correlates with higher anxiety and depression. Set boundaries, schedule device-free time, and curate your digital environment.</p></div></div>
-      <div class="col-md-6 col-lg-4 reveal"><div class="prev-card"><div class="prev-num">07</div><h5>Seek Professional Help Early</h5><p>Don't wait for a crisis. Therapy — including CBT, DBT, and talk therapy — is proven to build resilience and prevent conditions from worsening.</p></div></div>
-      <div class="col-md-6 col-lg-4 reveal"><div class="prev-card"><div class="prev-num">08</div><h5>Develop Healthy Coping Skills</h5><p>Learn your stress triggers and build a toolkit of healthy responses — journaling, deep breathing, time in nature, or talking with someone you trust.</p></div></div>
-      <div class="col-md-6 col-lg-4 reveal"><div class="prev-card"><div class="prev-num">09</div><h5>Find Purpose &amp; Meaning</h5><p>Having a sense of purpose — through work, volunteering, or creativity — is one of the most protective factors for long-term mental well-being.</p></div></div>
-      <div class="col-md-6 col-lg-4 reveal"><div class="prev-card"><div class="prev-num">10</div><h5>Reduce Substance Use</h5><p>Alcohol and drugs worsen mental health over time. Reducing or eliminating substance use can dramatically improve mood stability and clarity.</p></div></div>
+      <div class="col-md-6 col-lg-4 reveal"><div class="prev-card"><div class="prev-num">01</div><h5>Build Strong Social Connections</h5><p>Invest in meaningful relationships. Loneliness is a significant risk factor for mental illness. Regular quality time with people you trust acts as a buffer against stress.</p><div class="prev-check-wrap"><input type="checkbox" class="prev-check" id="pc1" onchange="updatePrevScore()"><label class="prev-check-label" for="pc1">I practise this regularly</label></div></div></div>
+      <div class="col-md-6 col-lg-4 reveal"><div class="prev-card"><div class="prev-num">02</div><h5>Prioritize Quality Sleep</h5><p>Sleep and mental health are deeply interlinked. Aim for 7–9 hours nightly. A consistent sleep routine helps your brain repair itself.</p><div class="prev-check-wrap"><input type="checkbox" class="prev-check" id="pc2" onchange="updatePrevScore()"><label class="prev-check-label" for="pc2">I practise this regularly</label></div></div></div>
+      <div class="col-md-6 col-lg-4 reveal"><div class="prev-card"><div class="prev-num">03</div><h5>Exercise Regularly</h5><p>Physical activity releases endorphins and reduces cortisol. Even 30 minutes of moderate movement five days a week significantly reduces depression and anxiety.</p><div class="prev-check-wrap"><input type="checkbox" class="prev-check" id="pc3" onchange="updatePrevScore()"><label class="prev-check-label" for="pc3">I practise this regularly</label></div></div></div>
+      <div class="col-md-6 col-lg-4 reveal"><div class="prev-card"><div class="prev-num">04</div><h5>Eat a Balanced Diet</h5><p>The gut-brain axis is real. Diets rich in whole grains, vegetables, and healthy fats support neurotransmitter production. Limit alcohol and ultra-processed foods.</p><div class="prev-check-wrap"><input type="checkbox" class="prev-check" id="pc4" onchange="updatePrevScore()"><label class="prev-check-label" for="pc4">I practise this regularly</label></div></div></div>
+      <div class="col-md-6 col-lg-4 reveal"><div class="prev-card"><div class="prev-num">05</div><h5>Practice Mindfulness &amp; Meditation</h5><p>Regular mindfulness practice rewires the brain's stress response. Even 10 minutes daily can measurably lower anxiety and improve emotional regulation.</p><div class="prev-check-wrap"><input type="checkbox" class="prev-check" id="pc5" onchange="updatePrevScore()"><label class="prev-check-label" for="pc5">I practise this regularly</label></div></div></div>
+      <div class="col-md-6 col-lg-4 reveal"><div class="prev-card"><div class="prev-num">06</div><h5>Limit Screen Time</h5><p>Excessive social media use correlates with higher anxiety and depression. Set boundaries, schedule device-free time, and curate your digital environment.</p><div class="prev-check-wrap"><input type="checkbox" class="prev-check" id="pc6" onchange="updatePrevScore()"><label class="prev-check-label" for="pc6">I practise this regularly</label></div></div></div>
+      <div class="col-md-6 col-lg-4 reveal"><div class="prev-card"><div class="prev-num">07</div><h5>Seek Professional Help Early</h5><p>Don't wait for a crisis. Therapy — including CBT, DBT, and talk therapy — is proven to build resilience and prevent conditions from worsening.</p><div class="prev-check-wrap"><input type="checkbox" class="prev-check" id="pc7" onchange="updatePrevScore()"><label class="prev-check-label" for="pc7">I practise this regularly</label></div></div></div>
+      <div class="col-md-6 col-lg-4 reveal"><div class="prev-card"><div class="prev-num">08</div><h5>Develop Healthy Coping Skills</h5><p>Learn your stress triggers and build a toolkit of healthy responses — journaling, deep breathing, time in nature, or talking with someone you trust.</p><div class="prev-check-wrap"><input type="checkbox" class="prev-check" id="pc8" onchange="updatePrevScore()"><label class="prev-check-label" for="pc8">I practise this regularly</label></div></div></div>
+      <div class="col-md-6 col-lg-4 reveal"><div class="prev-card"><div class="prev-num">09</div><h5>Find Purpose &amp; Meaning</h5><p>Having a sense of purpose — through work, volunteering, or creativity — is one of the most protective factors for long-term mental well-being.</p><div class="prev-check-wrap"><input type="checkbox" class="prev-check" id="pc9" onchange="updatePrevScore()"><label class="prev-check-label" for="pc9">I practise this regularly</label></div></div></div>
+      <div class="col-md-6 col-lg-4 reveal"><div class="prev-card"><div class="prev-num">10</div><h5>Reduce Substance Use</h5><p>Alcohol and drugs worsen mental health over time. Reducing or eliminating substance use can dramatically improve mood stability and clarity.</p><div class="prev-check-wrap"><input type="checkbox" class="prev-check" id="pc10" onchange="updatePrevScore()"><label class="prev-check-label" for="pc10">I practise this regularly</label></div></div></div>
     </div>
   </div>
 </section>
+
 <section id="lifestyle">
   <div class="container">
     <div class="row justify-content-center mb-5 text-center"><div class="col-lg-7 reveal"><span class="section-label" style="color:var(--sage-lt)">Daily Habits</span><h2 class="section-title text-white">Small Daily Actions That Add Up</h2></div></div>
@@ -63,19 +123,62 @@
         <div class="life-item"><i class="bi bi-chat-heart"></i><div><h6>Connect with One Person Daily</h6><p>A meaningful conversation — even brief — builds social resilience that protects long-term mental health.</p></div></div>
       </div>
     </div>
+    <div class="text-center mt-5 reveal">
+      <a href="{% url 'mentalapp:checklist_today' %}" class="btn-sage">✅ Track These Habits Daily →</a>
+    </div>
   </div>
 </section>
+
 <section id="early">
   <div class="container">
     <div class="early-banner reveal">
-      <div class="row align-items-center gy-4">
+      <div class="row align-items-center gy-4 position-relative">
         <div class="col-lg-8">
           <h3 style="color:#fff">Early Intervention Changes Outcomes</h3>
-          <p style="color:rgba(255,255,255,.75);line-height:1.75;margin-bottom:1.5rem">Research consistently shows that seeking help early leads to significantly better outcomes and shorter recovery times. Don't wait.</p>
-          <a href="{% url 'mentalapp:resources' %}" class="btn-outline-w">Find Support Resources</a>
+          <p style="color:rgba(255,255,255,.75);line-height:1.75;margin-bottom:1.5rem">Research consistently shows that seeking help early leads to significantly better outcomes and shorter recovery times. Don't wait until it's a crisis.</p>
+          <div class="d-flex gap-3 flex-wrap">
+            <a href="{% url 'mentalapp:resources' %}" class="btn-outline-w">Find Support Resources</a>
+            <button onclick="toggleChat(true)" style="background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.3);color:#fff;border-radius:50px;padding:.78rem 2rem;font-size:.93rem;cursor:pointer;font-family:inherit;transition:all .25s">🌿 Talk to Mwendo</button>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Restore checkboxes from localStorage
+for(let i=1;i<=10;i++){
+  const el=document.getElementById('pc'+i);
+  if(el&&localStorage.getItem('prev_'+i)==='true') el.checked=true;
+}
+updatePrevScore();
+
+function updatePrevScore(){
+  let done=0;
+  for(let i=1;i<=10;i++){
+    const el=document.getElementById('pc'+i);
+    if(el){
+      if(el.checked)done++;
+      localStorage.setItem('prev_'+i,el.checked);
+    }
+  }
+  const pct=done*10;
+  document.getElementById('prevScoreLabel').textContent=done+' / 10';
+  document.getElementById('prevScoreBadge').textContent=pct+'%';
+  document.getElementById('prevProgFill').style.width=pct+'%';
+  const msgs={
+    0:'Start ticking strategies you already practise.',
+    3:'Good start — small habits compound into big protection.',
+    5:'You\'re protecting your mental health well. Keep building.',
+    7:'Strong prevention profile — you\'re building real resilience.',
+    9:'Outstanding! You\'re living evidence-based mental wellness.',
+    10:'🌟 Perfect score — you\'re a mental health champion.'
+  };
+  const key=Object.keys(msgs).reverse().find(k=>done>=parseInt(k));
+  document.getElementById('prevScoreMsg').textContent=msgs[key]||'';
+}
+</script>
 {% endblock %}

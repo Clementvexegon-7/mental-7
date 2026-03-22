@@ -1,43 +1,42 @@
 {% extends 'mentalapp/base.html' %}
 {% block title %}Delete Journal Entry · MindWell{% endblock %}
-
 {% block extra_css %}
 <style>
-  .confirm-wrap{max-width:500px;margin:4rem auto;text-align:center}
-  .confirm-card{background:#fff;border-radius:16px;border:1px solid rgba(74,124,111,.12);padding:2.5rem 2rem}
-  .confirm-icon{font-size:3rem;margin-bottom:1rem}
-  .confirm-card h3{font-family:'Playfair Display',serif;color:var(--deep);margin-bottom:.5rem}
-  .entry-preview{
-    background:#f5f0e8;border-radius:10px;padding:1rem;
-    text-align:left;margin:1rem 0 1.5rem;font-size:.88rem;color:var(--text)
-  }
-  .entry-preview strong{display:block;margin-bottom:.3rem;color:var(--deep)}
-
-  .btn-danger-soft{background:#c62828;color:#fff;border:none;border-radius:10px;padding:.6rem 1.4rem;font-size:.9rem}
-  .btn-danger-soft:hover{background:#b71c1c;color:#fff}
-  .btn-outline-back{background:transparent;color:var(--muted);border:1.5px solid #ddd;border-radius:10px;padding:.6rem 1.2rem;font-size:.9rem;text-decoration:none;transition:all .2s}
-  .btn-outline-back:hover{border-color:var(--sage);color:var(--sage)}
+.confirm-wrap{max-width:500px;margin:4rem auto;text-align:center}
+.confirm-card{background:#fff;border-radius:20px;border:1px solid rgba(74,124,111,.12);padding:2.5rem 2rem;box-shadow:0 8px 32px rgba(28,43,40,.07)}
+.confirm-icon{font-size:3rem;margin-bottom:1rem}
+.confirm-card h3{font-family:'Playfair Display',serif;color:var(--deep);margin-bottom:.5rem}
+.entry-preview{background:rgba(74,124,111,.05);border:1px solid rgba(74,124,111,.12);border-radius:12px;padding:1rem;text-align:left;margin:1rem 0 1.5rem;font-size:.88rem;color:var(--text)}
+.entry-preview strong{display:block;margin-bottom:.3rem;color:var(--deep);font-family:'Playfair Display',serif}
+.btn-danger-soft{background:#c62828;color:#fff;border:none;border-radius:12px;padding:.65rem 1.5rem;font-size:.9rem;cursor:pointer;transition:all .2s;font-family:inherit}
+.btn-danger-soft:hover{background:#b71c1c;color:#fff;transform:translateY(-2px)}
+.btn-outline-back{background:transparent;color:var(--muted);border:1.5px solid #ddd;border-radius:12px;padding:.65rem 1.3rem;font-size:.9rem;text-decoration:none;transition:all .2s}
+.btn-outline-back:hover{border-color:var(--sage);color:var(--sage)}
+.gentle-note{background:rgba(232,201,138,.1);border:1px solid rgba(232,201,138,.3);border-radius:12px;padding:.75rem 1rem;font-size:.82rem;color:#7a5c20;margin-bottom:1.5rem;line-height:1.6}
 </style>
 {% endblock %}
-
 {% block content %}
 <div class="container py-5">
   <div class="confirm-wrap">
     <div class="confirm-card">
       <div class="confirm-icon">🗑️</div>
-      <h3>Delete Journal Entry?</h3>
-      <p class="text-muted" style="font-size:.9rem">This action cannot be undone.</p>
+      <h3>Delete This Entry?</h3>
+      <p class="text-muted" style="font-size:.9rem;margin-bottom:1rem">This action cannot be undone.</p>
+
+      <div class="gentle-note">
+        💙 Your journals are part of your healing journey. Consider editing instead of deleting — even difficult entries hold growth.
+      </div>
 
       <div class="entry-preview">
         <strong>{{ entry.title|default:"Untitled Entry" }}</strong>
-        {{ entry.content|truncatechars:100 }}
+        {{ entry.content|truncatechars:120 }}
       </div>
 
       <form method="post">
         {% csrf_token %}
         <div class="d-flex justify-content-center gap-3">
           <button type="submit" class="btn-danger-soft btn">Yes, Delete</button>
-          <a href="{% url 'mentalapp:journal_detail' entry.pk %}" class="btn-outline-back">Cancel</a>
+          <a href="{% url 'mentalapp:journal_detail' entry.pk %}" class="btn-outline-back">Keep It</a>
         </div>
       </form>
     </div>

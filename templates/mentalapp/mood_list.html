@@ -1,103 +1,363 @@
 {% extends 'mentalapp/base.html' %}
 {% block title %}Mood Tracker · MindWell{% endblock %}
-
 {% block extra_css %}
 <style>
-  .page-hero{background:linear-gradient(135deg,var(--deep),#2a4a42);padding:2.5rem 0;color:#fff}
-  .page-hero h1{color:var(--warm);font-size:1.9rem}
-  .page-hero p{color:rgba(255,255,255,.6);font-size:.9rem}
+/* ══ HERO ══════════════════════════════════════════════ */
+.mood-hero{background:linear-gradient(135deg,var(--deep) 0%,#2a4a42 70%,var(--sage) 100%);padding:3rem 0 5.5rem;position:relative;overflow:hidden}
+.mood-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 55% 65% at 80% 40%,rgba(111,173,160,.22) 0%,transparent 65%)}
+.mood-hero h1{font-size:clamp(1.7rem,4vw,2.4rem);color:#fff;position:relative}
+.mood-hero p{color:rgba(255,255,255,.55);font-size:.9rem;position:relative}
 
-  .mood-table-card{
-    background:#fff;border-radius:16px;
-    border:1px solid rgba(74,124,111,.12);
-    overflow:hidden
-  }
-  .mood-row{
-    display:grid;
-    grid-template-columns:110px 1fr auto auto;
-    align-items:center;gap:1rem;
-    padding:.9rem 1.25rem;
-    border-bottom:1px solid #f0ede7;
-    transition:background .15s
-  }
-  .mood-row:hover{background:#faf8f4}
-  .mood-row:last-child{border-bottom:none}
+/* ══ STAT CARDS ════════════════════════════════════════ */
+.mood-stats{margin-top:-3rem;margin-bottom:1.8rem}
+.ms-card{background:#fff;border-radius:18px;padding:1.2rem 1.5rem;border:1px solid rgba(74,124,111,.12);box-shadow:0 4px 20px rgba(28,43,40,.07);transition:all .3s;text-align:center}
+.ms-card:hover{transform:translateY(-4px);box-shadow:0 12px 36px rgba(74,124,111,.14)}
+.ms-val{font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;color:var(--sage);line-height:1}
+.ms-lbl{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-top:.3rem}
 
-  .mood-score{
-    display:inline-flex;align-items:center;gap:.4rem;
-    padding:.3rem .75rem;border-radius:20px;font-size:.82rem;font-weight:500
-  }
-  .score-1{background:#fce4ec;color:#c62828}
-  .score-2{background:#fff3e0;color:#e65100}
-  .score-3{background:#fff9c4;color:#f57f17}
-  .score-4{background:#e8f5e9;color:#2e7d32}
-  .score-5{background:#e3f2fd;color:#1565c0}
+/* ══ AI INSIGHT ════════════════════════════════════════ */
+.smart-insight{background:#fff;border-radius:20px;padding:1.5rem 1.8rem;border:1px solid rgba(74,124,111,.12);box-shadow:0 4px 24px rgba(28,43,40,.06);margin-bottom:1.5rem;position:relative;overflow:hidden}
+.smart-insight::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--sage),var(--warm))}
+.si-header{display:flex;align-items:center;gap:.75rem;margin-bottom:1rem}
+.si-bot{width:38px;height:38px;background:linear-gradient(135deg,var(--sage),var(--warm));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.05rem;flex-shrink:0}
+.si-label{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--sage);font-weight:700}
+.si-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.65rem}
+.si-chip{border-radius:12px;padding:.65rem .85rem;font-size:.82rem;line-height:1.5;display:flex;gap:.5rem;align-items:flex-start}
+.si-chip .sic-ico{font-size:1rem;flex-shrink:0;margin-top:.05rem}
+.si-chip.good{background:rgba(74,124,111,.07);border:1px solid rgba(74,124,111,.18);color:var(--sage)}
+.si-chip.warn{background:rgba(232,201,138,.12);border:1px solid rgba(232,201,138,.35);color:#7a5c20}
+.si-chip.alert{background:rgba(181,85,74,.08);border:1px solid rgba(181,85,74,.22);color:#a84848}
+.si-chip.neutral{background:rgba(100,149,237,.07);border:1px solid rgba(100,149,237,.18);color:#4169a8}
 
-  .btn-sage{background:var(--sage);color:#fff;border:none;border-radius:10px;padding:.5rem 1.2rem;font-size:.88rem;transition:background .2s}
-  .btn-sage:hover{background:var(--sage-lt);color:#fff}
+/* ══ CHART ═════════════════════════════════════════════ */
+.chart-card{background:#fff;border-radius:20px;padding:1.6rem 1.8rem;border:1px solid rgba(74,124,111,.1);box-shadow:0 4px 20px rgba(28,43,40,.06);margin-bottom:1.5rem}
+.chart-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;margin-bottom:1.2rem}
+.chart-title{font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--deep)}
+.chart-toggle{display:flex;gap:.4rem}
+.ct-btn{background:rgba(74,124,111,.07);border:1px solid rgba(74,124,111,.18);color:var(--muted);border-radius:50px;padding:.28rem .85rem;font-size:.75rem;cursor:pointer;font-family:inherit;transition:all .2s}
+.ct-btn.active{background:var(--sage);color:#fff;border-color:var(--sage)}
 
-  .empty-state{text-align:center;padding:3.5rem 1rem}
-  .empty-state .es-icon{font-size:3rem;margin-bottom:1rem;opacity:.4}
+/* ══ MOOD TABLE ════════════════════════════════════════ */
+.mood-table-card{background:#fff;border-radius:20px;border:1px solid rgba(74,124,111,.1);overflow:hidden;box-shadow:0 4px 18px rgba(28,43,40,.05)}
+.mt-header{display:grid;grid-template-columns:110px 1fr 80px 80px 40px;gap:.5rem;padding:.7rem 1.2rem;background:rgba(74,124,111,.06);font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:700}
+.mt-row{display:grid;grid-template-columns:110px 1fr 80px 80px 40px;gap:.5rem;padding:.85rem 1.2rem;border-bottom:1px solid rgba(74,124,111,.07);align-items:center;font-size:.84rem;transition:background .2s}
+.mt-row:last-child{border-bottom:none}
+.mt-row:hover{background:rgba(74,124,111,.03)}
+@media(max-width:600px){.mt-header,.mt-row{grid-template-columns:90px 1fr 70px 35px}.hide-sm{display:none}}
+
+.mood-badge{display:inline-flex;align-items:center;gap:.3rem;padding:.22rem .65rem;border-radius:50px;font-size:.78rem;font-weight:600;white-space:nowrap}
+.mb-1,.mb-2{background:#fce4ec;color:#c62828}
+.mb-3,.mb-4{background:#fff3e0;color:#e65100}
+.mb-5{background:#fff9c4;color:#f57f17}
+.mb-6,.mb-7{background:#e8f5e9;color:#2e7d32}
+.mb-8,.mb-9,.mb-10{background:linear-gradient(135deg,rgba(74,124,111,.15),rgba(232,201,138,.15));color:var(--sage)}
+
+.mood-emoji{font-size:1.1rem}
+.action-btns{display:flex;gap:.35rem}
+.act-btn-sm{background:none;border:1px solid rgba(74,124,111,.18);border-radius:8px;padding:.22rem .5rem;font-size:.78rem;cursor:pointer;transition:all .2s;text-decoration:none;color:var(--muted);display:inline-flex;align-items:center}
+.act-btn-sm:hover{background:var(--sage);color:#fff;border-color:var(--sage)}
+.act-btn-sm.del:hover{background:#c62828;border-color:#c62828;color:#fff}
+
+/* ══ LOG BUTTON ════════════════════════════════════════ */
+.log-mood-fab{position:fixed;bottom:100px;left:28px;z-index:9986;background:linear-gradient(135deg,var(--sage),#3d8b7a);color:#fff;border:none;border-radius:50px;padding:.65rem 1.4rem;font-size:.88rem;font-weight:600;cursor:pointer;box-shadow:0 6px 22px rgba(74,124,111,.4);font-family:inherit;transition:all .25s;text-decoration:none;display:inline-flex;align-items:center;gap:.45rem}
+.log-mood-fab:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(74,124,111,.5);color:#fff}
+
+/* ══ EMPTY ══════════════════════════════════════════ */
+.empty-mood{text-align:center;padding:4rem 1rem}
+.empty-mood .em-icon{font-size:3rem;margin-bottom:1rem;display:block;opacity:.35}
 </style>
 {% endblock %}
 
 {% block content %}
-<section class="page-hero">
-  <div class="container d-flex align-items-center justify-content-between flex-wrap gap-3">
-    <div>
-      <h1>😊 Mood Tracker</h1>
-      <p>Track how you feel over time</p>
+<section class="mood-hero">
+  <div class="container position-relative">
+    <div class="d-flex align-items-start justify-content-between flex-wrap gap-3">
+      <div>
+        <span class="badge-pill">Mood Tracker</span>
+        <h1>😊 Your Mood History</h1>
+        <p>Track patterns, spot trends, and understand how you really feel over time.</p>
+      </div>
+      <a href="{% url 'mentalapp:mood_create' %}" class="btn-sage mt-2">+ Log Today's Mood</a>
     </div>
-    <a href="{% url 'mentalapp:mood_create' %}" class="btn-sage btn">+ Log Mood</a>
   </div>
 </section>
 
-<div class="container py-4">
+<div class="container py-3">
 
   {% if messages %}
-    {% for msg in messages %}
-      <div class="alert alert-{{ msg.tags }} alert-dismissible fade show">
-        {{ msg }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-      </div>
-    {% endfor %}
+    {% for msg in messages %}<div class="alert alert-{{ msg.tags }} alert-dismissible fade show">{{ msg }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>{% endfor %}
   {% endif %}
 
-  <div class="mood-table-card">
-    {% if moods %}
-      <!-- Header -->
-      <div class="mood-row" style="background:#f5f0e8;font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:600">
-        <span>Date</span>
-        <span>Mood</span>
-        <span>Note</span>
-        <span>Actions</span>
-      </div>
-      {% for mood in moods %}
-      <div class="mood-row">
-        <span style="font-size:.88rem;color:var(--muted)">{{ mood.date|date:"M j, Y" }}</span>
-        <span class="mood-score score-{{ mood.score }}">
-          {% if mood.score == 1 %}😞 Very Low
-          {% elif mood.score == 2 %}😕 Low
-          {% elif mood.score == 3 %}😐 Okay
-          {% elif mood.score == 4 %}😊 Good
-          {% elif mood.score == 5 %}😄 Great
-          {% else %}{{ mood.score }}
-          {% endif %}
-        </span>
-        <span style="font-size:.85rem;color:var(--muted)">{{ mood.notes|default:"—"|truncatechars:50 }}</span>
-        <div class="d-flex gap-2">
-          <a href="{% url 'mentalapp:mood_edit' mood.pk %}" class="btn btn-sm btn-outline-secondary" style="border-radius:8px;font-size:.8rem">Edit</a>
-          <a href="{% url 'mentalapp:mood_delete' mood.pk %}" class="btn btn-sm btn-outline-danger" style="border-radius:8px;font-size:.8rem">Delete</a>
-        </div>
-      </div>
-      {% endfor %}
-    {% else %}
-      <div class="empty-state">
-        <div class="es-icon">😶</div>
-        <h5 style="font-family:'Playfair Display',serif;color:var(--deep)">No moods logged yet</h5>
-        <p class="text-muted" style="font-size:.88rem">Start tracking how you feel each day.</p>
-        <a href="{% url 'mentalapp:mood_create' %}" class="btn-sage btn mt-2">Log Your First Mood</a>
-      </div>
-    {% endif %}
+  {% if moods %}
+
+  {# ══ STAT CARDS ══ #}
+  <div class="mood-stats">
+    <div class="row g-3">
+      <div class="col-6 col-md-3"><div class="ms-card"><div class="ms-val" id="statTotal">{{ moods|length }}</div><div class="ms-lbl">Total Logged</div></div></div>
+      <div class="col-6 col-md-3"><div class="ms-card"><div class="ms-val" id="statAvg">–</div><div class="ms-lbl">Average Mood</div></div></div>
+      <div class="col-6 col-md-3"><div class="ms-card"><div class="ms-val" id="statBest">–</div><div class="ms-lbl">Best Day</div></div></div>
+      <div class="col-6 col-md-3"><div class="ms-card"><div class="ms-val" id="statTrend">–</div><div class="ms-lbl">7-Day Trend</div></div></div>
+    </div>
   </div>
+
+  {# ══ FEATURE 2: CHART ══ #}
+  <div class="chart-card">
+    <div class="chart-header">
+      <div class="chart-title">📊 Mood Over Time</div>
+      <div class="chart-toggle">
+        <button class="ct-btn active" id="btnLine" onclick="switchChart('line')">Line</button>
+        <button class="ct-btn" id="btnBar" onclick="switchChart('bar')">Bars</button>
+        <button class="ct-btn" id="btnWeek" onclick="filterChart(7)">7D</button>
+        <button class="ct-btn" id="btnMonth" onclick="filterChart(30)">30D</button>
+        <button class="ct-btn" id="btnAll" onclick="filterChart(999)">All</button>
+      </div>
+    </div>
+    <canvas id="moodChart" height="85"></canvas>
+  </div>
+
+  {# ══ FEATURE 3: SMART AI INSIGHTS ══ #}
+  <div class="smart-insight">
+    <div class="si-header">
+      <div class="si-bot">🌿</div>
+      <div>
+        <div class="si-label">Mwendo Smart Insights</div>
+        <div style="font-size:.78rem;color:var(--muted)">Pattern analysis from your mood data</div>
+      </div>
+      <button onclick="buildInsights()" style="margin-left:auto;background:rgba(74,124,111,.08);border:1px solid rgba(74,124,111,.2);color:var(--sage);border-radius:50px;padding:.3rem .9rem;font-size:.78rem;cursor:pointer;font-family:inherit">↻ Refresh</button>
+    </div>
+    <div class="si-grid" id="insightGrid">
+      <div style="color:var(--muted);font-size:.85rem;display:flex;align-items:center;gap:.5rem"><span>⏳</span> Analysing patterns...</div>
+    </div>
+  </div>
+
+  {# ══ MOOD TABLE ══ #}
+  <div class="mood-table-card">
+    <div class="mt-header">
+      <span>Date</span>
+      <span>Mood</span>
+      <span class="hide-sm">Score</span>
+      <span>Notes</span>
+      <span></span>
+    </div>
+    {% for mood in moods %}
+    <div class="mt-row">
+      <div>
+        <span style="font-weight:600;color:var(--deep)">{{ mood.date|date:"M j" }}</span>
+        <span style="display:block;font-size:.72rem;color:var(--muted)">{{ mood.date|date:"D" }}</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:.5rem">
+        <span class="mood-emoji">{{ mood.mood_emoji }}</span>
+        <span class="mood-badge mb-{{ mood.mood_score }}">{{ mood.get_mood_score_display }}</span>
+      </div>
+      <div class="hide-sm" style="font-weight:700;color:var(--sage)">{{ mood.mood_score }}/10</div>
+      <div style="font-size:.8rem;color:var(--muted)">
+        {% if mood.notes %}{{ mood.notes|truncatechars:28 }}{% else %}<span style="opacity:.4">—</span>{% endif %}
+      </div>
+      <div class="action-btns">
+        <a href="{% url 'mentalapp:mood_edit' mood.pk %}" class="act-btn-sm" title="Edit"><i class="bi bi-pencil"></i></a>
+        <a href="{% url 'mentalapp:mood_delete' mood.pk %}" class="act-btn-sm del" title="Delete"><i class="bi bi-trash"></i></a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  {% else %}
+  <div class="mood-table-card">
+    <div class="empty-mood">
+      <span class="em-icon">💭</span>
+      <h5 style="font-family:'Playfair Display',serif;color:var(--deep)">No moods logged yet</h5>
+      <p style="color:var(--muted);font-size:.9rem;margin-bottom:1.2rem">Tracking your mood is the first step to understanding your mental patterns.</p>
+      <a href="{% url 'mentalapp:mood_create' %}" class="btn-sage">Log Your First Mood →</a>
+    </div>
+  </div>
+  {% endif %}
+
 </div>
+
+<a href="{% url 'mentalapp:mood_create' %}" class="log-mood-fab">😊 Log Today's Mood</a>
+
+{# Pass mood data to JS #}
+<script>
+const MOOD_DATA = [
+  {% for mood in moods %}
+  {date:"{{ mood.date|date:'Y-m-d' }}",score:{{ mood.mood_score }},label:"{{ mood.get_mood_score_display }}",emoji:"{{ mood.mood_emoji }}"}{% if not forloop.last %},{% endif %}
+  {% endfor %}
+];
+</script>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+/* ════════════════════════════════════════
+   STATS
+════════════════════════════════════════ */
+(function(){
+  if(!MOOD_DATA.length) return;
+  const scores=MOOD_DATA.map(d=>d.score);
+  const avg=(scores.reduce((a,b)=>a+b,0)/scores.length).toFixed(1);
+  document.getElementById('statAvg').textContent=avg;
+  document.getElementById('statBest').textContent=Math.max(...scores)+'/10';
+
+  // 7-day trend
+  const sorted=[...MOOD_DATA].sort((a,b)=>a.date.localeCompare(b.date));
+  const recent7=sorted.slice(-7);
+  const older7=sorted.slice(-14,-7);
+  if(recent7.length && older7.length){
+    const r=recent7.reduce((s,d)=>s+d.score,0)/recent7.length;
+    const o=older7.reduce((s,d)=>s+d.score,0)/older7.length;
+    const diff=r-o;
+    const el=document.getElementById('statTrend');
+    if(diff>0.5){el.textContent='↑ Rising';el.style.color='#2e7d32';}
+    else if(diff<-0.5){el.textContent='↓ Falling';el.style.color='#c62828';}
+    else{el.textContent='→ Stable';el.style.color='var(--sage)';}
+  } else {
+    document.getElementById('statTrend').textContent='–';
+  }
+})();
+
+/* ════════════════════════════════════════
+   FEATURE 2: CHART
+════════════════════════════════════════ */
+let _chart=null, _chartType='line', _filterDays=30;
+
+function getChartData(days){
+  const sorted=[...MOOD_DATA].sort((a,b)=>a.date.localeCompare(b.date));
+  const sliced=days>=999?sorted:sorted.slice(-days);
+  const labels=sliced.map(d=>{const dt=new Date(d.date);return dt.toLocaleDateString('en-KE',{month:'short',day:'numeric'});});
+  const scores=sliced.map(d=>d.score);
+  return {labels,scores};
+}
+
+function buildChart(type,days){
+  const {labels,scores}=getChartData(days);
+  const ctx=document.getElementById('moodChart').getContext('2d');
+  if(_chart)_chart.destroy();
+  const colors=scores.map(s=>s>=8?'rgba(46,125,50,.8)':s>=6?'rgba(74,124,111,.8)':s>=4?'rgba(255,193,7,.8)':'rgba(244,67,54,.7)');
+  _chart=new Chart(ctx,{
+    type,
+    data:{
+      labels,
+      datasets:[{
+        label:'Mood Score',
+        data:scores,
+        borderColor:'#4a7c6f',
+        backgroundColor:type==='line'?'rgba(74,124,111,.08)':colors,
+        fill:type==='line',
+        tension:.4,
+        pointBackgroundColor:colors,
+        pointRadius:5,
+        pointHoverRadius:8,
+        borderWidth:2.5,
+      }]
+    },
+    options:{
+      responsive:true,
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{
+          label:ctx=>{
+            const s=ctx.raw;
+            const em=s>=8?'🌟':s>=6?'😊':s>=4?'😐':'💙';
+            return ` Score: ${s}/10  ${em}`;
+          }
+        }}
+      },
+      scales:{
+        y:{min:1,max:10,grid:{color:'rgba(74,124,111,.07)'},ticks:{color:'#6b7c78',font:{size:11},stepSize:1}},
+        x:{grid:{display:false},ticks:{color:'#6b7c78',font:{size:10}}}
+      }
+    }
+  });
+}
+
+function switchChart(type){
+  _chartType=type;buildChart(type,_filterDays);
+  document.querySelectorAll('.ct-btn[id^=btn]').forEach(b=>{if(b.id==='btn'+type.charAt(0).toUpperCase()+type.slice(1))b.classList.add('active');else b.classList.remove('active');});
+}
+
+function filterChart(days){
+  _filterDays=days;buildChart(_chartType,days);
+  ['Week','Month','All'].forEach(n=>{const btn=document.getElementById('btn'+n);if(btn)btn.classList.remove('active');});
+  const map={7:'Week',30:'Month',999:'All'};
+  const btn=document.getElementById('btn'+map[days]);
+  if(btn)btn.classList.add('active');
+}
+
+if(MOOD_DATA.length) buildChart('line',30);
+
+/* ════════════════════════════════════════
+   FEATURE 3: SMART INSIGHTS
+════════════════════════════════════════ */
+function buildInsights(){
+  const grid=document.getElementById('insightGrid');
+  if(!MOOD_DATA.length){grid.innerHTML='<div style="color:var(--muted);font-size:.85rem">Log at least 3 moods to unlock insights.</div>';return;}
+  grid.innerHTML='<div style="color:var(--muted);font-size:.85rem;display:flex;align-items:center;gap:.5rem"><span>⏳</span> Analysing...</div>';
+
+  setTimeout(()=>{
+    const sorted=[...MOOD_DATA].sort((a,b)=>a.date.localeCompare(b.date));
+    const scores=sorted.map(d=>d.score);
+    const avg=scores.reduce((a,b)=>a+b,0)/scores.length;
+    const recent=sorted.slice(-7);
+    const older=sorted.slice(-14,-7);
+    const recentAvg=recent.length?recent.reduce((s,d)=>s+d.score,0)/recent.length:avg;
+    const olderAvg=older.length?older.reduce((s,d)=>s+d.score,0)/older.length:avg;
+    const trend=recentAvg-olderAvg;
+
+    // Day-of-week analysis
+    const byDay={};
+    sorted.forEach(d=>{
+      const dow=new Date(d.date).toLocaleDateString('en-KE',{weekday:'short'});
+      if(!byDay[dow]){byDay[dow]=[];}
+      byDay[dow].push(d.score);
+    });
+    let bestDay='',bestDayAvg=0,worstDay='',worstDayAvg=11;
+    Object.entries(byDay).forEach(([day,scores])=>{
+      if(scores.length<2)return;
+      const a=scores.reduce((s,v)=>s+v,0)/scores.length;
+      if(a>bestDayAvg){bestDayAvg=a;bestDay=day;}
+      if(a<worstDayAvg){worstDayAvg=a;worstDay=day;}
+    });
+
+    const lowDays=sorted.filter(d=>d.score<=3).length;
+    const highDays=sorted.filter(d=>d.score>=8).length;
+
+    const chips=[];
+
+    // Trend
+    if(trend>1) chips.push({cls:'good',ico:'📈',text:`Your mood has improved by ${trend.toFixed(1)} points over the last 7 days. Keep doing what you're doing!`});
+    else if(trend<-1) chips.push({cls:'warn',ico:'📉',text:`Your mood has dipped ${Math.abs(trend).toFixed(1)} points recently. Consider tracking what's changed.`});
+    else chips.push({cls:'neutral',ico:'→',text:`Your mood has been stable recently — consistency is a form of strength.`});
+
+    // Average
+    if(avg>=7) chips.push({cls:'good',ico:'🌟',text:`Your average mood is ${avg.toFixed(1)}/10 — that's genuinely positive. Well done.`});
+    else if(avg>=5) chips.push({cls:'neutral',ico:'🙂',text:`Your average mood is ${avg.toFixed(1)}/10. There's room to grow with small daily habits.`});
+    else chips.push({cls:'warn',ico:'💙',text:`Your average mood is ${avg.toFixed(1)}/10. This suggests consistent struggles — consider reaching out for support.`});
+
+    // Low days alert
+    if(lowDays>=5) chips.push({cls:'alert',ico:'🆘',text:`You've logged ${lowDays} low-mood days. This pattern matters — talking to someone could help.`});
+
+    // Best/worst day
+    if(bestDay&&bestDay!==worstDay) chips.push({cls:'good',ico:'📅',text:`You tend to feel best on ${bestDay}s (avg ${bestDayAvg.toFixed(1)}/10) and lowest on ${worstDay}s. Plan self-care around this.`});
+
+    // Low streak
+    const lastThree=sorted.slice(-3);
+    if(lastThree.every(d=>d.score<=4)) chips.push({cls:'alert',ico:'💙',text:`Your last 3 entries are all low. If you're struggling, you don't have to carry this alone.`});
+
+    // High streak
+    if(lastThree.every(d=>d.score>=7)) chips.push({cls:'good',ico:'🔥',text:`Three consecutive good days! You're in a strong streak — protect this momentum.`});
+
+    if(!chips.length) chips.push({cls:'neutral',ico:'🌿',text:`Keep logging daily — Mwendo needs at least 7 entries to detect meaningful patterns.`});
+
+    grid.innerHTML='';
+    chips.slice(0,6).forEach(c=>{
+      const div=document.createElement('div');
+      div.className=`si-chip ${c.cls}`;
+      div.innerHTML=`<span class="sic-ico">${c.ico}</span><span>${c.text}</span>`;
+      grid.appendChild(div);
+    });
+  },700);
+}
+buildInsights();
+</script>
 {% endblock %}
