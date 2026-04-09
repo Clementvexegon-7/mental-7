@@ -10,6 +10,7 @@ from django.contrib import messages
 from django.utils import timezone
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 
 from .models import (
     Mood, JournalEntry, SavedResource, Checklist,
@@ -44,6 +45,7 @@ def selfcare_info(request):
 def resources_info(request):
     return render(request, 'mentalapp/resources.html')
 
+@ensure_csrf_cookie
 def mwendo_page(request):
     """Dedicated full-page AI companion chat."""
     return render(request, 'mentalapp/mwendo_page.html')
@@ -176,6 +178,7 @@ def dashboard(request):
 
 
 # ── MWENDO AI CHAT ENDPOINT ────────────────────────────────────
+@csrf_exempt
 @require_POST
 def mwendo_chat(request):
     """

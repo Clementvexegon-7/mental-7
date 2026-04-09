@@ -1,125 +1,167 @@
 {% extends "mentalapp/base.html" %}
 {% load static %}
-
 {% block title %}{{ action }} Appointment · MindWell{% endblock %}
 {% block nav_appointment %}active-page{% endblock %}
 
 {% block extra_css %}
 <style>
-/* ══ PAGE SHELL ═══════════════════════════════════════ */
-.appt-hero{background:linear-gradient(135deg,var(--deep) 0%,#2a4a40 60%,#1c3530 100%);padding:4rem 0 5.5rem;position:relative;overflow:hidden}
-.appt-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 80% 50%,rgba(74,124,111,.35) 0%,transparent 70%);pointer-events:none}
-.appt-hero-badge{display:inline-flex;align-items:center;gap:.45rem;background:rgba(232,201,138,.12);border:1px solid rgba(232,201,138,.3);border-radius:50px;padding:.35rem .95rem;font-size:.78rem;color:var(--warm);letter-spacing:.06em;text-transform:uppercase;margin-bottom:1.2rem}
-.appt-hero h1{font-size:clamp(1.8rem,4vw,2.8rem);color:#fff;line-height:1.2;margin-bottom:.7rem}
-.appt-hero p{color:rgba(255,255,255,.62);font-size:1rem;max-width:520px}
-.deco-leaf{position:absolute;right:6%;top:50%;transform:translateY(-50%);font-size:9rem;opacity:.07;pointer-events:none;line-height:1}
+:root{--sage:#4a7c6f;--sage-lt:#6fada0;--warm:#e8c98a;--deep:#1c2b28;--cream:#f5f0e8;--muted:#6b7c78;--blush:#e8a598}
 
-/* FEATURE 6: Progress Indicator */
-.progress-indicator{display:flex;align-items:center;gap:0;margin-bottom:0;padding:.9rem 0 .6rem}
+/* ── Hero ──────────────────────────────────────────────────── */
+.appt-hero{background:linear-gradient(135deg,var(--deep) 0%,#2a4a40 60%,#1c3530 100%);padding:3.5rem 0 6rem;position:relative;overflow:hidden;z-index:1}
+.appt-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 80% 50%,rgba(74,124,111,.35) 0%,transparent 70%)}
+.hero-badge{display:inline-flex;align-items:center;gap:.45rem;background:rgba(232,201,138,.12);border:1px solid rgba(232,201,138,.3);border-radius:50px;padding:.35rem .95rem;font-size:.78rem;color:var(--warm);text-transform:uppercase;letter-spacing:.06em;margin-bottom:1.1rem;position:relative}
+.appt-hero h1{color:#fff;font-size:clamp(1.8rem,4vw,2.8rem);line-height:1.2;margin-bottom:.6rem;position:relative}
+.appt-hero p{color:rgba(255,255,255,.62);position:relative;max-width:520px}
+.deco-leaf{position:absolute;right:6%;top:50%;transform:translateY(-50%);font-size:9rem;opacity:.07}
+
+/* ── Progress ─────────────────────────────────────────────── */
+.progress-indicator{display:flex;align-items:center;padding:.9rem 0 .6rem;position:relative}
 .pi-step{display:flex;align-items:center;gap:.4rem;font-size:.78rem;font-weight:600;color:rgba(255,255,255,.4)}
 .pi-step.active{color:var(--warm)}
 .pi-step.done{color:rgba(111,173,160,.8)}
-.pi-num{width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:.72rem;flex-shrink:0;transition:all .3s}
+.pi-num{width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:.72rem;flex-shrink:0}
 .pi-step.active .pi-num{background:var(--warm);border-color:var(--warm);color:var(--deep)}
 .pi-step.done .pi-num{background:rgba(111,173,160,.3);border-color:rgba(111,173,160,.5);color:#fff}
 .pi-line{width:28px;height:2px;background:rgba(255,255,255,.12);margin:0 3px}
 .pi-line.done{background:rgba(111,173,160,.4)}
-@media(max-width:520px){.pi-step span{display:none}.pi-line{width:14px}}
 
-/* ══ CARD SHELL ═══════════════════════════════════════ */
-.appt-card-wrap{margin-top:-3rem;padding-bottom:5rem}
-.appt-card{background:#fff;border-radius:20px;box-shadow:0 12px 60px rgba(28,43,40,.12);overflow:hidden;animation:fadeUp .5s ease both}
-@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+/* ── Layout ───────────────────────────────────────────────── */
+.appt-wrap{margin-top:-2.5rem;padding-bottom:5rem;position:relative;z-index:10}
+.appt-card{background:#fff;border-radius:20px;box-shadow:0 12px 60px rgba(28,43,40,.14)}
 
-/* ══ SIDEBAR ══════════════════════════════════════════ */
-.appt-card-sidebar{background:linear-gradient(160deg,var(--deep),#2e5048);color:#fff;padding:2.5rem 2rem;display:flex;flex-direction:column;gap:1.6rem}
-.sidebar-step{display:flex;align-items:flex-start;gap:.85rem}
-.step-num{width:32px;height:32px;flex-shrink:0;border-radius:50%;background:rgba(232,201,138,.18);border:1.5px solid rgba(232,201,138,.4);display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:600;color:var(--warm)}
-.step-body h6{font-family:'DM Sans',sans-serif;font-weight:600;font-size:.88rem;color:#fff;margin-bottom:.2rem}
-.step-body p{font-size:.78rem;color:rgba(255,255,255,.52);margin:0}
+/* ── Sidebar ──────────────────────────────────────────────── */
+.appt-sidebar{background:linear-gradient(160deg,var(--deep),#2e5048);color:#fff;padding:2.4rem 1.8rem;border-radius:20px 0 0 20px;display:flex;flex-direction:column;gap:1.3rem}
+@media(max-width:991px){.appt-sidebar{border-radius:20px 20px 0 0}}
+.s-step{display:flex;align-items:flex-start;gap:.8rem}
+.s-num{width:30px;height:30px;flex-shrink:0;border-radius:50%;background:rgba(232,201,138,.18);border:1.5px solid rgba(232,201,138,.4);display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:600;color:var(--warm)}
+.s-body h6{font-weight:600;font-size:.86rem;color:#fff;margin-bottom:.12rem}
+.s-body p{font-size:.76rem;color:rgba(255,255,255,.5);margin:0}
+.rb{background:rgba(111,173,160,.18);border:1px solid rgba(111,173,160,.35);border-radius:12px;padding:.7rem .9rem;font-size:.78rem;color:rgba(255,255,255,.75);line-height:1.5}
+.rb strong{color:var(--sage-lt)}
+.crisis-box{background:rgba(181,85,74,.15);border:1.5px solid rgba(181,85,74,.35);border-radius:14px;padding:.9rem 1rem;margin-top:auto}
+.crisis-box-title{color:#ffb3ab;font-weight:700;font-size:.82rem;margin-bottom:.55rem;display:flex;align-items:center;gap:.4rem}
+.c-btn{display:flex;align-items:center;gap:.45rem;background:rgba(181,85,74,.2);border:1px solid rgba(181,85,74,.4);border-radius:50px;padding:.35rem .8rem;color:#fff;text-decoration:none;font-size:.76rem;font-weight:600;margin-bottom:.38rem;transition:all .2s}
+.c-btn:last-child{margin-bottom:0}
+.c-btn:hover{background:rgba(181,85,74,.4);color:#fff}
 
-/* FEATURE 4: Expected response time badge */
-.response-time-badge{background:rgba(111,173,160,.18);border:1px solid rgba(111,173,160,.35);border-radius:12px;padding:.75rem 1rem;display:flex;align-items:center;gap:.65rem;margin-top:.5rem}
-.rtb-icon{font-size:1.3rem;flex-shrink:0}
-.rtb-text{font-size:.78rem;color:rgba(255,255,255,.75);line-height:1.5}
-.rtb-text strong{color:var(--sage-lt)}
+/* ── Form ─────────────────────────────────────────────────── */
+.appt-form-body{padding:2.4rem;border-radius:0 20px 20px 0}
+@media(max-width:991px){.appt-form-body{border-radius:0 0 20px 20px}}
+@media(max-width:575px){.appt-form-body{padding:1.4rem 1.1rem}}
+.f-sec{display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid rgba(74,124,111,.1);padding-bottom:.45rem;margin-bottom:1.2rem;margin-top:2rem}
+.f-sec:first-of-type{margin-top:0}
+.f-sec-title{font-family:'Playfair Display',serif;font-size:1rem;color:var(--sage);margin:0;display:flex;align-items:center;gap:.35rem}
+.f-badge{font-size:.7rem;color:var(--muted);background:rgba(74,124,111,.08);border-radius:50px;padding:.15rem .65rem;font-weight:600}
+.f-label{font-size:.83rem;font-weight:600;color:var(--muted);margin-bottom:.3rem;display:block}
+.f-input{width:100%;border:1.5px solid #d8e3df;border-radius:10px;padding:.65rem .95rem;font-size:.9rem;color:#2d3d39;background:#fafcfb;font-family:inherit;transition:border-color .2s,box-shadow .2s;outline:none;display:block}
+.f-input:focus{border-color:var(--sage);box-shadow:0 0 0 3px rgba(74,124,111,.12);background:#fff}
+.err-msg{color:#b5554a;font-size:.79rem;margin-top:.25rem;display:block}
 
-/* FEATURE 5: Actionable urgent help */
-.urgent-crisis-block{background:rgba(181,85,74,.15);border:1.5px solid rgba(181,85,74,.35);border-radius:14px;padding:1rem 1.1rem;margin-top:auto}
-.ucb-title{color:#ffb3ab;font-weight:700;font-size:.82rem;margin-bottom:.6rem;display:flex;align-items:center;gap:.4rem}
-.crisis-action-btn{display:flex;align-items:center;gap:.5rem;background:rgba(181,85,74,.2);border:1px solid rgba(181,85,74,.4);border-radius:50px;padding:.38rem .85rem;color:#fff;text-decoration:none;font-size:.77rem;font-weight:600;margin-bottom:.4rem;transition:all .2s}
-.crisis-action-btn:hover{background:rgba(181,85,74,.4);color:#fff;transform:translateX(3px)}
-.crisis-action-btn:last-child{margin-bottom:0}
-.crisis-action-btn i{font-size:.85rem;flex-shrink:0}
+/* ── Therapist cards ──────────────────────────────────────── */
+.therapist-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;margin-top:.8rem}
+.therapist-card{
+  border:2px solid rgba(74,124,111,.14);border-radius:16px;padding:1.2rem 1rem 1rem;
+  cursor:pointer;transition:all .25s;position:relative;background:#fff;
+  text-align:center;user-select:none;
+}
+.therapist-card:hover{border-color:var(--sage);transform:translateY(-3px);box-shadow:0 8px 24px rgba(74,124,111,.14)}
+.therapist-card.selected{border-color:var(--sage);background:rgba(74,124,111,.06);box-shadow:0 0 0 3px rgba(74,124,111,.18),0 8px 24px rgba(74,124,111,.12)}
+.therapist-card.unavailable{opacity:.45;cursor:not-allowed;pointer-events:none}
+.tc-selected-badge{
+  position:absolute;top:.6rem;right:.6rem;
+  background:var(--sage);color:#fff;border-radius:50%;
+  width:22px;height:22px;display:none;align-items:center;justify-content:center;font-size:.72rem;
+}
+.therapist-card.selected .tc-selected-badge{display:flex}
+.tc-avatar{
+  width:72px;height:72px;border-radius:50%;
+  background:linear-gradient(135deg,rgba(74,124,111,.2),rgba(74,124,111,.08));
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.8rem;margin:0 auto .75rem;border:2px solid rgba(74,124,111,.12);
+  overflow:hidden;
+}
+.tc-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.tc-name{font-family:'Playfair Display',serif;font-size:.95rem;color:#1c2b28;font-weight:700;margin-bottom:.15rem}
+.tc-title{font-size:.74rem;color:var(--sage);font-weight:600;margin-bottom:.4rem}
+.tc-spec{display:inline-block;background:rgba(74,124,111,.08);color:var(--sage);border-radius:20px;padding:.15rem .65rem;font-size:.7rem;font-weight:600;margin-bottom:.5rem}
+.tc-stars{color:#e8a030;font-size:.75rem;margin-bottom:.3rem;letter-spacing:.5px}
+.tc-meta{font-size:.72rem;color:var(--muted);line-height:1.5}
+.tc-modes{display:flex;justify-content:center;gap:.3rem;margin-top:.5rem;flex-wrap:wrap}
+.tc-mode-tag{background:rgba(74,124,111,.06);border:1px solid rgba(74,124,111,.15);border-radius:50px;padding:.1rem .5rem;font-size:.65rem;color:var(--sage)}
+.tc-crisis-tag{background:rgba(181,85,74,.08);border:1px solid rgba(181,85,74,.2);color:#b5554a;border-radius:50px;padding:.1rem .5rem;font-size:.65rem}
 
-/* ══ FORM BODY ════════════════════════════════════════ */
-.appt-form-body{padding:2.5rem 2.5rem 2rem}
-@media(max-width:575px){.appt-form-body{padding:1.5rem 1.2rem 1.5rem}}
+.no-pref-card{
+  border:2px dashed rgba(74,124,111,.2);border-radius:16px;padding:1.2rem 1rem;
+  cursor:pointer;transition:all .25s;background:#fff;text-align:center;user-select:none;
+}
+.no-pref-card:hover{border-color:var(--sage);background:rgba(74,124,111,.03)}
+.no-pref-card.selected{border-color:var(--sage);background:rgba(74,124,111,.05);box-shadow:0 0 0 3px rgba(74,124,111,.15)}
 
-/* FEATURE 6: Section progress header */
-.form-section-header{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #e8ede9;padding-bottom:.5rem;margin-bottom:1.25rem;margin-top:1.8rem}
-.form-section-header:first-of-type{margin-top:0}
-.form-section-title{font-family:'Playfair Display',serif;font-size:1rem;color:var(--sage);margin:0}
-.form-section-badge{font-size:.71rem;color:var(--muted);background:rgba(74,124,111,.08);border-radius:50px;padding:.18rem .7rem;font-weight:600}
+/* Therapist details expand panel */
+.therapist-detail-panel{
+  background:linear-gradient(135deg,rgba(74,124,111,.06),rgba(74,124,111,.03));
+  border:1px solid rgba(74,124,111,.16);border-radius:14px;
+  padding:1.2rem 1.4rem;margin-top:1rem;
+  display:none;animation:slideDown .3s ease;
+}
+.therapist-detail-panel.show{display:block}
+@keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+.tdp-inner{display:flex;gap:1.2rem;align-items:flex-start;flex-wrap:wrap}
+.tdp-avatar{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,rgba(74,124,111,.2),rgba(74,124,111,.08));display:flex;align-items:center;justify-content:center;font-size:1.6rem;flex-shrink:0;overflow:hidden}
+.tdp-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.tdp-info{flex:1;min-width:180px}
+.tdp-name{font-family:'Playfair Display',serif;font-size:1rem;color:#1c2b28;font-weight:700}
+.tdp-title{font-size:.78rem;color:var(--sage);margin-bottom:.4rem}
+.tdp-bio{font-size:.82rem;color:var(--muted);line-height:1.65;margin-bottom:.5rem}
+.tdp-tags{display:flex;flex-wrap:wrap;gap:.35rem}
+.tdp-tag{background:#fff;border:1px solid rgba(74,124,111,.18);border-radius:50px;padding:.18rem .65rem;font-size:.72rem;color:var(--sage)}
 
-/* ══ INPUTS ════════════════════════════════════════ */
-.appt-input{border:1.5px solid #d8e3df!important;border-radius:10px!important;padding:.65rem .95rem!important;font-size:.9rem!important;color:var(--text)!important;background:#fafcfb!important;transition:border-color .2s,box-shadow .2s!important}
-.appt-input:focus{border-color:var(--sage)!important;box-shadow:0 0 0 3px rgba(74,124,111,.12)!important;background:#fff!important;outline:none!important}
-.form-label{font-size:.83rem;font-weight:600;color:var(--muted);letter-spacing:.03em;margin-bottom:.35rem}
+/* Type cards */
+.type-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:.65rem;margin-top:.7rem}
+.type-card{border:1.5px solid rgba(74,124,111,.15);border-radius:14px;padding:.85rem;cursor:pointer;transition:all .22s;position:relative;background:#fff;user-select:none}
+.type-card:hover{border-color:var(--sage);transform:translateY(-2px);box-shadow:0 4px 14px rgba(74,124,111,.12)}
+.type-card.selected{border-color:var(--sage);background:rgba(74,124,111,.07);box-shadow:0 0 0 3px rgba(74,124,111,.14)}
+.type-card.crisis-type.selected{border-color:#b5554a;background:rgba(181,85,74,.06);box-shadow:0 0 0 3px rgba(181,85,74,.14)}
+.tc-chk{position:absolute;top:.6rem;right:.6rem;width:18px;height:18px;border-radius:50%;background:var(--sage);color:#fff;font-size:.64rem;display:none;align-items:center;justify-content:center}
+.type-card.selected .tc-chk{display:flex}
+.type-card.crisis-type.selected .tc-chk{background:#b5554a}
+.type-icon{font-size:1.35rem;display:block;margin-bottom:.35rem}
+.type-name{font-size:.84rem;font-weight:700;color:#1c2b28;margin-bottom:.18rem}
+.type-desc{font-size:.71rem;color:var(--muted);line-height:1.4}
 
-/* FEATURE 2: Session type descriptions */
-.session-type-grid{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-top:.6rem}
-@media(max-width:480px){.session-type-grid{grid-template-columns:1fr}}
-.st-card{border:1.5px solid rgba(74,124,111,.15);border-radius:12px;padding:.75rem .9rem;cursor:pointer;transition:all .22s;position:relative}
-.st-card:hover{border-color:var(--sage);background:rgba(74,124,111,.04)}
-.st-card.selected{border-color:var(--sage);background:rgba(74,124,111,.07);box-shadow:0 0 0 3px rgba(74,124,111,.12)}
-.st-card input[type=radio]{position:absolute;opacity:0;pointer-events:none}
-.st-card-icon{font-size:1.2rem;margin-bottom:.3rem}
-.st-card-name{font-size:.85rem;font-weight:700;color:var(--deep);margin-bottom:.18rem}
-.st-card-desc{font-size:.74rem;color:var(--muted);line-height:1.45}
-.st-card-check{position:absolute;top:.7rem;right:.7rem;width:18px;height:18px;border-radius:50%;background:var(--sage);color:#fff;font-size:.65rem;display:none;align-items:center;justify-content:center}
-.st-card.selected .st-card-check{display:flex}
+/* Mode + urgency pills */
+.pill-row{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.6rem}
+.sel-pill{flex:1;min-width:95px;border:1.5px solid rgba(74,124,111,.18);border-radius:50px;padding:.52rem .85rem;font-size:.83rem;font-weight:600;color:var(--muted);cursor:pointer;text-align:center;transition:all .22s;user-select:none;background:#fff}
+.sel-pill:hover{border-color:var(--sage);color:var(--sage)}
+.sel-pill.active{background:var(--sage);border-color:var(--sage);color:#fff;box-shadow:0 4px 12px rgba(74,124,111,.25)}
+.sel-pill.urgent-active{background:#b5554a;border-color:#b5554a;color:#fff;box-shadow:0 4px 12px rgba(181,85,74,.25)}
 
-/* FEATURE 7: Session Mode */
-.mode-row{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.6rem}
-.mode-pill{flex:1;min-width:90px;border:1.5px solid rgba(74,124,111,.2);border-radius:50px;padding:.5rem .9rem;font-size:.82rem;font-weight:600;color:var(--muted);cursor:pointer;text-align:center;transition:all .22s;user-select:none;position:relative}
-.mode-pill:hover{border-color:var(--sage);color:var(--sage)}
-.mode-pill.selected{background:var(--sage);border-color:var(--sage);color:#fff}
-.mode-pill input[type=radio]{position:absolute;opacity:0}
+/* Availability */
+.avail-fb{margin-top:.45rem;padding:.5rem .85rem;border-radius:10px;font-size:.78rem;display:none;align-items:center;gap:.4rem}
+.avail-fb.show{display:flex;animation:fadeUp .3s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.avail-fb.good{background:rgba(74,124,111,.08);color:var(--sage);border:1px solid rgba(74,124,111,.18)}
+.avail-fb.warn{background:rgba(232,201,138,.15);color:#9a7a20;border:1px solid rgba(232,201,138,.4)}
+.avail-fb.busy{background:rgba(181,85,74,.08);color:#a84848;border:1px solid rgba(181,85,74,.25)}
+.countdown-bar{background:rgba(74,124,111,.06);border:1px solid rgba(74,124,111,.12);border-radius:10px;padding:.5rem .9rem;margin-top:.5rem;font-size:.8rem;color:var(--muted);display:none;align-items:center;gap:.5rem}
+.countdown-bar.show{display:flex}
+.crisis-alert-strip{background:rgba(181,85,74,.06);border:1.5px solid rgba(181,85,74,.22);border-radius:14px;padding:1rem 1.2rem;margin-top:.8rem;display:none;gap:.75rem;align-items:flex-start}
+.crisis-alert-strip.show{display:flex;animation:fadeUp .3s ease}
 
-/* FEATURE 1: Availability Feedback */
-.avail-feedback{margin-top:.5rem;padding:.55rem .9rem;border-radius:10px;font-size:.78rem;display:none;align-items:center;gap:.45rem;animation:fadeUp .3s ease}
-.avail-feedback.show{display:flex}
-.avail-feedback.good{background:rgba(74,124,111,.08);color:var(--sage);border:1px solid rgba(74,124,111,.18)}
-.avail-feedback.warn{background:rgba(232,201,138,.15);color:#9a7a20;border:1px solid rgba(232,201,138,.4)}
-.avail-feedback.busy{background:rgba(181,85,74,.08);color:#a84848;border:1px solid rgba(181,85,74,.25)}
-
-/* FEATURE 3: Confidentiality */
-.confidentiality-bar{background:rgba(74,124,111,.06);border:1px solid rgba(74,124,111,.14);border-radius:12px;padding:.75rem 1rem;display:flex;align-items:flex-start;gap:.7rem;margin:1.4rem 0 1.2rem}
-.conf-icon{font-size:1.1rem;flex-shrink:0;margin-top:.05rem}
-.conf-text{font-size:.78rem;color:var(--muted);line-height:1.55}
-.conf-text strong{color:var(--deep)}
-
-/* ══ SUBMIT BUTTONS ═══════════════════════════════════ */
-.btn-appt-submit{background:var(--sage);color:#fff;border:none;border-radius:12px;padding:.8rem 2.2rem;font-size:.95rem;font-weight:600;letter-spacing:.02em;transition:all .25s;cursor:pointer;display:flex;align-items:center;gap:.5rem}
-.btn-appt-submit:hover{background:var(--sage-lt);transform:translateY(-2px);box-shadow:0 6px 24px rgba(74,124,111,.3)}
-.btn-appt-submit:disabled{opacity:.55;cursor:not-allowed;transform:none}
-.btn-appt-cancel{background:transparent;color:var(--muted);border:1.5px solid #d8e3df;border-radius:12px;padding:.8rem 1.6rem;font-size:.95rem;transition:all .25s;text-decoration:none;display:inline-block}
-.btn-appt-cancel:hover{border-color:var(--blush);color:var(--blush)}
-
-/* Submit-loading spinner */
-@keyframes spin{to{transform:rotate(360deg)}}
-.spin-icon{animation:spin 1s linear infinite;display:inline-block}
+/* Conf + submit */
+.conf-bar{background:rgba(74,124,111,.06);border:1px solid rgba(74,124,111,.14);border-radius:12px;padding:.75rem 1rem;display:flex;align-items:flex-start;gap:.65rem;margin:1.4rem 0 1.2rem}
+.btn-book{background:linear-gradient(135deg,var(--sage),#3d8b7a);color:#fff;border:none;border-radius:12px;padding:.85rem 2.4rem;font-size:.95rem;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:.55rem;transition:all .28s;box-shadow:0 4px 18px rgba(74,124,111,.3)}
+.btn-book:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(74,124,111,.4)}
+.btn-book:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.btn-cancel-lnk{color:var(--muted);border:1.5px solid #d8e3df;border-radius:12px;padding:.85rem 1.6rem;font-size:.95rem;text-decoration:none;display:inline-block;transition:all .25s}
+.btn-cancel-lnk:hover{border-color:var(--blush);color:var(--blush)}
 </style>
 {% endblock %}
 
 {% block content %}
-
-<!-- ═══ HERO ═══════════════════════════════════════════════ -->
 <section class="appt-hero">
   <div class="container position-relative">
-
-    {# FEATURE 6: Progress Indicator #}
     <div class="progress-indicator">
       <div class="pi-step done"><div class="pi-num"><i class="bi bi-check2"></i></div><span>Login</span></div>
       <div class="pi-line done"></div>
@@ -129,186 +171,261 @@
       <div class="pi-line"></div>
       <div class="pi-step"><div class="pi-num">4</div><span>Session</span></div>
     </div>
-
-    <div class="appt-hero-badge">🌿 Wellbeing Appointment</div>
+    <div class="hero-badge">🌿 Wellbeing Appointment</div>
     <h1>{{ action }} Your Appointment</h1>
-    <p>Take a meaningful step toward better mental health. Fill in the details below and we'll confirm your session soon.</p>
+    <p>Choose your therapist, pick a time, and take a meaningful step toward better mental health.</p>
   </div>
   <span class="deco-leaf" aria-hidden="true">🌱</span>
 </section>
 
-<!-- ═══ MAIN CARD ══════════════════════════════════════════ -->
-<div class="appt-card-wrap">
+<div class="appt-wrap">
   <div class="container">
     <div class="appt-card row g-0">
 
       <!-- SIDEBAR -->
-      <div class="col-lg-4 appt-card-sidebar">
+      <div class="col-lg-4 appt-sidebar">
         <div>
-          <h5 style="font-family:'Playfair Display',serif;margin-bottom:.2rem">How it works</h5>
-          <p style="font-size:.78rem;color:rgba(255,255,255,.45);margin-bottom:1rem">Simple steps to get support</p>
+          <h5 style="font-family:'Playfair Display',serif;margin-bottom:.15rem">How it works</h5>
+          <p style="font-size:.77rem;color:rgba(255,255,255,.45);margin-bottom:.8rem">Simple steps to get support</p>
         </div>
-
-        <div class="sidebar-step"><div class="step-num">1</div><div class="step-body"><h6>Choose a session type</h6><p>Individual, group, assessment, or crisis support.</p></div></div>
-        <div class="sidebar-step"><div class="step-num">2</div><div class="step-body"><h6>Pick date, time &amp; mode</h6><p>Choose in-person, video, or phone — whatever feels safest.</p></div></div>
-        <div class="sidebar-step"><div class="step-num">3</div><div class="step-body"><h6>Add optional details</h6><p>Name a preferred therapist or leave notes for context.</p></div></div>
-        <div class="sidebar-step"><div class="step-num">4</div><div class="step-body"><h6>We confirm &amp; follow up</h6><p>You'll receive confirmation within 24 hours.</p></div></div>
-
-        {# FEATURE 4: Expected Response Time #}
-        <div class="response-time-badge">
-          <div class="rtb-icon">⏱️</div>
-          <div class="rtb-text">We confirm appointments within <strong>24 hours</strong>. Urgent? <strong>Same-day</strong> crisis sessions available — see below.</div>
-        </div>
-
-        {# FEATURE 5: Actionable Urgent Help #}
-        <div class="urgent-crisis-block">
-          <div class="ucb-title"><i class="bi bi-exclamation-triangle-fill"></i>Need immediate help?</div>
-          <a href="tel:0722178177" class="crisis-action-btn"><i class="bi bi-telephone-fill"></i>Call Befrienders: 0722 178 177</a>
-          <a href="tel:+254202724069" class="crisis-action-btn"><i class="bi bi-hospital"></i>Mathari Hospital: +254 20 2724069</a>
-          <a href="tel:999" class="crisis-action-btn"><i class="bi bi-shield-fill"></i>Emergency Services: 999</a>
-          <button onclick="toggleChat(true)" class="crisis-action-btn" style="border:none;width:100%;cursor:pointer;background:rgba(181,85,74,.2);border:1px solid rgba(181,85,74,.4)"><i class="bi bi-chat-heart"></i>Talk to Mwendo now</button>
+        <div class="s-step"><div class="s-num">1</div><div class="s-body"><h6>Choose your therapist</h6><p>Browse profiles and pick the right fit.</p></div></div>
+        <div class="s-step"><div class="s-num">2</div><div class="s-body"><h6>Select session type</h6><p>Individual, group, assessment, or crisis.</p></div></div>
+        <div class="s-step"><div class="s-num">3</div><div class="s-body"><h6>Pick date, time &amp; mode</h6><p>In-person, video, or phone.</p></div></div>
+        <div class="s-step"><div class="s-num">4</div><div class="s-body"><h6>We confirm &amp; follow up</h6><p>Confirmation within 24 hours.</p></div></div>
+        <div class="rb">Confirmed within <strong>24 hours</strong>. Urgent? <strong>Same-day</strong> crisis sessions available.</div>
+        <div class="crisis-box">
+          <div class="crisis-box-title"><i class="bi bi-exclamation-triangle-fill"></i>Need immediate help?</div>
+          <a href="tel:0722178177" class="c-btn"><i class="bi bi-telephone-fill"></i>Befrienders: 0722 178 177</a>
+          <a href="tel:+254202724069" class="c-btn"><i class="bi bi-hospital"></i>Mathari: +254 20 2724069</a>
+          <a href="tel:999" class="c-btn"><i class="bi bi-shield-fill"></i>Emergency: 999</a>
+          <button type="button" onclick="toggleChat(true)" class="c-btn" style="border:none;width:100%;justify-content:center;cursor:pointer"><i class="bi bi-chat-heart"></i>Talk to Mwendo</button>
         </div>
       </div>
 
-      <!-- FORM BODY -->
+      <!-- FORM -->
       <div class="col-lg-8 appt-form-body">
-
         {% if messages %}
           {% for msg in messages %}
-            <div class="alert alert-{{ msg.tags }} alert-dismissible fade show mb-3" role="alert">
-              {{ msg }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
+            <div class="alert alert-{{ msg.tags }} alert-dismissible fade show mb-3">{{ msg }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
           {% endfor %}
         {% endif %}
 
-        <form method="post" novalidate id="apptForm">
+        <form method="post" id="apptForm" novalidate>
           {% csrf_token %}
-
-          <!-- ══ FEATURE 2: Session Type with Descriptions ══ -->
-          <div class="form-section-header">
-            <p class="form-section-title"><i class="bi bi-calendar2-heart me-2"></i>Session Type</p>
-            <span class="form-section-badge">Step 1 of 3</span>
+          <!-- Hidden Django fields -->
+          <div style="position:absolute;width:0;height:0;overflow:hidden;opacity:0;pointer-events:none">
+            {{ form.appointment_type }}
+            {{ form.session_mode }}
+            {{ form.urgency }}
           </div>
+          <!-- Hidden therapist selection -->
+          <input type="hidden" name="selected_therapist_id" id="selectedTherapistId" value="">
 
-          <label class="form-label d-block mb-2">Choose the type of support you need <span style="color:#b5554a">*</span></label>
-          <div class="session-type-grid" id="sessionTypeGrid">
-            <label class="st-card" data-value="individual">
-              <input type="radio" name="{{ form.appointment_type.html_name }}" value="individual" {% if form.appointment_type.value == 'individual' %}checked{% endif %}>
-              <div class="st-card-check"><i class="bi bi-check2"></i></div>
-              <div class="st-card-icon">🧑‍💼</div>
-              <div class="st-card-name">Individual Therapy</div>
-              <div class="st-card-desc">One-on-one session with a licensed therapist. Fully confidential.</div>
-            </label>
-            <label class="st-card" data-value="group">
-              <input type="radio" name="{{ form.appointment_type.html_name }}" value="group" {% if form.appointment_type.value == 'group' %}checked{% endif %}>
-              <div class="st-card-check"><i class="bi bi-check2"></i></div>
-              <div class="st-card-icon">🤝</div>
-              <div class="st-card-name">Group Support</div>
-              <div class="st-card-desc">Facilitated group sessions for shared experiences and peer connection.</div>
-            </label>
-            <label class="st-card" data-value="assessment">
-              <input type="radio" name="{{ form.appointment_type.html_name }}" value="assessment" {% if form.appointment_type.value == 'assessment' %}checked{% endif %}>
-              <div class="st-card-check"><i class="bi bi-check2"></i></div>
-              <div class="st-card-icon">📋</div>
-              <div class="st-card-name">Mental Health Assessment</div>
-              <div class="st-card-desc">A structured first session to identify your needs and create a support plan.</div>
-            </label>
-            <label class="st-card" data-value="crisis">
-              <input type="radio" name="{{ form.appointment_type.html_name }}" value="crisis" {% if form.appointment_type.value == 'crisis' %}checked{% endif %}>
-              <div class="st-card-check"><i class="bi bi-check2"></i></div>
-              <div class="st-card-icon">🆘</div>
-              <div class="st-card-name">Crisis Support</div>
-              <div class="st-card-desc">Urgent, same-day session for acute mental health distress. Prioritised.</div>
-            </label>
+          <!-- ═══ STEP 0: CHOOSE THERAPIST ═════════════════ -->
+          <div class="f-sec" style="margin-top:0">
+            <p class="f-sec-title"><i class="bi bi-person-circle"></i>Choose Your Therapist</p>
+            <span class="f-badge">Step 1 of 4</span>
           </div>
-          {% if form.appointment_type.errors %}
-            <div class="text-danger mt-2" style="font-size:.8rem">{{ form.appointment_type.errors.0 }}</div>
-          {% endif %}
+          <p style="font-size:.83rem;color:var(--muted);margin-bottom:.5rem">Click a therapist to see their full profile and select them.</p>
 
-          <!-- ══ DATE & TIME + FEATURE 1: Availability Feedback ══ -->
-          <div class="form-section-header mt-4">
-            <p class="form-section-title"><i class="bi bi-clock me-2"></i>Date &amp; Time</p>
-            <span class="form-section-badge">Step 2 of 3</span>
-          </div>
+          {% if therapists %}
+          <div class="therapist-grid" id="therapistGrid">
+            <!-- No Preference card -->
+            <div class="no-pref-card selected" id="card-nopref" onclick="selectTherapist(this, '', 'No preference', '', '')">
+              <div class="tc-selected-badge" style="display:flex"><i class="bi bi-check2"></i></div>
+              <div style="font-size:2rem;margin-bottom:.5rem">🌿</div>
+              <div style="font-size:.88rem;font-weight:700;color:#1c2b28;margin-bottom:.2rem">No Preference</div>
+              <div style="font-size:.73rem;color:var(--muted);line-height:1.5">Assign me to any available therapist that matches my needs.</div>
+            </div>
 
-          <div class="row g-3 mb-2">
-            <div class="col-sm-6">
-              <label class="form-label" for="{{ form.preferred_date.id_for_label }}">Preferred Date <span style="color:#b5554a">*</span></label>
-              {{ form.preferred_date }}
-              {% if form.preferred_date.errors %}
-                <div class="text-danger mt-1" style="font-size:.8rem">{{ form.preferred_date.errors.0 }}</div>
-              {% endif %}
-              {# FEATURE 1: Availability Feedback #}
-              <div class="avail-feedback" id="availFeedback">
-                <i class="bi bi-circle-fill" style="font-size:.55rem"></i>
-                <span id="availText"></span>
+            {% for t in therapists %}
+            <div class="therapist-card" id="card-{{ t.pk }}"
+              onclick="selectTherapist(this, '{{ t.pk }}', '{{ t.name }}', '{{ t.title }}', '{{ t.specialisation }}')">
+              <div class="tc-selected-badge"><i class="bi bi-check2"></i></div>
+              <div class="tc-avatar">
+                {% if t.photo %}<img src="{{ t.photo.url }}" alt="{{ t.name }}">
+                {% else %}{{ t.name|first }}{% endif %}
+              </div>
+              <div class="tc-name">{{ t.name }}</div>
+              <div class="tc-title">{{ t.title }}</div>
+              <span class="tc-spec">{{ t.get_specialisation_display }}</span>
+              <div class="tc-stars">
+                {% with stars=t.star_display %}{{ stars }}{% endwith %}
+                <span style="color:var(--muted);font-size:.68rem">({{ t.rating }})</span>
+              </div>
+              <div class="tc-meta">{{ t.years_experience }}yr exp · {{ t.sessions_done }} sessions</div>
+              <div class="tc-modes">
+                {% for m in t.mode_list %}
+                  {% if m == 'in_person' %}<span class="tc-mode-tag">🏥</span>
+                  {% elif m == 'video' %}<span class="tc-mode-tag">📹</span>
+                  {% elif m == 'phone' %}<span class="tc-mode-tag">📞</span>{% endif %}
+                {% endfor %}
+                {% if t.accepts_crisis %}<span class="tc-crisis-tag">🆘 Crisis</span>{% endif %}
               </div>
             </div>
-            <div class="col-sm-6">
-              <label class="form-label" for="{{ form.preferred_time.id_for_label }}">Preferred Time <span style="color:#b5554a">*</span></label>
-              {{ form.preferred_time }}
-              {% if form.preferred_time.errors %}
-                <div class="text-danger mt-1" style="font-size:.8rem">{{ form.preferred_time.errors.0 }}</div>
-              {% endif %}
+            {% endfor %}
+          </div>
+
+          <!-- Therapist detail expand panel -->
+          <div class="therapist-detail-panel" id="therapistDetailPanel">
+            <div class="tdp-inner">
+              <div class="tdp-avatar" id="tdpAvatar">🌿</div>
+              <div class="tdp-info">
+                <div class="tdp-name" id="tdpName"></div>
+                <div class="tdp-title" id="tdpTitle"></div>
+                <div class="tdp-bio" id="tdpBio"></div>
+                <div class="tdp-tags" id="tdpTags"></div>
+              </div>
             </div>
           </div>
 
-          <!-- ══ FEATURE 7: Session Mode ══ -->
-          <div class="mb-3">
-            <label class="form-label d-block">Session Mode <span style="color:#b5554a">*</span></label>
-            <div class="mode-row" id="modeRow">
-              <label class="mode-pill selected" data-mode="in_person">
-                <input type="radio" name="session_mode" value="in_person" checked>
-                🏥 In-Person
-              </label>
-              <label class="mode-pill" data-mode="video">
-                <input type="radio" name="session_mode" value="video">
-                📹 Video Call
-              </label>
-              <label class="mode-pill" data-mode="phone">
-                <input type="radio" name="session_mode" value="phone">
-                📞 Phone Call
-              </label>
+          <!-- Therapist detail data (from Django, hidden) -->
+          <div id="therapistData" style="display:none">
+            {% for t in therapists %}
+            <div data-id="{{ t.pk }}"
+                 data-name="{{ t.name }}"
+                 data-title="{{ t.title }}"
+                 data-bio="{{ t.bio|default:'No bio available yet.' }}"
+                 data-spec="{{ t.get_specialisation_display }}"
+                 data-years="{{ t.years_experience }}"
+                 data-sessions="{{ t.sessions_done }}"
+                 data-rating="{{ t.rating }}"
+                 data-langs="{{ t.languages }}"
+                 data-modes="{{ t.available_modes }}"
+                 data-crisis="{{ t.accepts_crisis }}">
+            </div>
+            {% endfor %}
+          </div>
+
+          {% else %}
+          <div style="background:rgba(74,124,111,.06);border:1px solid rgba(74,124,111,.14);border-radius:14px;padding:1.5rem;text-align:center;margin-bottom:.5rem">
+            <div style="font-size:2.5rem;opacity:.4;margin-bottom:.5rem">🌿</div>
+            <p style="font-size:.88rem;color:var(--muted);margin:0">No therapists are currently listed. An available therapist will be assigned to you after booking.</p>
+          </div>
+          {% endif %}
+
+          <!-- ═══ STEP 1: SESSION TYPE ═════════════════════ -->
+          <div class="f-sec">
+            <p class="f-sec-title"><i class="bi bi-calendar2-heart"></i>Session Type</p>
+            <span class="f-badge">Step 2 of 4</span>
+          </div>
+
+          <div class="type-grid">
+            <div class="type-card {% if form.appointment_type.value == 'individual' or not form.appointment_type.value %}selected{% endif %}" onclick="selectType(this,'individual')">
+              <div class="tc-chk"><i class="bi bi-check2"></i></div>
+              <span class="type-icon">🧑‍💼</span>
+              <div class="type-name">Individual Therapy</div>
+              <div class="type-desc">One-on-one · Fully confidential</div>
+            </div>
+            <div class="type-card {% if form.appointment_type.value == 'group' %}selected{% endif %}" onclick="selectType(this,'group')">
+              <div class="tc-chk"><i class="bi bi-check2"></i></div>
+              <span class="type-icon">🤝</span>
+              <div class="type-name">Group Session</div>
+              <div class="type-desc">Shared experience · Peer support</div>
+            </div>
+            <div class="type-card {% if form.appointment_type.value == 'assessment' %}selected{% endif %}" onclick="selectType(this,'assessment')">
+              <div class="tc-chk"><i class="bi bi-check2"></i></div>
+              <span class="type-icon">📋</span>
+              <div class="type-name">Assessment</div>
+              <div class="type-desc">First session · Build a plan</div>
+            </div>
+            <div class="type-card {% if form.appointment_type.value == 'follow_up' %}selected{% endif %}" onclick="selectType(this,'follow_up')">
+              <div class="tc-chk"><i class="bi bi-check2"></i></div>
+              <span class="type-icon">🔄</span>
+              <div class="type-name">Follow-Up</div>
+              <div class="type-desc">Continue your progress</div>
+            </div>
+            <div class="type-card crisis-type {% if form.appointment_type.value == 'crisis' %}selected{% endif %}" onclick="selectType(this,'crisis',true)">
+              <div class="tc-chk"><i class="bi bi-check2"></i></div>
+              <span class="type-icon">🆘</span>
+              <div class="type-name">Crisis Support</div>
+              <div class="type-desc">Urgent · Same-day · Prioritised</div>
+            </div>
+          </div>
+          {% if form.appointment_type.errors %}<span class="err-msg">{{ form.appointment_type.errors.0 }}</span>{% endif %}
+
+          <div class="crisis-alert-strip" id="crisisStrip">
+            <div style="font-size:1.5rem;flex-shrink:0">🆘</div>
+            <div>
+              <strong style="color:#b5554a;font-size:.88rem">Crisis Support selected</strong>
+              <p style="font-size:.78rem;color:var(--muted);margin:.2rem 0 .4rem;line-height:1.55">We will prioritise your booking. For immediate help call <a href="tel:0722178177" style="color:#b5554a;font-weight:700">0722 178 177</a> — Befrienders Kenya, free, 24/7.</p>
+              <button type="button" onclick="toggleChat(true)" style="background:rgba(181,85,74,.1);border:1px solid rgba(181,85,74,.3);color:#b5554a;border-radius:50px;padding:.22rem .7rem;font-size:.77rem;cursor:pointer;font-family:inherit">🌿 Talk to Mwendo now</button>
             </div>
           </div>
 
-          <!-- ══ PROVIDER & LOCATION ══ -->
-          <div class="form-section-header mt-4">
-            <p class="form-section-title"><i class="bi bi-person-badge me-2"></i>Provider &amp; Details</p>
-            <span class="form-section-badge">Step 3 of 3</span>
+          <!-- ═══ STEP 2: DATE, TIME & MODE ════════════════ -->
+          <div class="f-sec">
+            <p class="f-sec-title"><i class="bi bi-clock"></i>Date, Time &amp; Mode</p>
+            <span class="f-badge">Step 3 of 4</span>
           </div>
 
           <div class="row g-3 mb-3">
             <div class="col-sm-6">
-              <label class="form-label" for="{{ form.therapist_name.id_for_label }}">{{ form.therapist_name.label }}</label>
-              {{ form.therapist_name }}
+              <label class="f-label" for="id_preferred_date">Preferred Date <span style="color:#b5554a">*</span></label>
+              <input type="date" name="preferred_date" id="id_preferred_date" class="f-input"
+                value="{{ form.preferred_date.value|default:'' }}"
+                min="{% now 'Y-m-d' %}" required onchange="onDateChange()">
+              {% if form.preferred_date.errors %}<span class="err-msg">{{ form.preferred_date.errors.0 }}</span>{% endif %}
+              <div class="avail-fb" id="availFb"><span id="availTxt"></span></div>
             </div>
             <div class="col-sm-6">
-              <label class="form-label" for="{{ form.location.id_for_label }}">{{ form.location.label }}</label>
-              {{ form.location }}
+              <label class="f-label" for="id_preferred_time">Preferred Time <span style="color:#b5554a">*</span></label>
+              <input type="time" name="preferred_time" id="id_preferred_time" class="f-input"
+                value="{{ form.preferred_time.value|default:'' }}" required onchange="onTimeChange()">
+              {% if form.preferred_time.errors %}<span class="err-msg">{{ form.preferred_time.errors.0 }}</span>{% endif %}
+            </div>
+          </div>
+          <div class="countdown-bar" id="countdownBar"><i class="bi bi-calendar-event" style="color:var(--sage)"></i><span id="countdownTxt"></span></div>
+
+          <div class="mb-3">
+            <label class="f-label">How would you like to meet? <span style="color:#b5554a">*</span></label>
+            <div class="pill-row">
+              <div class="sel-pill {% if form.session_mode.value == 'in_person' or not form.session_mode.value %}active{% endif %}" onclick="selectMode(this,'in_person')">🏥 In-Person</div>
+              <div class="sel-pill {% if form.session_mode.value == 'video' %}active{% endif %}" onclick="selectMode(this,'video')">📹 Video Call</div>
+              <div class="sel-pill {% if form.session_mode.value == 'phone' %}active{% endif %}" onclick="selectMode(this,'phone')">📞 Phone Call</div>
+            </div>
+          </div>
+
+          <!-- ═══ STEP 3: DETAILS ══════════════════════════ -->
+          <div class="f-sec">
+            <p class="f-sec-title"><i class="bi bi-pencil-square"></i>Additional Details</p>
+            <span class="f-badge">Step 4 of 4</span>
+          </div>
+
+          <div class="mb-3">
+            <label class="f-label">How urgent is this? <span style="color:#b5554a">*</span></label>
+            <div class="pill-row">
+              <div class="sel-pill {% if form.urgency.value == 'routine' or not form.urgency.value %}active{% endif %}" onclick="selectUrgency(this,'routine')">🗓️ Routine</div>
+              <div class="sel-pill {% if form.urgency.value == 'soon' %}active{% endif %}" onclick="selectUrgency(this,'soon')">⚡ Within a week</div>
+              <div class="sel-pill {% if form.urgency.value == 'urgent' %}active urgent-active{% endif %}" onclick="selectUrgency(this,'urgent')">🆘 Urgent</div>
             </div>
           </div>
 
           <div class="mb-3">
-            <label class="form-label" for="{{ form.notes.id_for_label }}">{{ form.notes.label }}</label>
-            {{ form.notes }}
+            <label class="f-label" for="id_location">Location / Meeting Details</label>
+            <input type="text" name="location" id="id_location" class="f-input"
+              placeholder="Clinic address or 'Online'"
+              value="{{ form.location.value|default:'' }}">
           </div>
 
-          {# FEATURE 3: Confidentiality Reinforcement #}
-          <div class="confidentiality-bar">
-            <div class="conf-icon">🔒</div>
-            <div class="conf-text">
-              <strong>Your privacy is protected.</strong> Everything you share here is treated as strictly confidential. Notes and session details are only visible to you and your assigned therapist — never shared with third parties.
-            </div>
+          <div class="mb-1">
+            <label class="f-label" for="id_notes">Tell your therapist what's on your mind</label>
+            <textarea name="notes" id="id_notes" class="f-input" rows="4"
+              placeholder="Share anything that would help your therapist prepare — what you're going through, what you hope to work on, any concerns…">{{ form.notes.value|default:'' }}</textarea>
+            <div style="font-size:.73rem;color:var(--muted);margin-top:.25rem;text-align:right"><span id="notesCount">0</span> / 500</div>
           </div>
 
-          <!-- ACTIONS -->
+          <div class="conf-bar">
+            <span style="font-size:1.1rem;flex-shrink:0">🔒</span>
+            <div style="font-size:.78rem;color:var(--muted);line-height:1.55"><strong style="color:#1c2b28">Your privacy is protected.</strong> Everything you share is strictly confidential and visible only to you and your assigned therapist.</div>
+          </div>
+
           <div class="d-flex align-items-center gap-3 flex-wrap">
-            <button type="submit" class="btn-appt-submit" id="submitBtn" onclick="animateSubmit()">
-              <i class="bi bi-calendar-check" id="submitIcon"></i>
-              <span id="submitText">{{ action }} Appointment</span>
+            <button type="submit" class="btn-book" id="submitBtn">
+              <i class="bi bi-calendar-check" id="submitIco"></i>
+              <span id="submitTxt">{{ action }} Appointment</span>
             </button>
-            <a href="{% url 'mentalapp:appointment_list' %}" class="btn-appt-cancel">Cancel</a>
+            <a href="{% url 'mentalapp:appointment_list' %}" class="btn-cancel-lnk">Cancel</a>
           </div>
 
         </form>
@@ -316,126 +433,206 @@
     </div>
   </div>
 </div>
-
 {% endblock %}
 
 {% block extra_js %}
 <script>
-/* ════════════════════════════════════
-   FEATURE 2: Session Type Cards
-════════════════════════════════════ */
-document.querySelectorAll('.st-card').forEach(card => {
-  card.addEventListener('click', function () {
-    document.querySelectorAll('.st-card').forEach(c => c.classList.remove('selected'));
-    this.classList.add('selected');
-    this.querySelector('input[type=radio]').checked = true;
+// ── State ────────────────────────────────────────────────────
+let _type    = '{{ form.appointment_type.value|default:"individual" }}';
+let _mode    = '{{ form.session_mode.value|default:"in_person" }}';
+let _urgency = '{{ form.urgency.value|default:"routine" }}';
+let _selectedTherapistId = '';
 
-    // Crisis type: nudge to call sidebar
-    const val = this.dataset.value;
-    if (val === 'crisis') {
-      const crisis = document.querySelector('.urgent-crisis-block');
-      if (crisis) {
-        crisis.style.boxShadow = '0 0 0 2px rgba(181,85,74,.5)';
-        crisis.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        setTimeout(() => crisis.style.boxShadow = '', 2500);
-      }
-    }
+// ── Therapist selection ──────────────────────────────────────
+function selectTherapist(card, id, name, title, spec) {
+  // Deselect all
+  document.querySelectorAll('.therapist-card,.no-pref-card').forEach(c => {
+    c.classList.remove('selected');
+    const badge = c.querySelector('.tc-selected-badge');
+    if (badge) badge.style.display = 'none';
   });
-  // Restore selected state on load
-  const radio = card.querySelector('input[type=radio]');
-  if (radio.checked) card.classList.add('selected');
-});
+  // Select clicked
+  card.classList.add('selected');
+  const badge = card.querySelector('.tc-selected-badge');
+  if (badge) badge.style.display = 'flex';
+  _selectedTherapistId = id;
+  document.getElementById('selectedTherapistId').value = id;
 
-/* ════════════════════════════════════
-   FEATURE 7: Mode Pills
-════════════════════════════════════ */
-document.querySelectorAll('.mode-pill').forEach(pill => {
-  pill.addEventListener('click', function () {
-    document.querySelectorAll('.mode-pill').forEach(p => p.classList.remove('selected'));
-    this.classList.add('selected');
-    this.querySelector('input[type=radio]').checked = true;
+  // Show detail panel
+  const panel = document.getElementById('therapistDetailPanel');
+  if (!id) {
+    panel.classList.remove('show');
+    return;
+  }
 
-    // Hint: video/phone → location may not be needed
-    const mode = this.dataset.mode;
-    const locField = document.getElementById('{{ form.location.id_for_label }}');
-    if (locField) {
-      locField.placeholder = mode === 'in_person'
-        ? 'e.g. Nairobi, Westlands Clinic'
-        : mode === 'video' ? 'We\'ll send a video link to your email'
-        : 'We\'ll call you — please add number in notes';
-    }
+  // Find therapist data
+  const dataEl = document.querySelector(`#therapistData [data-id="${id}"]`);
+  if (!dataEl) { panel.classList.remove('show'); return; }
+
+  const avatarEl = document.getElementById('tdpAvatar');
+  const photo = card.querySelector('.tc-avatar img');
+  avatarEl.innerHTML = photo
+    ? `<img src="${photo.src}" alt="${name}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`
+    : name.charAt(0);
+
+  document.getElementById('tdpName').textContent  = dataEl.dataset.name;
+  document.getElementById('tdpTitle').textContent = dataEl.dataset.title;
+  document.getElementById('tdpBio').textContent   = dataEl.dataset.bio;
+
+  const tagsEl = document.getElementById('tdpTags');
+  tagsEl.innerHTML = '';
+  const tags = [
+    dataEl.dataset.spec,
+    `${dataEl.dataset.years} yrs experience`,
+    `${dataEl.dataset.sessions} sessions`,
+    `⭐ ${dataEl.dataset.rating}`,
+    ...dataEl.dataset.langs.split(',').map(l => `🗣️ ${l.trim()}`),
+  ];
+  if (dataEl.dataset.crisis === 'True') tags.push('🆘 Crisis support');
+  tags.forEach(t => {
+    const el = document.createElement('span');
+    el.className = 'tdp-tag';
+    el.textContent = t;
+    tagsEl.appendChild(el);
   });
-});
 
-/* ════════════════════════════════════
-   FEATURE 1: Availability Feedback
-════════════════════════════════════ */
-const busyDays   = [0, 6];          // Sun, Sat — weekends typically busy
-const busyHours  = ['09:00','10:00','14:00','15:00'];  // peak slots
-const goodHours  = ['11:00','13:00','16:00','17:00'];
+  panel.classList.add('show');
+  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
 
-function checkAvailability() {
-  const dateInput = document.getElementById('{{ form.preferred_date.id_for_label }}');
-  const timeInput = document.getElementById('{{ form.preferred_time.id_for_label }}');
-  const fb        = document.getElementById('availFeedback');
-  const fbTxt     = document.getElementById('availText');
-
-  if (!dateInput || !dateInput.value) { fb.classList.remove('show'); return; }
-
-  const d    = new Date(dateInput.value);
-  const dow  = d.getDay();
-  const time = timeInput ? timeInput.value : '';
-
-  fb.className = 'avail-feedback';
-
-  if (busyDays.includes(dow)) {
-    fb.classList.add('show', 'warn');
-    fbTxt.textContent = 'Weekends fill up quickly — consider a weekday for better availability.';
-  } else if (busyHours.includes(time)) {
-    fb.classList.add('show', 'busy');
-    fbTxt.textContent = 'This slot is in high demand. We\'ll do our best — or try a quieter time.';
-  } else if (goodHours.includes(time)) {
-    fb.classList.add('show', 'good');
-    fbTxt.textContent = '✓ Great choice! This slot usually has good availability.';
+// ── Session type ──────────────────────────────────────────────
+function selectType(card, val, isCrisis) {
+  document.querySelectorAll('.type-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  _type = val;
+  const sel = document.querySelector('select[name="appointment_type"]');
+  if (sel) sel.value = val;
+  const strip = document.getElementById('crisisStrip');
+  if (isCrisis) {
+    strip.classList.add('show');
+    const urgentPill = document.querySelector('.sel-pill:last-of-type');
+    if (urgentPill) selectUrgency(urgentPill, 'urgent');
   } else {
-    fb.classList.add('show', 'good');
-    fbTxt.textContent = '✓ Slot looks available. We\'ll confirm within 24 hours.';
+    strip.classList.remove('show');
   }
 }
 
-const _dateEl = document.getElementById('{{ form.preferred_date.id_for_label }}');
-const _timeEl = document.getElementById('{{ form.preferred_time.id_for_label }}');
-if (_dateEl) _dateEl.addEventListener('change', checkAvailability);
-if (_timeEl) _timeEl.addEventListener('change', checkAvailability);
-
-/* ════════════════════════════════════
-   STYLE ALL FORM INPUTS
-════════════════════════════════════ */
-document.querySelectorAll('input,select,textarea').forEach(el => {
-  if (!el.classList.contains('appt-input') && !el.type?.match(/radio|checkbox|submit/)) {
-    el.classList.add('appt-input', 'form-control');
+// ── Mode ──────────────────────────────────────────────────────
+function selectMode(pill, val) {
+  document.querySelectorAll('.pill-row .sel-pill').forEach(p => {
+    if (['🏥 In-Person','📹 Video Call','📞 Phone Call'].some(t => p.textContent.includes(t.slice(2)))) {
+      p.classList.remove('active');
+    }
+  });
+  pill.classList.add('active');
+  _mode = val;
+  const sel = document.querySelector('select[name="session_mode"]');
+  if (sel) sel.value = val;
+  const loc = document.getElementById('id_location');
+  if (loc) {
+    loc.placeholder = val === 'in_person' ? 'e.g. Nairobi, Westlands Clinic'
+      : val === 'video' ? "We'll email you a meeting link"
+      : "We'll call you — add your phone number in notes";
   }
+}
+
+// ── Urgency ───────────────────────────────────────────────────
+function selectUrgency(pill, val) {
+  // Only affect urgency pills (3rd pill-row)
+  const rows = document.querySelectorAll('.pill-row');
+  if (rows[2]) rows[2].querySelectorAll('.sel-pill').forEach(p => p.classList.remove('active','urgent-active'));
+  pill.classList.remove('active','urgent-active');
+  pill.classList.add(val === 'urgent' ? 'urgent-active' : 'active');
+  _urgency = val;
+  const sel = document.querySelector('select[name="urgency"]');
+  if (sel) sel.value = val;
+}
+
+// ── Date / time ───────────────────────────────────────────────
+function onDateChange() {
+  const dv   = document.getElementById('id_preferred_date').value;
+  const fb   = document.getElementById('availFb');
+  const ftxt = document.getElementById('availTxt');
+  const cd   = document.getElementById('countdownBar');
+  const ctxt = document.getElementById('countdownTxt');
+  if (!dv) { fb.className = 'avail-fb'; cd.className = 'countdown-bar'; return; }
+
+  const chosen = new Date(dv);
+  const today  = new Date(); today.setHours(0,0,0,0);
+  const days   = Math.round((chosen - today) / 86400000);
+  const dow    = chosen.getDay();
+
+  fb.className = 'avail-fb show';
+  if (dow === 0 || dow === 6) {
+    fb.classList.add('warn');
+    ftxt.textContent = '⚠️ Weekends fill up quickly — a weekday may confirm faster.';
+  } else if (days === 0) {
+    fb.classList.add('warn');
+    ftxt.textContent = '⚡ Same-day — only available for crisis or urgent sessions.';
+  } else {
+    fb.classList.add('good');
+    ftxt.textContent = '✓ Looks available — we\'ll confirm within 24 hours.';
+  }
+
+  cd.className = 'countdown-bar show';
+  if (days === 0) ctxt.textContent = "📅 That's today";
+  else if (days === 1) ctxt.textContent = "📅 That's tomorrow";
+  else ctxt.textContent = `📅 In ${days} day${days !== 1 ? 's' : ''} — ${chosen.toLocaleDateString('en-GB', {weekday:'long',day:'numeric',month:'long'})}`;
+
+  onTimeChange();
+}
+
+function onTimeChange() {
+  const tv  = document.getElementById('id_preferred_time').value;
+  const fb  = document.getElementById('availFb');
+  const txt = document.getElementById('availTxt');
+  if (!tv || !fb.classList.contains('show')) return;
+  if (['09:00','10:00','14:00','15:00'].includes(tv)) {
+    fb.className = 'avail-fb show busy';
+    txt.textContent = '🔴 High-demand slot — we\'ll try our best, or try 11:00 or 16:00.';
+  }
+}
+
+// ── Notes counter ─────────────────────────────────────────────
+const notesEl = document.getElementById('id_notes');
+const counterEl = document.getElementById('notesCount');
+if (notesEl && counterEl) {
+  notesEl.addEventListener('input', () => {
+    const len = notesEl.value.length;
+    counterEl.textContent = len;
+    counterEl.style.color = len > 450 ? '#b5554a' : 'var(--muted)';
+    if (len > 500) notesEl.value = notesEl.value.slice(0, 500);
+  });
+  counterEl.textContent = notesEl.value.length;
+}
+
+// ── Submit ────────────────────────────────────────────────────
+document.getElementById('apptForm').addEventListener('submit', function() {
+  // Sync all hidden Django selects
+  const apptSel = document.querySelector('select[name="appointment_type"]');
+  if (apptSel) apptSel.value = _type;
+  const modeSel = document.querySelector('select[name="session_mode"]');
+  if (modeSel) modeSel.value = _mode;
+  const urgSel  = document.querySelector('select[name="urgency"]');
+  if (urgSel) urgSel.value = _urgency;
+  document.getElementById('selectedTherapistId').value = _selectedTherapistId;
+
+  const btn = document.getElementById('submitBtn');
+  const ico = document.getElementById('submitIco');
+  const txt = document.getElementById('submitTxt');
+  btn.disabled = true;
+  ico.className = 'bi bi-hourglass-split';
+  txt.textContent = 'Booking...';
 });
 
-/* ════════════════════════════════════
-   SUBMIT ANIMATION
-════════════════════════════════════ */
-function animateSubmit() {
-  const btn  = document.getElementById('submitBtn');
-  const icon = document.getElementById('submitIcon');
-  const txt  = document.getElementById('submitText');
-  if (!btn) return;
-  setTimeout(() => {
-    if (!btn.disabled) {
-      btn.disabled = true;
-      icon.className = 'bi bi-arrow-repeat spin-icon';
-      txt.textContent = 'Booking...';
-      setTimeout(() => {
-        icon.className = 'bi bi-check2-circle';
-        txt.textContent = 'Booked!';
-      }, 1800);
-    }
-  }, 10);
-}
+// ── Init ──────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  if ('{{ form.preferred_date.value|default:"" }}') onDateChange();
+  if ('{{ form.appointment_type.value|default:"" }}' === 'crisis') {
+    document.getElementById('crisisStrip').classList.add('show');
+  }
+  // Init notes counter
+  if (notesEl && counterEl) counterEl.textContent = notesEl.value.length;
+});
 </script>
-{% endblock %}56
+{% endblock %}
